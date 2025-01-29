@@ -10,6 +10,7 @@ const app = express();
 const PORT = 3000;
 
 // Middlewares
+app.use(bodyParser.urlencoded({extended:false}));
 app.use(express.json());
 
 // Routes

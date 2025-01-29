@@ -12,6 +12,30 @@ const signUpSchema = z.object({
   password: z.string().min(1, { message: "Password cannot be empty!" }),
 });
 
+const signupUser = async (req, res) => {
+  try {
+    // Validate the request body wrt schema
+    const validatedData = signUpSchema.parse(req.body);
+    
+    const hashedPassword = await bcrypt.hash(validatedData.password, 10);
+    const user = await prisma.user.create({
+      data: {
+        username: validatedData.username,
+        email: validatedData.email,
+        password: hashedPassword,
+      },
+    });
+
+    return res.status(201).json({ message: "User created successfully!", user });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ message: "Validation failed.", errors: error.errors });
+    }
+    console.error("Error during sign-up:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
 // Sign-in User Function
 const signinUser = async (req, res) => {
   try {
@@ -47,4 +71,4 @@ const signinUser = async (req, res) => {
   }
 };
 
-module.exports = { signinUser };
+module.exports = { signinUser,signupUser };
