@@ -1,0 +1,94 @@
+@import url("https://fonts.googleapis.com/css2?family=Arbutus+Slab&display=swap");
+
+.navbar-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 30px;
+  background-color: #8d5e3e99;
+  border-bottom: 2px solid #3b4c5f;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.nav-logo {
+  width: 50px;
+  height: 50px;
+  margin-right: 15px;
+}
+
+.text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-family: "Arbutus Slab", serif;
+}
+
+.logo-text {
+  font-size: 25px;
+  color: black;
+}
+
+.auth {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.auth a {
+  text-decoration: none;
+  font-weight: bold;
+  color: black;
+}
+
+.auth .profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ffffff;
+}
+
+.center-items {
+  flex: 1; /* Allow center items to take the available space */
+  display: flex;
+  justify-content: center;
+}
+
+.navbar ul {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar ul li {
+  margin-right: 30px;
+}
+
+.navbar ul li a {
+  text-decoration: none;
+  color: black;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.navbar ul li a:hover {
+  color: black; /* Change color on hover */
+  text-decoration: underline;
+  font-size: 18px; /* Slightly increase font size on hover */
+}
+
+.navbar ul li a.active {
+  color: black;
+  text-decoration: underline;
+  font-size: 18px;
+}
