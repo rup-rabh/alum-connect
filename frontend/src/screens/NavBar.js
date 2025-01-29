@@ -13,7 +13,7 @@ function NavBar() {
         <div className="logo-container">
           <img src={logo} alt="Logo" className="nav-logo" />
           <div className="text-container">
-            <div className="logo-text">Alumini Connect</div>
+            <div className="logo-text">Alumni Connect</div>
           </div>
         </div>
         <div className="center-items">
