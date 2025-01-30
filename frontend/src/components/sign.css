@@ -1,0 +1,8 @@
+/* SignIn.css and SignUp.css */
+.signin-container, .signup-container {
+    background: radial-gradient(circle, #b45309, #92400e, #7c2d12); /* Brown background */
+    height: 100vh; /* Full height to cover the page */
+    display: flex;
+    justify-content: center; /* Center the card horizontally */
+    align-items: center; /* Center the card vertically */
+}

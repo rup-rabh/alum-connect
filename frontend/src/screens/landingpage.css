@@ -1,0 +1,27 @@
+.welcome-section {
+    background-image: url('../media/background.webp'); 
+    background-size: cover; 
+    background-position: center; 
+    height: 100vh; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center; 
+    text-align: center; 
+    color: white; 
+    padding: 20px; 
+}
+
+.join-button {
+    background-color: #7c2d12; 
+    color: white; 
+    border: none; 
+    padding: 10px 20px; 
+    cursor: pointer; 
+    border-radius: 5px; 
+    font-size: 16px; 
+}
+
+.join-button:hover {
+    background-color: #5b1e0e; 
+}

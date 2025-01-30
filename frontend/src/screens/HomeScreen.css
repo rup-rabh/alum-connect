@@ -3,9 +3,10 @@
   background: radial-gradient(circle, #b45309, #92400e, #7c2d12);
 }
 
+
 .alumni-section,
 .students-section {
-  color: white;
+  color: #ffffff;
   margin-bottom: 40px;
   font-family: "Inter", sans-serif;
   font-size: 1.3rem;

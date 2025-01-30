@@ -18,6 +18,11 @@ function NavBar() {
         </div>
         <div className="center-items">
           <ul>
+          <li>
+              <NavLink to="/Home" activeClassName="active">
+                Home
+              </NavLink>
+            </li>
             <li>
               <NavLink to="/aboutus" activeClassName="active">
                 About Us
@@ -46,13 +51,13 @@ function NavBar() {
           </ul>
         </div>
         <div className="auth">
-          Sign In
           <NavLink to="/signin" className="signin-btn">
             <img
               src={profilePic || defaultProfilePic}
               alt="Profile"
               className="profile-pic"
             />
+            <span className="signin-text">Sign In</span>
           </NavLink>
         </div>
       </div>

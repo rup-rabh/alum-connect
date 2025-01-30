@@ -14,6 +14,7 @@
   border-bottom: 2px solid #3b4c5f;
 }
 
+
 .logo-container {
   display: flex;
   align-items: center;
@@ -39,26 +40,33 @@
 
 .auth {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: center; 
+  gap: 20px; 
 }
 
 .auth a {
+  display: flex; 
+  align-items: center;
   text-decoration: none;
   font-weight: bold;
   color: black;
 }
 
 .auth .profile-pic {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #ffffff;
+  width: 40px; 
+  height: 40px; 
+  border-radius: 50%; 
+  object-fit: cover; 
+  border: 2px solid #ffffff; 
+}
+
+.signin-text {
+  margin-left: 10px;
+  margin-right: 10px; 
 }
 
 .center-items {
-  flex: 1; /* Allow center items to take the available space */
+  flex: 1; 
   display: flex;
   justify-content: center;
 }

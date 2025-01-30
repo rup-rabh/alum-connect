@@ -100,6 +100,7 @@ const HomeScreen = () => {
 
   return (
     <div className="home-screen">
+
       <section className="alumni-section">
         <h2>
           <i
