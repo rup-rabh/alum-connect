@@ -99,7 +99,7 @@ const linkedinCallback = async (req, res) => {
   }
 
   try {
-      // Exchange the authorization code for an access token
+      // Exchange authorization code for an access token
       const tokenResponse = await axios.post('https://www.linkedin.com/oauth/v2/accessToken', null, {
           params: {
               grant_type: 'authorization_code',
@@ -114,10 +114,8 @@ const linkedinCallback = async (req, res) => {
       });
 
       const accessToken = tokenResponse.data.access_token;
-      const idToken = tokenResponse.data.id_token;
-      console.log(accessToken);
-      
-      //  Use the access token to fetch user data
+
+      // Using access token to fetch user data
       const userInfoResponse = await axios.get('https://api.linkedin.com/v2/userinfo', {
           headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -126,12 +124,36 @@ const linkedinCallback = async (req, res) => {
 
       const userInfo = userInfoResponse.data;
 
-      res.json({ userInfo, idToken });
+      // if user already exists in database
+      let user = await prisma.user.findUnique({
+          where: { email: userInfo.email },
+      });
+
+      // If user does not exist, create a new one
+      if (!user) {      
+          user = await prisma.user.create({
+              data: {
+                  username: userInfo.name,
+                  email: userInfo.email,
+                  password: null,  // No password needed for OAuth users
+              },
+          });
+      }
+
+      
+      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
+
+      return res.status(200).json({
+          message: "LinkedIn sign-in successful.",
+          token,
+      });
+
   } catch (error) {
       console.error('Error during OAuth process:', error.response ? error.response.data : error.message);
       res.status(500).send('Authentication failed.');
   }
 };
+
 
 
 module.exports = { signinUser,signupUser,linkedinSignin,linkedinCallback };
