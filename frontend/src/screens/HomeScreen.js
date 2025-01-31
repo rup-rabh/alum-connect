@@ -100,7 +100,11 @@ const HomeScreen = () => {
 
   return (
     <div className="home-screen">
-
+       <section className="welcome-section">
+            <h1>Welcome to Alumni Connect</h1>
+            <p>Empowering connections, fostering growth, and building a stronger alumni community.</p>
+            <button className="join-button">Join Our Network</button>
+        </section>
       <section className="alumni-section">
         <h2>
           <i

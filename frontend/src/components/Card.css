@@ -3,8 +3,8 @@
   flex-direction: column; /* Stack icon, title, and description vertically */
   align-items: center;
   justify-content: center;
-  background-color: whitesmoke;
-  color: #3b4c5f;
+  background-color: rgba(255, 255, 255, 0.8); /* white with 80% opacity */
+  border-color: rgb(254, 215, 170);
   border-radius: 8px;
   padding: 20px;
   margin: 10px;
@@ -22,17 +22,18 @@
 .icon {
   font-size: 40px;
   margin-bottom: 10px;
+  color: rgb(154, 52, 18);
 }
 
 .card-title {
   font-size: 18px;
   text-align: center;
   margin: 5px 0;
-  color: #3b4c5f;
+  color: rgb(194, 65, 12);
 }
 
 .card-description {
   font-size: 14px;
   text-align: center;
-  color: #5b5b5b;
+  color: rgb(154, 52, 18);
 }
