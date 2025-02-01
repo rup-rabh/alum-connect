@@ -1,7 +1,9 @@
+require('dotenv').config({path:'../.env'});
 const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { z } = require("zod");
+const axios = require('axios');
 
 const prisma = new PrismaClient();
 
@@ -71,4 +73,87 @@ const signinUser = async (req, res) => {
   }
 };
 
-module.exports = { signinUser,signupUser };
+/////////////////////For linkedIn
+// LinkedIn OAuth 2.0 credentials from environment variables
+const LINKEDIN_CLIENT_ID = process.env.LINKEDIN_CLIENT_ID;
+const LINKEDIN_CLIENT_SECRET = process.env.LINKEDIN_CLIENT_SECRET;
+const LINKEDIN_REDIRECT_URI = process.env.LINKEDIN_REDIRECT_URI || "http://localhost:3000/api/auth/linkedin/callback";
+
+// console.log(LINKEDIN_CLIENT_ID);
+// console.log(LINKEDIN_CLIENT_SECRET);
+// console.log(LINKEDIN_REDIRECT_URI);
+
+
+const linkedinSignin = (req, res) => {
+  const authorizationUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(LINKEDIN_REDIRECT_URI)}&scope=openid%20profile%20email&state=12345`;
+  // console.log('Authorization URL:', authorizationUrl);
+  res.redirect(authorizationUrl);
+};
+
+const linkedinCallback = async (req, res) => {
+  const { code, state } = req.query;
+
+  if (!code) {
+      console.error('Authorization code is missing.');
+      return res.status(400).send('Authorization code is missing.');
+  }
+
+  try {
+      // Exchange authorization code for an access token
+      const tokenResponse = await axios.post('https://www.linkedin.com/oauth/v2/accessToken', null, {
+          params: {
+              grant_type: 'authorization_code',
+              code,
+              redirect_uri: LINKEDIN_REDIRECT_URI,
+              client_id: LINKEDIN_CLIENT_ID,
+              client_secret: LINKEDIN_CLIENT_SECRET,
+          },
+          headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+          },
+      });
+
+      const accessToken = tokenResponse.data.access_token;
+
+      // Using access token to fetch user data
+      const userInfoResponse = await axios.get('https://api.linkedin.com/v2/userinfo', {
+          headers: {
+              Authorization: `Bearer ${accessToken}`,
+          },
+      });
+
+      const userInfo = userInfoResponse.data;
+
+      // if user already exists in database
+      let user = await prisma.user.findUnique({
+          where: { email: userInfo.email },
+      });
+
+      // If user does not exist, create a new one
+      if (!user) {      
+          user = await prisma.user.create({
+              data: {
+                  username: userInfo.name,
+                  email: userInfo.email,
+                  password: null,  // No password needed for OAuth users
+              },
+          });
+      }
+
+      
+      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
+
+      return res.status(200).json({
+          message: "LinkedIn sign-in successful.",
+          token,
+      });
+
+  } catch (error) {
+      console.error('Error during OAuth process:', error.response ? error.response.data : error.message);
+      res.status(500).send('Authentication failed.');
+  }
+};
+
+
+
+module.exports = { signinUser,signupUser,linkedinSignin,linkedinCallback };
