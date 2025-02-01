@@ -10,10 +10,11 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 30px;
-  background-color: #8d5e3e99;
-  border-bottom: 2px solid #3b4c5f;
+  /* background-color: #8d5e3e99;
+  border-bottom: 2px solid #3b4c5f; */
+  background-color: rgba(255, 255, 255, 0.8);
+  border-color: rgb(254, 215, 170);
 }
-
 
 .logo-container {
   display: flex;
@@ -35,38 +36,38 @@
 
 .logo-text {
   font-size: 25px;
-  color: black;
+  color: rgb(154, 52, 18);
 }
 
 .auth {
   display: flex;
-  align-items: center; 
-  gap: 20px; 
+  align-items: center;
+  gap: 20px;
 }
 
 .auth a {
-  display: flex; 
+  display: flex;
   align-items: center;
   text-decoration: none;
   font-weight: bold;
-  color: black;
+  color: rgb(154, 52, 18);
 }
 
 .auth .profile-pic {
-  width: 40px; 
-  height: 40px; 
-  border-radius: 50%; 
-  object-fit: cover; 
-  border: 2px solid #ffffff; 
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ffffff;
 }
 
 .signin-text {
   margin-left: 10px;
-  margin-right: 10px; 
+  margin-right: 10px;
 }
 
 .center-items {
-  flex: 1; 
+  flex: 1;
   display: flex;
   justify-content: center;
 }
@@ -84,19 +85,19 @@
 
 .navbar ul li a {
   text-decoration: none;
-  color: black;
+  color: rgb(194, 65, 12);
   font-size: 15px;
   font-weight: 600;
 }
 
 .navbar ul li a:hover {
-  color: black; /* Change color on hover */
+  color: rgb(124, 45, 18);
   text-decoration: underline;
-  font-size: 18px; /* Slightly increase font size on hover */
+  font-size: 18px;
 }
 
 .navbar ul li a.active {
-  color: black;
+  color: rgb(194, 65, 12);
   text-decoration: underline;
   font-size: 18px;
 }
