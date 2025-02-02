@@ -32,7 +32,7 @@ function NavBar() {
         <div className="center-items">
           <ul>
             <li>
-              <NavLink to="/Home" activeClassName="active">
+              <NavLink to="/" activeClassName="active">
                 Home
               </NavLink>
             </li>

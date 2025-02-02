@@ -12,6 +12,7 @@ const signUp_signIn_Schema = z.object({
   username: z.string().min(1, { message: "Username cannot be empty!" }).optional(),
   email: z.string().email({ message: "Invalid email address!" }),
   password: z.string().min(1, { message: "Password cannot be empty!" }),
+  role:z.enum(["STUDENT","ALUMNI"]).optional()
 });
 
 
@@ -38,6 +39,7 @@ const signupUser = async (req, res) => {
         username: validatedData.username,
         email: validatedData.email,
         password: hashedPassword,
+        role:validatedData.role
       },
     });
 

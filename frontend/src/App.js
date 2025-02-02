@@ -13,7 +13,7 @@ function App() {
        {/* Include the NavBar on every screen */}
       <Routes>
         <Route path="/" element={<HomeScreen />} />
-        <Route path="/Home" element={<HomeScreen />} />
+        {/* <Route path="/Home" element={<HomeScreen />} /> */}
         <Route path="/signin" element={<SignIn />} />
         <Route path="/register" element={<SignUp />} />
       </Routes>

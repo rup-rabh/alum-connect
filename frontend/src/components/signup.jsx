@@ -7,21 +7,23 @@ const SignUp = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading,setLoading]=useState(false)
+  const [role, setRole] = useState("");
+  const [isLoading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSignUp = async (event) => {
     event.preventDefault();
-    setLoading((isLoading)=>true)
+    setLoading((isLoading) => true);
     const response = await axios.post("http://localhost:3000/api/auth/signup", {
       username,
       email,
       password,
+      role
     });
-    console.log(response.data.message)
+    console.log(response.data.message);
     localStorage.setItem("token", response.data.token);
-    navigate("/home");
+    navigate("/");
   };
 
   return (
@@ -57,6 +59,27 @@ const SignUp = () => {
           required
           onChange={(event) => setPassword(event.target.value)}
         />
+        <select
+          name="role"
+          onChange={(event) => setRole(event.target.value)}
+          style={{
+            width: "100%",
+            padding: "10px",
+            marginTop: "10px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+            backgroundColor: "#f9f9f9",
+            fontSize: "16px",
+            cursor: "pointer",
+          }}
+          value={role} // Ensures the state controls the select
+        >
+          <option value="" disabled selected>
+            Select Role
+          </option>
+          <option value="STUDENT">Student</option>
+          <option value="ALUMNI">Alumni</option>
+        </select>
       </SignCard>
     </div>
   );
