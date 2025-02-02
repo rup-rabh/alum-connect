@@ -10,7 +10,7 @@ import "./App.css";
 function App() {
   return (
     <Router>
-      <NavBar /> {/* Include the NavBar on every screen */}
+       {/* Include the NavBar on every screen */}
       <Routes>
         <Route path="/" element={<HomeScreen />} />
         <Route path="/Home" element={<HomeScreen />} />

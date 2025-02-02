@@ -18,7 +18,7 @@ function NavBar() {
         </div>
         <div className="center-items">
           <ul>
-          <li>
+            <li>
               <NavLink to="/Home" activeClassName="active">
                 Home
               </NavLink>
@@ -50,16 +50,23 @@ function NavBar() {
             </li>
           </ul>
         </div>
-        <div className="auth">
-          <NavLink to="/signin" className="signin-btn">
-            <img
-              src={profilePic || defaultProfilePic}
-              alt="Profile"
-              className="profile-pic"
-            />
-            <span className="signin-text">Sign In</span>
-          </NavLink>
-        </div>
+
+        {localStorage.getItem("token") ? (
+          <div>
+            
+          </div>
+        ) : (
+          <div className="auth">
+            <NavLink to="/signin" className="signin-btn">
+              <img
+                src={profilePic || defaultProfilePic}
+                alt="Profile"
+                className="profile-pic"
+              />
+              <span className="signin-text">Sign In</span>
+            </NavLink>
+          </div>
+        )}
       </div>
     </header>
   );

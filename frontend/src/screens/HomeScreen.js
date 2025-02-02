@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./HomeScreen.css";
 import Card from "../components/Card";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import NavBar from "./NavBar";
 
 const HomeScreen = () => {
   const alumniCards = [
@@ -99,90 +100,99 @@ const HomeScreen = () => {
   };
 
   return (
-    <div className="home-screen">
-       <section className="welcome-section">
-            <h1>Welcome to Alumni Connect</h1>
-            <p>Empowering connections, fostering growth, and building a stronger alumni community.</p>
-            <button className="join-button">Join Our Network</button>
+    <>
+      <NavBar></NavBar>
+      <div className="home-screen">
+        <section className="welcome-section">
+          <h1>Welcome to Alumni Connect</h1>
+          <p>
+            Empowering connections, fostering growth, and building a stronger
+            alumni community.
+          </p>
+          <button className="join-button">Join Our Network</button>
         </section>
-      <section className="alumni-section">
-        <h2>
-          <i
-            className="fas fa-user-graduate"
-            style={{ marginRight: "8px" }}
-          ></i>
-          Connect with your Alumni
-        </h2>
-        <div className="carousel">
-          <button
-            onClick={prevPageAlumni}
-            disabled={currentIndexAlumni === 0}
-            className="carousel-button"
-          >
-            ❮
-          </button>
-          <div className="card-container">
-            {alumniCards
-              .slice(currentIndexAlumni, currentIndexAlumni + cardsPerPage)
-              .map((card, index) => (
-                <Card
-                  key={index}
-                  title={card.title}
-                  description={card.description}
-                  icon={card.icon}
-                  link={card.link}
-                />
-              ))}
+        <section className="alumni-section">
+          <h2>
+            <i
+              className="fas fa-user-graduate"
+              style={{ marginRight: "8px" }}
+            ></i>
+            Connect with your Alumni
+          </h2>
+          <div className="carousel">
+            <button
+              onClick={prevPageAlumni}
+              disabled={currentIndexAlumni === 0}
+              className="carousel-button"
+            >
+              ❮
+            </button>
+            <div className="card-container">
+              {alumniCards
+                .slice(currentIndexAlumni, currentIndexAlumni + cardsPerPage)
+                .map((card, index) => (
+                  <Card
+                    key={index}
+                    title={card.title}
+                    description={card.description}
+                    icon={card.icon}
+                    link={card.link}
+                  />
+                ))}
+            </div>
+            <button
+              onClick={nextPageAlumni}
+              disabled={currentIndexAlumni + 1 >= alumniCards.length}
+              className="carousel-button"
+            >
+              ❯
+            </button>
           </div>
-          <button
-            onClick={nextPageAlumni}
-            disabled={currentIndexAlumni + 1 >= alumniCards.length}
-            className="carousel-button"
-          >
-            ❯
-          </button>
-        </div>
-      </section>
+        </section>
 
-      <section className="students-section">
-        <h2>
-          <i
-            className="fas fa-graduation-cap"
-            style={{ marginRight: "8px" }}
-          ></i>
-          Students Corner
-        </h2>
-        <div className="carousel">
-          <button
-            onClick={prevPageStudents}
-            disabled={currentIndexStudents === 0}
-            className="carousel-button"
-          >
-            ❮
-          </button>
-          <div className="card-container">
-            {studentCards
-              .slice(currentIndexStudents, currentIndexStudents + cardsPerPage)
-              .map((card, index) => (
-                <Card
-                  key={index}
-                  title={card.title}
-                  description={card.description}
-                  icon={card.icon}
-                  link={card.link}
-                />
-              ))}
+        <section className="students-section">
+          <h2>
+            <i
+              className="fas fa-graduation-cap"
+              style={{ marginRight: "8px" }}
+            ></i>
+            Students Corner
+          </h2>
+          <div className="carousel">
+            <button
+              onClick={prevPageStudents}
+              disabled={currentIndexStudents === 0}
+              className="carousel-button"
+            >
+              ❮
+            </button>
+            <div className="card-container">
+              {studentCards
+                .slice(
+                  currentIndexStudents,
+                  currentIndexStudents + cardsPerPage
+                )
+                .map((card, index) => (
+                  <Card
+                    key={index}
+                    title={card.title}
+                    description={card.description}
+                    icon={card.icon}
+                    link={card.link}
+                  />
+                ))}
+            </div>
+            <button
+              onClick={nextPageStudents}
+              disabled={currentIndexStudents + 1 >= studentCards.length}
+              className="carousel-button"
+            >
+              ❯
+            </button>
           </div>
-          <button
-            onClick={nextPageStudents}
-            disabled={currentIndexStudents + 1 >= studentCards.length}
-            className="carousel-button"
-          >
-            ❯
-          </button>
-        </div>
-      </section>
-    </div>
+        </section>
+      </div>
+    </>
   );
 };
 
