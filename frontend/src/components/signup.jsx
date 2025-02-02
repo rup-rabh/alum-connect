@@ -7,34 +7,21 @@ const SignUp = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState(null);
+  const [isLoading,setLoading]=useState(false)
 
   const navigate = useNavigate();
 
-  const handleSignUp = async (e) => {
-    if (!error) {
-      try {
-        const response = await axios.post("http://localhost:3000/api/auth/signup", {
-          username,
-          email,
-          password,
-        });
-        localStorage.setItem("token", response.data.token);
-        navigate("/home");
-      } catch (err) {
-        setError("Signup failed. Please try again.");
-      }
-    }
-  };
-
-  const validatePassword = () => {
-    if (confirmPassword && confirmPassword !== password) {
-      setError("Passwords do not match.");
-      setPassword(""); 
-    } else {
-      setError(null);
-    }
+  const handleSignUp = async (event) => {
+    event.preventDefault();
+    setLoading((isLoading)=>true)
+    const response = await axios.post("http://localhost:3000/api/auth/signup", {
+      username,
+      email,
+      password,
+    });
+    console.log(response.data.message)
+    localStorage.setItem("token", response.data.token);
+    navigate("/home");
   };
 
   return (
@@ -46,7 +33,8 @@ const SignUp = () => {
         linkText="Already have an account?"
         linkUrl="Sign In"
         to="/signin"
-        onClick={handleSignUp}
+        onSubmit={handleSignUp}
+        isLoading={isLoading}
       >
         <input
           type="text"
@@ -69,26 +57,6 @@ const SignUp = () => {
           required
           onChange={(event) => setPassword(event.target.value)}
         />
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          className="signcard-input"
-          required
-          onChange={(event) => setConfirmPassword(event.target.value)}
-          onBlur={validatePassword} 
-        />
-        {error && (
-          <p
-            style={{
-              color: "red",
-              fontSize: "14px",
-              marginTop: "5px",
-              fontWeight: "bold",
-            }}
-          >
-            {error}
-          </p>
-        )}
       </SignCard>
     </div>
   );
