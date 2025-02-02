@@ -8,17 +8,18 @@ export function SignCard({
   linkText,
   linkUrl,
   to,
-  onClick,
+  onSubmit,
+  isLoading
 }) {
   return (
     <div className="signcard-container">
       <div className="signcard">
         <div className="signcard-heading">{heading}</div>
         <div className="signcard-about">{about}</div>
-        <form onSubmit={onClick}>
+        <form onSubmit={onSubmit}>
           {children} {/* Inputs injected here */}
-          <button type="submit" className="signcard-button">
-            {buttonText}
+          <button type="submit" className="signcard-button" disabled={isLoading}>
+            {isLoading ? "Please wait..." : buttonText}
           </button>
         </form>
         <div className="signcard-link-container">

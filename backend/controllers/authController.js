@@ -8,17 +8,30 @@ const axios = require('axios');
 const prisma = new PrismaClient();
 
 // Zod Schema for sign-up Validation
-const signUpSchema = z.object({
-  username: z.string().min(1, { message: "Username cannot be empty!" }),
+const signUp_signIn_Schema = z.object({
+  username: z.string().min(1, { message: "Username cannot be empty!" }).optional(),
   email: z.string().email({ message: "Invalid email address!" }),
   password: z.string().min(1, { message: "Password cannot be empty!" }),
 });
 
+
+
 const signupUser = async (req, res) => {
   try {
     // Validate the request body wrt schema
-    const validatedData = signUpSchema.parse(req.body);
+    const validatedData = signUp_signIn_Schema.parse(req.body);
     
+    // check if the user already exists
+    const userExist= await prisma.user.findUnique({
+      where:{
+       email:validatedData.email
+      }
+    })
+
+    if(userExist){
+      return res.status(401).json({message:"User already exists with provided email Id"})
+    }
+
     const hashedPassword = await bcrypt.hash(validatedData.password, 10);
     const user = await prisma.user.create({
       data: {
@@ -28,7 +41,9 @@ const signupUser = async (req, res) => {
       },
     });
 
-    return res.status(201).json({ message: "User created successfully!", user });
+    const token=jwt.sign({userId:user.id},process.env.JWT_SECRET)
+
+    return res.status(201).json({ message: "User created successfully!", token });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ message: "Validation failed.", errors: error.errors });
@@ -40,7 +55,11 @@ const signupUser = async (req, res) => {
 
 // Sign-in User Function
 const signinUser = async (req, res) => {
+  console.log(req.body)
   try {
+    if(!signUp_signIn_Schema.safeParse(req.body).success)
+      return res.status(400).json({ message: "Zod Validation failed.", errors: error.errors })
+
     const { email, password } = req.body;
 
     const user = await prisma.user.findUnique({
