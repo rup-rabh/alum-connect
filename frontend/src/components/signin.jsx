@@ -25,7 +25,7 @@ const SignIn = () => {
     );
     console.log(response.data.message);
     localStorage.setItem("token",response.data.token)
-    navigate("/home");
+    navigate("/");
   };
 
   return (
