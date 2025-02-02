@@ -1,11 +1,24 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import "./NavBar.css";
 import logo from "../media/logo.png";
 import defaultProfilePic from "../media/default-profile.png";
 
 function NavBar() {
+  const [showDropdown, setShowDropdown] = useState(false);
   const profilePic = ""; // Add logic to fetch the user's profile picture URL
+
+  // Handle clicks outside dropdown
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest('.profile-dropdown-container')) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
 
   return (
     <header className="navbar-header">
@@ -52,8 +65,39 @@ function NavBar() {
         </div>
 
         {localStorage.getItem("token") ? (
-          <div>
-            
+          <div className="profile-dropdown-container">
+            <div
+              className="profile-icon-wrapper"
+              onClick={() => setShowDropdown(!showDropdown)}
+            >
+              <img
+                src={profilePic || defaultProfilePic}
+                alt="Profile"
+                className="profile-pic"
+              />
+            </div>
+
+            {showDropdown && (
+              <div className="dropdown-menu">
+                <NavLink
+                  to="/edit-profile"
+                  className="dropdown-item"
+                  onClick={() => setShowDropdown(false)}
+                >
+                  Edit Profile
+                </NavLink>
+                <button
+                  className="dropdown-item"
+                  onClick={() => {
+                    localStorage.removeItem("token");
+                    setShowDropdown(false);
+                    window.location.href = "/signin"; 
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           <div className="auth">
