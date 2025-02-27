@@ -10,8 +10,10 @@ export function SignCard({
   to,
   onSubmit,
   isLoading,
-  isLinkedIn=false,
-  handleLinkedInSignIn={}
+  isLinkedIn=true,
+  handleLinkedInSignIn=() => {
+    window.location.href = "http://localhost:3000/api/auth/linkedin";
+  }
 }) {
   return (
     <div className="signcard-container">

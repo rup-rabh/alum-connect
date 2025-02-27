@@ -24,9 +24,9 @@ const SignIn = () => {
     navigate("/");
   };
 
-  const handleLinkedInSignIn = () => {
-    window.location.href = "http://localhost:3000/api/auth/linkedin";
-  };
+  // const handleLinkedInSignIn = () => {
+  //   window.location.href = "http://localhost:3000/api/auth/linkedin";
+  // };
 
   return (
     <div className="signin-container">
@@ -39,8 +39,8 @@ const SignIn = () => {
         to="/register"
         onSubmit={handleSignInClick}
         isLoading={isLoading}
-        isLinkedIn={true}
-        handleLinkedInSignIn={handleLinkedInSignIn}
+        // isLinkedIn={true}
+        // handleLinkedInSignIn={handleLinkedInSignIn}
       >
         <input
           type="text"
