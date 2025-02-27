@@ -31,7 +31,7 @@
   width: 70%;
   max-width: 500px;
   min-width: 300px;
-  margin: 0 auto; /* Center the card */
+  margin: 0 auto;
 }
 
 .signcard form {
@@ -118,6 +118,58 @@
   stroke: currentColor;
   stroke-linecap: round;
   animation: dash 1.5s ease-in-out infinite;
+}
+
+/* New CSS for divider and LinkedIn button */
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #666;
+  margin: 20px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #ddd;
+}
+
+.divider:not(:empty)::before {
+  margin-right: 16px;
+}
+
+.divider:not(:empty)::after {
+  margin-left: 16px;
+}
+
+.linkedin-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  background-color: #0077b5;
+  color: white;
+  font-weight: 600;
+  font-size: 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  margin-top: 10px;
+}
+
+.linkedin-button:hover {
+  background-color: #005582;
+}
+
+.linkedin-button img {
+  width: 20px;
+  height: 20px;
 }
 
 @keyframes rotate {

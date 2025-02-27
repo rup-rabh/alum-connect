@@ -6,26 +6,26 @@ import { useState } from "react";
 import axios from "axios";
 
 const SignIn = () => {
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading,setLoading]=useState(false)
+  const [isLoading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSignInClick = async (event) => {
     event.preventDefault();
-    setLoading((isLoading)=>true)
-    const response = await axios.post(
-      "http://localhost:3000/api/auth/signin",
-      {
-        email,
-        password,
-      }
-    );
+    setLoading((isLoading) => true);
+    const response = await axios.post("http://localhost:3000/api/auth/signin", {
+      email,
+      password,
+    });
     console.log(response.data.message);
-    localStorage.setItem("token",response.data.token)
+    localStorage.setItem("token", response.data.token);
     navigate("/");
+  };
+
+  const handleLinkedInSignIn = () => {
+    window.location.href = "http://localhost:3000/api/auth/linkedin";
   };
 
   return (
@@ -39,20 +39,22 @@ const SignIn = () => {
         to="/register"
         onSubmit={handleSignInClick}
         isLoading={isLoading}
+        isLinkedIn={true}
+        handleLinkedInSignIn={handleLinkedInSignIn}
       >
         <input
           type="text"
           placeholder="Email or Username"
           className="signcard-input"
           required
-          onChange={(event)=>setEmail((email)=>event.target.value)}
+          onChange={(event) => setEmail((email) => event.target.value)}
         />
         <input
           type="password"
           placeholder="Password"
           className="signcard-input"
           required
-          onChange={(event)=>setPassword((password)=>event.target.value)}
+          onChange={(event) => setPassword((password) => event.target.value)}
         />
       </SignCard>
     </div>
