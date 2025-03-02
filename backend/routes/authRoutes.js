@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { signinUser,signupUser,linkedinSignin,linkedinCallback } = require("../controllers/authController");
 
+// signin, signup routes
 
 router.post("/signup", signupUser);
 router.post("/signin", signinUser);

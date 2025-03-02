@@ -6,6 +6,7 @@ import SignIn from "./components/signin";
 import SignUp from "./components/signup";
 import LinkedInCallback from "./components/LinkedInCallback";
 import "./App.css";
+import Alum_internship from "./screens/Alum_internship";
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/linkedin/callback" element={<LinkedInCallback />} />
         <Route path="/register" element={<SignUp />} />
+        <Route path="/alum_internship" element={<Alum_internship></Alum_internship>}></Route>
       </Routes>
     </Router>
   );
