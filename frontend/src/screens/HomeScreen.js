@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./HomeScreen.css";
 import Card from "../components/Card";
 import "@fortawesome/fontawesome-free/css/all.min.css";
@@ -10,7 +10,7 @@ const HomeScreen = () => {
       title: "Internships",
       description: "Find internship opportunities through alumni network",
       icon: <i className="fas fa-briefcase"></i>,
-      link: "/event1",
+      link: "/alum_internship",
     },
     {
       title: "Enroll as Startup Mentors",
@@ -98,6 +98,39 @@ const HomeScreen = () => {
       setCurrentIndexStudents(currentIndexStudents - 1);
     }
   };
+
+ 
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const response = await fetch("http://localhost:3000/api/user/userInfo", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (response.ok) {
+            const data = await response.json();
+            console.log(data.user)
+
+            // set a new "role" variable here to whatever role the user has. and update this page acc to the role
+            // Note: role will only have 2 values -- STUDENT or ALUMNI
+            // access role as data.user.role
+            // go through the console in the inspect of the site for better understanding of the response data.
+
+          } else {
+            console.error("Failed to fetch user info");
+          }
+        } catch (error) {
+          console.error("Error fetching user info:", error);
+        }
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
 
   return (
     <>

@@ -15,7 +15,29 @@ model User {
   role Role 
 }
 
+model Internship {
+  id Int @id @default(autoincrement())
+  title String
+  jd String
+  domain Domain
+  location String //ONLINE or any city name
+  compensation Int
+}
+
 enum Role {
   STUDENT
   ALUMNI
+}
+
+enum Domain {
+  DATASCIENCE
+  SOFTWARE
+  FRONTEND
+  BACKEND
+  PRODUCT_MANAGEMENT
+}
+
+enum Location {
+  ONLINE
+  OFFLINE
 }

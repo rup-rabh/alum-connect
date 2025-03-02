@@ -1,9 +1,15 @@
 import React from 'react';
 import './Card.css'; 
+import { useNavigate } from 'react-router-dom';
 
-const Card = ({ title, description, icon }) => {
+const Card = ({ title, description, icon, link }) => {
+    const navigate=useNavigate();
+
+    const handleClick=()=>{
+        navigate(link)
+    }
     return (
-        <div className="card">
+        <div className="card" style={{cursor:'pointer'}} onClick={handleClick}>
             <div className="icon">
                 {icon}
             </div>

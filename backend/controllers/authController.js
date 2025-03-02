@@ -120,6 +120,8 @@ const linkedinCallback = async (req, res) => {
   }
 
   try {
+    console.log("🔹 Received auth code:", code);
+
       // Exchange authorization code for an access token
       const tokenResponse = await axios.post('https://www.linkedin.com/oauth/v2/accessToken', null, {
           params: {
@@ -133,7 +135,7 @@ const linkedinCallback = async (req, res) => {
               'Content-Type': 'application/x-www-form-urlencoded',
           },
       });
-
+      console.log("✅ Token Response:", tokenResponse.data);
       const accessToken = tokenResponse.data.access_token;
 
       // Using access token to fetch user data
