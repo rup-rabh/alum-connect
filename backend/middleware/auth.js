@@ -24,7 +24,6 @@ const authenticationToken = async (req, res, next) => {
 
     req.userId = user.id;
     req.role = user.role;
-    req.user=user
 
     next();
   } catch (err) {

@@ -6,7 +6,6 @@ const isAlumni = async (req, res, next) => {
     if (req.role !== "ALUMNI") {
       return res.status(403).json({
           message: "Access denied. Only alumni can perform this action.",
-          user: req.user,
         });
     }
 
@@ -23,12 +22,11 @@ const isAlumWithProfile = async (req, res, next) => {
       return res.status(403)
         .json({
           message: "Access denied. Only alumni can perform this action.",
-          user: req.user,
         });
     }
     // check whether user has filled his profile or not
     const profile = await prisma.alumni.findUnique({
-      where: { userId: user.id },
+      where: { userId: req.userId },
     });
 
     if (!profile) {
