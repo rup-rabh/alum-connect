@@ -5,6 +5,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import NavBar from "./NavBar";
 
 const HomeScreen = () => {
+
   const alumniCards = [
     {
       title: "Internships",

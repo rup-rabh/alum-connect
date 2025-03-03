@@ -3,9 +3,10 @@ require("dotenv").config();
 
 const authenticationToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
-  const token = authHeader.split(" ")[1];
+  if (!authHeader) return res.status(401).json({ message: "Unauthorized" });
 
-  if (token == null) return res.status(401).json({ message: "Unauthorized" });
+  const token = authHeader.split(" ")[1];
+  if (!token) return res.status(401).json({ message: "Unauthorized" });
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
@@ -14,6 +15,7 @@ const authenticationToken = (req, res, next) => {
     }
 
     req.userId = user.userId;
+    req.role = user.role; 
     next();
   });
 };

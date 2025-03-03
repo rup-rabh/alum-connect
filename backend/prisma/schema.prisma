@@ -8,20 +8,104 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  username String @unique
-  email    String @unique
-  password String?  //linkedIn signIn peeps may have null password
-  role Role 
+  id              Int              @id @default(autoincrement())
+  username        String           @unique
+  email           String           @unique
+  password        String?          // LinkedIn sign-ins may have null password
+  role            Role
+
+  student         Student?
+  alumni          Alumni?
+}
+
+model Student {
+  id            Int                 @id @default(autoincrement())
+  cgpa          Float?
+  cv            String?             // Drive link for resume
+  department    String?
+  rollno        String?
+  domain        Domain?
+
+  experiences   Experience[]        
+  applications  InternApplication[] 
+
+  user          User                @relation(fields: [userId], references: [id])
+  userId        Int                 @unique
+}
+
+model Alumni {
+  id                 Int                @id @default(autoincrement())
+  fullName           String
+  presentCompany     String?
+  yearsOfExperience  Int
+  domain             Domain?
+
+  pastExperiences    AlumniExperience[] 
+  postedInternships  Internship[]       
+
+  user               User               @relation(fields: [userId], references: [id])
+  userId             Int                @unique
+}
+
+model Experience {
+  id           Int          @id @default(autoincrement())
+  title        String
+  description  String
+  techStacks   String[]       
+  startDate    DateTime?
+  endDate      DateTime?
+
+  student      Student      @relation(fields: [studentId], references: [id])
+  studentId    Int
+}
+
+model AlumniExperience {
+  id          Int        @id @default(autoincrement())
+  company     String
+  role        String
+  startDate   DateTime
+  endDate     DateTime?
+  description String?
+
+  alumni      Alumni     @relation(fields: [alumniId], references: [id])
+  alumniId    Int
 }
 
 model Internship {
-  id Int @id @default(autoincrement())
-  title String
-  jd String
-  domain Domain
-  location String //ONLINE or any city name
-  compensation Int
+  id           Int                 @id @default(autoincrement())
+  title        String
+  jd           String              // Job description
+  domain       Domain
+  location     String              // ONLINE or any city name
+  compensation String
+  duration     String
+  startTime    DateTime
+  endTime      DateTime
+  criteria     String              // Eligibility based on year of study
+  weeklyHours  String?             // Optional - Weekly time commitment
+  closed       Boolean             @default(false)
+  createdAt    DateTime            @default(now())
+
+  postedBy     Alumni              @relation(fields: [postedById], references: [id])
+  postedById   Int
+
+  applications InternApplication[] 
+}
+
+model InternApplication {
+  id            Int               @id @default(autoincrement())
+  status        ApplicationStatus @default(PENDING)
+  appliedAt     DateTime         @default(now())
+
+  
+  student       Student          @relation(fields: [studentId], references: [id])
+  studentId     Int
+
+  internship    Internship       @relation(fields: [internshipId], references: [id])
+  internshipId  Int
+
+  // Composite unique constraint to prevent duplicate applications
+  @@unique([studentId, internshipId])
 }
 
 enum Role {
@@ -30,14 +114,24 @@ enum Role {
 }
 
 enum Domain {
-  DATASCIENCE
   SOFTWARE
   FRONTEND
   BACKEND
   PRODUCT_MANAGEMENT
+  WEB_DEVELOPMENT
+  MOBILE_DEVELOPMENT
+  MACHINE_LEARNING
+  DATA_SCIENCE
+  BLOCKCHAIN
+  CLOUD_COMPUTING
+  CYBERSECURITY
 }
 
-enum Location {
-  ONLINE
-  OFFLINE
+enum ApplicationStatus {
+  PENDING
+  SHORTLISTED
+  INTERVIEW_SCHEDULED
+  ACCEPTED
+  REJECTED
 }
+
