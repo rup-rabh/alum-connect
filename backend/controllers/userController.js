@@ -1,11 +1,9 @@
 require('dotenv').config({path:'../.env'});
-const { PrismaClient } = require("@prisma/client");
+const prisma= require("../utils/prismaClient")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { z } = require("zod");
 const axios = require('axios');
-
-const prisma = new PrismaClient();
 
 const getUserInfo = async (req, res) => {
     try {

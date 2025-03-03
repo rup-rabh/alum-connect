@@ -1,6 +1,6 @@
 const express = require("express");
 const authenticationToken = require("../middleware/auth");
-const {isAlumni, isAlumWithProfile} = require("../middleware/isAlumni")
+const {isAlumni, isAlumWithProfile} = require("../middleware/alumniMiddleware")
 const router = express.Router();
 
 const { completeProfile, postInternship, closeInternship, updateInternship, getInternPostsById } = require("../controllers/alumniController");

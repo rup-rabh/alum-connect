@@ -1,4 +1,4 @@
-const { PrismaClient, Domain } = require("@prisma/client");
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const isAlumni = async (req, res, next) => {
