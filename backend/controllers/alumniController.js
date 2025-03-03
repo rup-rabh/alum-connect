@@ -7,6 +7,47 @@ const axios = require("axios");
 
 const prisma = new PrismaClient();
 
+const alumProfileSchema = z.object({
+  fullName: z.string().min(1, { message: "Full name is required." }),
+  presentCompany: z.string().min(1, { message: "Company name is required." }),
+  yearsOfExperience: z
+    .number()
+    .min(0, { message: "Invalid years of experience." }),
+  domain: z.enum(
+    [
+      "SOFTWARE",
+      "FRONTEND",
+      "BACKEND",
+      "PRODUCT_MANAGEMENT",
+      "WEB_DEVELOPMENT",
+      "MOBILE_DEVELOPMENT",
+      "MACHINE_LEARNING",
+      "DATA_SCIENCE",
+      "BLOCKCHAIN",
+      "CLOUD_COMPUTING",
+      "CYBERSECURITY",
+    ],
+    { message: "Invalid domain selected." }
+  ),
+});
+
+const completeProfile = async (req, res) => {
+  const profile = alumProfileSchema.safeParse(req.body);
+  if (!profile.success) {
+    return res
+      .status(403)
+      .json({ message: "Zod validation error for profile completion." });
+  }
+
+  const alumni = await prisma.alumni.create({
+    data: { ...profile.data, userId: req.userId },
+  });
+
+  return res
+    .status(201)
+    .json({ message: "Alumni profile completed successfully.", alumni });
+};
+
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   return new Date(date.getFullYear(), date.getMonth(), date.getDate()); // Time set to 00:00:00
@@ -42,8 +83,6 @@ const postInternship = async (req, res) => {
   });
 };
 
-
-
 const getInternPostsById = async (req, res) => {
   const alumniId = req.alumniId;
 
@@ -57,7 +96,6 @@ const getInternPostsById = async (req, res) => {
 
   return res.status(200).json({ internships });
 };
-
 
 const closeInternship = async (req, res) => {
   try {
@@ -128,6 +166,7 @@ const updateInternship = async (req, res) => {
 };
 
 module.exports = {
+  completeProfile,
   postInternship,
   closeInternship,
   updateInternship,

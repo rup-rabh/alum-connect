@@ -1,21 +1,14 @@
-import { PrismaClient } from "@prisma/client";
+const { PrismaClient, Domain } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const isAlumni = async (req, res, next) => {
   try {
     if (req.role !== "ALUMNI") {
-      return res.status(403).json({ message: "Access denied. Only alumni can perform this action." });
+      return res.status(403).json({
+          message: "Access denied. Only alumni can perform this action.",
+          user: req.user,
+        });
     }
-
-    // Fetch the Alumni profile linked to this User
-    const alumni = await prisma.alumni.findUnique({
-      where: { userId: req.userId },
-    });
-
-    if (!alumni) {
-      return res.status(403).json({ message: "Only verified alumni can perform this action." });
-    }
-    req.alumniId = alumni.id;
 
     next();
   } catch (error) {
@@ -24,4 +17,33 @@ const isAlumni = async (req, res, next) => {
   }
 };
 
-export default isAlumni;
+const isAlumWithProfile = async (req, res, next) => {
+  try {
+    if (req.role !== "ALUMNI") {
+      return res.status(403)
+        .json({
+          message: "Access denied. Only alumni can perform this action.",
+          user: req.user,
+        });
+    }
+    // check whether user has filled his profile or not
+    const profile = await prisma.alumni.findUnique({
+      where: { userId: user.id },
+    });
+
+    if (!profile) {
+      return res.status(403).json({
+        message:
+          "Profile incomplete. Please complete your profile before proceeding.",
+      });
+    }
+    req.alumniId = profile.id;
+
+    next();
+  } catch (error) {
+    console.error("Error in isAlumni middleware:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = {isAlumni, isAlumWithProfile};

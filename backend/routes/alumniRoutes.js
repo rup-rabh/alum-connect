@@ -1,14 +1,17 @@
 const express = require("express");
 const authenticationToken = require("../middleware/auth");
-const isAlumni = require("../middleware/isAlumni").default.default; // Import the new middleware
+const {isAlumni, isAlumWithProfile} = require("../middleware/isAlumni")
 const router = express.Router();
 
-const { postInternship, closeInternship, updateInternship, getInternPostsById } = require("../controllers/alumniController");
+const { completeProfile, postInternship, closeInternship, updateInternship, getInternPostsById } = require("../controllers/alumniController");
 
 // Protected Routes - Only Alumni can access
-router.post("/postInternship", authenticationToken, isAlumni, postInternship);
-router.get("/getInternPostsById", authenticationToken, isAlumni, getInternPostsById);
-router.put("/closeInternship/:id", authenticationToken, isAlumni, closeInternship);
-router.put("/updateInternship/:id", authenticationToken, isAlumni, updateInternship);
+// complete profile
+router.post("/completeProfile",authenticationToken ,isAlumni,completeProfile)
+// feature routes
+router.post("/postInternship", authenticationToken, isAlumWithProfile, postInternship);
+router.get("/getInternPostsById", authenticationToken, isAlumWithProfile, getInternPostsById);
+router.put("/closeInternship/:id", authenticationToken, isAlumWithProfile, closeInternship);
+router.put("/updateInternship/:id", authenticationToken, isAlumWithProfile, updateInternship);
 
 module.exports = router;
