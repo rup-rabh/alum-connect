@@ -17,7 +17,7 @@ const getAllInternships=async (req,res)=>{
     return res.status(200).json({internships})
 }
 
-const applyInternships=async (req,res)=>{
+const applyInternship=async (req,res)=>{
     
 }
 
@@ -25,4 +25,4 @@ const getAppliedInternships=async (req,res)=>{
 
 }
 
-module.exports={getAllInternships,applyInternships,getAppliedInternships}
+module.exports={getAllInternships,applyInternship,getAppliedInternships}

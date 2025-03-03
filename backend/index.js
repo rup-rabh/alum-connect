@@ -2,12 +2,12 @@ const dotenv = require("dotenv");
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcrypt");
 
 const authRoutes = require("./routes/authRoutes");
+const userRoutes= require("./routes/userRoutes");
 const alumniRoutes= require("./routes/alumniRoutes");
-const userRoutes= require("./routes/userRoutes")
+const studentRoutes=require("./routes/studentRoutes");
 
 const app = express();
 const PORT = 3000;
@@ -21,6 +21,7 @@ app.use(cors())
 app.use("/api/auth", authRoutes);
 app.use("/api/user",userRoutes)
 app.use("/api/alumni",alumniRoutes)
+app.use("/api/student",studentRoutes)
 
 
 app.listen(PORT, () => console.log(`Server listening on port:${PORT}`));
