@@ -3,6 +3,7 @@ import "./HomeScreen.css";
 import Card from "../components/Card";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import NavBar from "./NavBar";
+import { fetchUserInfo } from "./fetchUserInfo";
 
 const HomeScreen = () => {
   const alumniCards = [
@@ -10,7 +11,7 @@ const HomeScreen = () => {
       title: "Internships",
       description: "Find internship opportunities through alumni network",
       icon: <i className="fas fa-briefcase"></i>,
-      link: "/alum_internship",
+      link: "/internships",
     },
     {
       title: "Enroll as Startup Mentors",
@@ -43,7 +44,7 @@ const HomeScreen = () => {
       title: "Opportunities",
       description: "Explore career and learning opportunities",
       icon: <i className="fas fa-lightbulb"></i>,
-      link: "/workshop1",
+      link: "/internships",
     },
     {
       title: "Find Mentors",
@@ -74,6 +75,7 @@ const HomeScreen = () => {
   const [currentIndexAlumni, setCurrentIndexAlumni] = useState(0);
   const [currentIndexStudents, setCurrentIndexStudents] = useState(0);
   const cardsPerPage = 4;
+  const [role, setRole] = useState(null); // Add role state
 
   const nextPageAlumni = () => {
     if (currentIndexAlumni + 1 < alumniCards.length) {
@@ -99,37 +101,15 @@ const HomeScreen = () => {
     }
   };
 
- 
-
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      const token = localStorage.getItem("token");
-      if (token) {
-        try {
-          const response = await fetch("http://localhost:3000/api/user/userInfo", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          if (response.ok) {
-            const data = await response.json();
-            console.log(data.user)
-
-            // set a new "role" variable here to whatever role the user has. and update this page acc to the role
-            // Note: role will only have 2 values -- STUDENT or ALUMNI
-            // access role as data.user.role
-            // go through the console in the inspect of the site for better understanding of the response data.
-
-          } else {
-            console.error("Failed to fetch user info");
-          }
-        } catch (error) {
-          console.error("Error fetching user info:", error);
-        }
+    const getUserInfo = async () => {
+      const userInfo = await fetchUserInfo(); // Use the utility function
+      if (userInfo) {
+        setRole(userInfo.role); // Set the role based on the fetched user info
       }
     };
 
-    fetchUserInfo();
+    getUserInfo();
   }, []);
 
   return (
@@ -170,6 +150,8 @@ const HomeScreen = () => {
                     description={card.description}
                     icon={card.icon}
                     link={card.link}
+                    disabled={role === "STUDENT"}
+                    disabledMessage="Students cannot access these"
                   />
                 ))}
             </div>
@@ -212,6 +194,8 @@ const HomeScreen = () => {
                     description={card.description}
                     icon={card.icon}
                     link={card.link}
+                    disabled={role === "ALUMNI"}
+                    disabledMessage="Alumni cannot access these"
                   />
                 ))}
             </div>
