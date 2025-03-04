@@ -16,7 +16,8 @@ const isAlumni = async (req, res, next) => {
   }
 };
 
-const isAlumWithProfile = async (req, res, next) => {
+
+const isAlumWithBasicProfile = async (req, res, next) => {
   try {
     if (req.role !== "ALUMNI") {
       return res.status(403)
@@ -44,4 +45,4 @@ const isAlumWithProfile = async (req, res, next) => {
   }
 };
 
-module.exports = {isAlumni, isAlumWithProfile};
+module.exports = {isAlumni, isAlumWithBasicProfile};
