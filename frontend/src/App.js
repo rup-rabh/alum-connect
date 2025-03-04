@@ -8,6 +8,7 @@ import LinkedInCallback from "./components/LinkedInCallback";
 import "./App.css";
 import InternshipPage from "./screens/InternshipPage";
 import JobDetails from "./screens/JobDetails";
+import ProfilePage from './screens/ProfilePage';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/register" element={<SignUp />} />
         <Route path="/internships" element={<InternshipPage />} />
         <Route path="/jobs/:id" element={<JobDetails />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Routes>
     </Router>
   );

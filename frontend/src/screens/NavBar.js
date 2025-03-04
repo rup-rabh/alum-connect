@@ -80,11 +80,11 @@ function NavBar() {
             {showDropdown && (
               <div className="dropdown-menu">
                 <NavLink
-                  to="/edit-profile"
+                  to="/profile" // Updated to point to the profile page
                   className="dropdown-item"
                   onClick={() => setShowDropdown(false)}
                 >
-                  Edit Profile
+                  Profile
                 </NavLink>
                 <button
                   className="dropdown-item"
