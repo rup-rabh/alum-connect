@@ -26,7 +26,7 @@ model Student {
   rollno        String?
   domain        Domain?
 
-  experiences   Experience[]        
+  experiences   StudentExperience[]        
   applications  InternApplication[] 
 
   user          User                @relation(fields: [userId], references: [id])
@@ -47,7 +47,7 @@ model Alumni {
   userId             Int                @unique
 }
 
-model Experience {
+model StudentExperience {
   id           Int          @id @default(autoincrement())
   title        String
   description  String

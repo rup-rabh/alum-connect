@@ -44,7 +44,7 @@ CREATE TABLE "Alumni" (
 );
 
 -- CreateTable
-CREATE TABLE "Experience" (
+CREATE TABLE "StudentExperience" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE "Experience" (
     "endDate" TIMESTAMP(3),
     "studentId" INTEGER NOT NULL,
 
-    CONSTRAINT "Experience_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "StudentExperience_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -122,7 +122,7 @@ ALTER TABLE "Student" ADD CONSTRAINT "Student_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "Alumni" ADD CONSTRAINT "Alumni_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Experience" ADD CONSTRAINT "Experience_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "Student"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "StudentExperience" ADD CONSTRAINT "StudentExperience_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "Student"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "AlumniExperience" ADD CONSTRAINT "AlumniExperience_alumniId_fkey" FOREIGN KEY ("alumniId") REFERENCES "Alumni"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
