@@ -3,7 +3,8 @@ const authenticationToken = require("../middleware/auth");
 const {isAlumni, isAlumWithBasicProfile} = require("../middleware/alumniMiddleware")
 const router = express.Router();
 
-const { addBasicProfile, addExperience, getBasicProfile, getExperience, postInternship, closeInternship, updateInternship, getInternPostsById } = require("../controllers/alumniController");
+const {addBasicProfile, addExperience, getBasicProfile, getExperience}= require("../controllers/profile Controllers/alumniProfileController");
+const {postInternship, closeInternship, updateInternship, getInternPostsById } = require("../controllers/alumniController");
 
 // Protected Routes - Only Alumni can access
 // complete profile
