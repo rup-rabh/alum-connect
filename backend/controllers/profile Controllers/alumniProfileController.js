@@ -1,5 +1,5 @@
 require("dotenv").config({ path: "../.env" });
-const prisma = require("../utils/prismaClient");
+const prisma = require("../../utils/prismaClient");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { z } = require("zod");
@@ -30,7 +30,7 @@ const basicProfileSchema = z.object({
 
 const experienceSchema = z.object({
   company: z.string().min(1, { message: "Company name cannot be empty." }),
-  role: z.string(),
+  role: z.string().min(1,{message:"Role cannot be empty."}),
   startDate: z.union([z.string().datetime(), z.null()]).optional(),
   endDate: z.union([z.string().datetime(), z.null()]).optional(),
   description: z.string().min(1, { message: "Description cannot be empty." }),
@@ -43,9 +43,13 @@ const experiencesSchema = z.array(experienceSchema).min(1, {
 const addBasicProfile = async (req, res) => {
   const profile = basicProfileSchema.safeParse(req.body);
   if (!profile.success) {
+    const errors = profile.error.errors.map((error) => ({
+      message: error.message,
+      path: error.path,
+    }));
     return res
       .status(403)
-      .json({ message: "Zod validation error for profile completion." });
+      .json({ message: "Zod validation errors.", errors });
   }
 
   const existingAlumni = await prisma.alumni.findUnique({
@@ -73,9 +77,13 @@ const addExperience = async (req, res) => {
   const experiences = experiencesSchema.safeParse(req.body);
 
   if (!experiences.success) {
+    const errors = experiences.error.errors.map((error) => ({
+      message: error.message,
+      path: error.path,
+    }));
     return res
       .status(403)
-      .json({ message: "Zod validation error for adding experiences." });
+      .json({ message: "Zod validation errors.", errors });
   }
 
   const experincesdata = experiences.data.map((exp) => {
