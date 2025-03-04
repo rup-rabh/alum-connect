@@ -1,22 +1,29 @@
 .card {
   display: flex;
-  flex-direction: column; /* Stack icon, title, and description vertically */
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.8); /* white with 80% opacity */
+  background-color: rgba(255, 255, 255, 0.8);
   border-color: rgb(254, 215, 170);
   border-radius: 8px;
   padding: 20px;
   margin: 10px;
-  width: calc(25% - 20px); /* Adjust width for rectangular appearance */
+  width: calc(25% - 20px);
   height: 200px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition for hover effect */
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative; /* For tooltip positioning */
 }
 
-.card:hover {
+.card:hover:not(.disabled) {
   background-color: #cd9779;
-  transform: scale(1.08); /* Increase card size on hover */
+  transform: scale(1.08);
+}
+
+/* Disabled state modifications */
+.card.disabled {
+  cursor: not-allowed;
 }
 
 .icon {
@@ -36,4 +43,15 @@
   font-size: 14px;
   text-align: center;
   color: rgb(154, 52, 18);
+}
+
+.tooltip {
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  position: fixed;
+  z-index: 1000;
+  white-space: nowrap;
 }
