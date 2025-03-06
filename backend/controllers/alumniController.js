@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { z } = require("zod");
 const axios = require("axios");
+const { isStudent } = require("../middleware/studentMiddleware");
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -40,7 +41,7 @@ const postInternship = async (req, res) => {
   });
 };
 
-const getInternPostsById = async (req, res) => {
+const getPostedInternships = async (req, res) => {
   const alumniId = req.alumniId;
 
   const user = await prisma.alumni.findUnique({
@@ -53,6 +54,49 @@ const getInternPostsById = async (req, res) => {
 
   return res.status(200).json({ internships });
 };
+
+const getPendingApplications=async(req,res)=>{
+  const internshipId=parseInt(req.params.id);
+
+  const appliedStudents=await prisma.internApplication.findMany({
+    where:{internshipId,status:"PENDING"},
+    include:{
+      student:{
+        include:{
+          experiences:true
+        }
+      }
+    }
+  })
+
+  return res.status(201).json({appliedStudents});
+}
+
+const acceptStudent=async(req,res)=>{
+  const internshipId=parseInt(req.params.id)
+  const studentId=req.body.studentId
+
+  const applications=await prisma.internApplication.update({
+    where:{studentId,internshipId},
+    data:{status:"ACCEPTED"}
+  })
+
+  return res.status(201).json({message:"Successfully accepted the student's application for this internship"})
+}
+
+const rejectStudent=async(req,res)=>{
+  const internshipId=parseInt(req.params.id);
+  const studentId=req.body.studentId
+
+  const application=await prisma.internApplication.update({
+    where:{studentId,internshipId},
+    data:{
+      status:"REJECTED"
+    }
+  })
+
+  return res.status(201).json({message:"successfully rejected the student for this internship."})
+}
 
 const closeInternship = async (req, res) => {
   try {
@@ -124,7 +168,10 @@ const updateInternship = async (req, res) => {
 
 module.exports = {
   postInternship,
+  getPendingApplications,
+  acceptStudent,
+  rejectStudent,
   closeInternship,
   updateInternship,
-  getInternPostsById,
+  getPostedInternships,
 };
