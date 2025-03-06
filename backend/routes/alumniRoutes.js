@@ -4,7 +4,7 @@ const {isAlumni, isAlumWithBasicProfile} = require("../middleware/alumniMiddlewa
 const router = express.Router();
 
 const {addBasicProfile, addExperience, getBasicProfile, getExperience}= require("../controllers/profile Controllers/alumniProfileController");
-const {postInternship, closeInternship, updateInternship, getInternPostsById } = require("../controllers/alumniController");
+const {postInternship,getPendingApplications, acceptStudent,rejectStudent, closeInternship, updateInternship, getPostedInternships } = require("../controllers/alumniController");
 
 // Protected Routes - Only Alumni can access
 // complete profile
@@ -16,8 +16,12 @@ router.get("/getExperience",authenticationToken,isAlumWithBasicProfile,getExperi
 
 // feature routes
 router.post("/postInternship", authenticationToken, isAlumWithBasicProfile, postInternship);
-router.get("/getInternPostsById", authenticationToken, isAlumWithBasicProfile, getInternPostsById);
-router.put("/closeInternship/:id", authenticationToken, isAlumWithBasicProfile, closeInternship);
+router.get("/getPostedInternships", authenticationToken, isAlumWithBasicProfile, getPostedInternships);
+router.get("/getPendingApplications/:id",authenticationToken,isAlumWithBasicProfile,getPendingApplications);
+router.patch("/acceptInternship/:id",authenticationToken,isAlumWithBasicProfile,acceptStudent);
+router.patch("/rejectStudent/:id",authenticationToken,isAlumWithBasicProfile,rejectStudent);
+
+router.patch("/closeInternship/:id", authenticationToken, isAlumWithBasicProfile, closeInternship);
 router.put("/updateInternship/:id", authenticationToken, isAlumWithBasicProfile, updateInternship);
 
 module.exports = router;

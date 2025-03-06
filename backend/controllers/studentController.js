@@ -18,11 +18,47 @@ const getAllInternships=async (req,res)=>{
 }
 
 const applyInternship=async (req,res)=>{
-    
+    const internshipId=parseInt(req.params.id);
+    const studentId=req.studentId;
+
+    const internshipApplication=await prisma.internApplication.create({
+      data:{
+        studentId,
+        internshipId
+      }
+    })
+
+    return res.status(201).json({message:"Successfully applied to the internship."})
 }
 
 const getAppliedInternships=async (req,res)=>{
+  const studentId=req.studentId;
 
+  const appliedInternships=await prisma.internApplication.findMany({
+    studentId
+  })
+
+  return res.status(201).json({appliedInternships})
 }
 
-module.exports={getAllInternships,applyInternship,getAppliedInternships}
+const getAcceptedInternships=async(req,res)=>{
+  const studentId=req.studentId;
+
+  const accepedInternships=await prisma.internApplication.findMany({
+    where:{studentId,status:"ACCEPTED"}
+  })
+
+  return res.status(201).json({accepedInternships});
+}
+
+const getRejectedInternships=async(req,res)=>{
+  const studentId=req.studentId;
+
+  const rejectedInternships=await prisma.internApplication.findMany({
+    where:{studentId,status:"REJECTED"}
+  })
+
+  return res.status(201).json({rejectedInternships});
+}
+
+module.exports={getAllInternships,applyInternship,getAppliedInternships,getAcceptedInternships,getRejectedInternships}
