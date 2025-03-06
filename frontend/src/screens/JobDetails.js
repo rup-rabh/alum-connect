@@ -4,7 +4,7 @@ import "./JobDetails.css";
 import NavBar from "./NavBar";
 
 const JobDetails = () => {
-  const { id } = useParams(); // Extract ID from URL
+  const { id } = useParams(); 
   const [job, setJob] = useState(null);
 
   useEffect(() => {

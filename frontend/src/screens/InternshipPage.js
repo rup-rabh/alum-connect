@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import "./InternshipPage.css";
 import InternCard from "../components/InternCard";
 import NavBar from "./NavBar";
+import { useUser } from "../context/userContext";
+import { fetchInternships } from "./fetchData";
 
 const domains = [
   "SOFTWARE",
@@ -34,55 +36,26 @@ const InternshipPage = () => {
   const [selectedLocation, setSelectedLocation] = useState("");
   const [openDropdown, setOpenDropdown] = useState(null); // 'domain' or 'location'
   const filterRef = useRef(null);
+  const {user} = useUser();
 
-  // Sample data with company field added
   useEffect(() => {
-    const sampleData = [
-      {
-        id: 1,
-        company: "Tech Corp",
-        title: "Software Engineer Intern",
-        jd: "Work on core product development using modern technologies...",
-        domain: "SOFTWARE",
-        location: "India",
-        compensation: "₹50,000/month",
-        duration: "6 months",
-        startTime: "2024-06-01",
-        endTime: "2024-12-01",
-        criteria: "Open to 3rd and 4th year students",
-        weeklyHours: "40",
-      },
-      {
-        id: 2,
-        company: "Design Studio",
-        title: "UI/UX Intern",
-        jd: "Collaborate on client projects and design systems...",
-        domain: "FRONTEND",
-        location: "Remote",
-        compensation: "₹40,000/month",
-        duration: "3 months",
-        startTime: "2024-07-01",
-        endTime: "2024-10-01",
-        criteria: "Open to 2nd, 3rd, and 4th year students",
-        weeklyHours: "30",
-      },
-      {
-        id: 3,
-        company: "Data Insights",
-        title: "Data Science Intern",
-        jd: "Analyze large datasets and build predictive models...",
-        domain: "DATA_SCIENCE",
-        location: "United States",
-        compensation: "$3000/month",
-        duration: "6 months",
-        startTime: "2024-06-15",
-        endTime: "2024-12-15",
-        criteria: "Open to final year students",
-        weeklyHours: "35",
-      },
-    ];
-    setInternships(sampleData);
-  }, []);
+    if (!user) return;
+    
+    console.log("User:",user); 
+    
+    const url =
+      user.role === "ALUMNI"
+        ? "alumni/getPostedInternships"
+        : "student/getAllInternships";
+  
+    const fetchData = async () => {
+      const internships = await fetchInternships(url);
+      setInternships(internships);
+    };
+  
+    fetchData(); 
+  }, [user]); 
+  
 
   // Click outside handler
   useEffect(() => {
@@ -206,7 +179,7 @@ const InternshipPage = () => {
             <InternCard
               key={internship.id}
               {...internship}
-              company={internship.company} // Pass company to InternCard
+              company={internship.company} 
             />
           ))}
         </div>

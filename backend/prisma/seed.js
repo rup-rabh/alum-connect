@@ -4,10 +4,13 @@ const bcrypt = require("bcrypt");
 async function main() {
   console.log("🌱 Seeding database...");
 
-  await prisma.internship.deleteMany(); 
-  await prisma.alumni.deleteMany(); 
-  await prisma.student.deleteMany(); 
-  await prisma.user.deleteMany(); 
+    await prisma.internApplication.deleteMany();
+    await prisma.internship.deleteMany(); 
+    await prisma.alumniExperience.deleteMany();
+    await prisma.alumni.deleteMany(); 
+    await prisma.studentExperience.deleteMany();
+    await prisma.student.deleteMany(); 
+    await prisma.user.deleteMany(); 
 
   console.log("🗑️ Deleted existing users and dependent records");
 

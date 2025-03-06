@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./InternCard.css";
 import { useNavigate } from "react-router-dom";
-import { fetchUserInfo } from "../screens/fetchUserInfo";
+import { fetchUserInfo } from "../screens/fetchData";
 import { Link } from "react-router-dom";
+import { useUser } from "../context/userContext";
 
 const domainMap = {
   SOFTWARE: "Software Engineering",
@@ -33,18 +34,24 @@ const InternCard = ({
   company,
 }) => {
   const navigate = useNavigate();
-  const [role, setRole] = useState(null);
+  const {user,setUser}=useUser();
 
-  // Fetch user role on component mount
-  useEffect(() => {
-    const getUserRole = async () => {
-      const userInfo = await fetchUserInfo();
-      if (userInfo) {
-        setRole(userInfo.role);
-      }
-    };
-    getUserRole();
-  }, []);
+  // // Fetch user role on component mount
+  // useEffect(() => {
+  //   const getUserRole = async () => {
+  //     const userInfo = await fetchUserInfo();
+  //     if (userInfo) {
+  //       setRole(userInfo.role);
+  //     }
+  //   };
+  //   getUserRole();
+  // }, []);
+
+  useEffect(()=>{
+    if(!user) return;
+
+    console.log("User:",user)
+  },[user])
 
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "short", day: "numeric" };
@@ -108,12 +115,12 @@ const InternCard = ({
           </div>
 
           {/* Conditional rendering based on role */}
-          {role === "STUDENT" && (
+          {user.role === "STUDENT" && (
             <button className="apply-button" onClick={handleApplyClick}>
               Apply Now
             </button>
           )}
-          {role === "ALUMNI" && (
+          {user.role === "ALUMNI" && (
             <button className="modify-button" onClick={handleModifyClick}>
               Manage
             </button>
