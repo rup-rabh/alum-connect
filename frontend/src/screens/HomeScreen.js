@@ -3,6 +3,7 @@ import "./HomeScreen.css";
 import Card from "../components/Card";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import NavBar from "./NavBar";
+import { fetchUserInfo } from "./fetchData";
 import { useUser } from "../context/userContext";
 
 const HomeScreen = () => {
@@ -75,11 +76,8 @@ const HomeScreen = () => {
   const [currentIndexAlumni, setCurrentIndexAlumni] = useState(0);
   const [currentIndexStudents, setCurrentIndexStudents] = useState(0);
   const cardsPerPage = 4;
-  // const [role, setRole] = useState(null);
-  const { user, userInfoLoading } = useUser();
-  const role=user?.role||null;
-
-  console.log("User in HomeScreen:", user, "Loading:", userInfoLoading);
+  const [role, setRole] = useState(null);
+  const { user, setUser, userInfoLoading, setUserInfoLoading }=useUser();
 
   const nextPageAlumni = () => {
     if (currentIndexAlumni + 1 < alumniCards.length) {
@@ -105,26 +103,18 @@ const HomeScreen = () => {
     }
   };
 
-  // useEffect(() => {
-  //   const getUserInfo = async () => {
-  //     const userInfo = await fetchUserInfo(); // Use the utility function
-  //     if (userInfo) {
-  //       setRole(userInfo.role); // Set the role based on the fetched user info
-  //     }
-  //   };
+  useEffect(() => {
+    const getUserInfo = async () => {
+      const userInfo = await fetchUserInfo(); // Use the utility function
+      if (userInfo) {
+        setRole(userInfo.role); 
+        setUser(userInfo);
+        setUserInfoLoading(false);
+      }
+    };
 
-  //   getUserInfo();
-  // }, []);
-
-  // useEffect(() => {
-  //   if (user) {
-  //     setRole(user.role);
-  //     console.log(role);
-  //   }
-  // }, [user]);
-  // useEffect(() => {
-  //   console.log("Updated role:", role);
-  // }, [role]);
+    getUserInfo();
+  }, []);
 
   return (
     <>
@@ -164,9 +154,9 @@ const HomeScreen = () => {
                     description={card.description}
                     icon={card.icon}
                     link={card.link}
-                    disabled={userInfoLoading ||role === "STUDENT" || role === null}
+                    disabled={role === "STUDENT" || role === null}
                     disabledMessage={
-                      userInfoLoading?"Please wait...":(role === null
+                     (role === null
                       ? "Please sign in."
                       : "Students cannot access these")
                     }
@@ -214,9 +204,9 @@ const HomeScreen = () => {
                     link={card.link}
                     disabled={role === "ALUMNI" || role === null}
                     disabledMessage={
-                      role === null
-                        ? "Please wait..."
-                        : "Alumni cannot access these"
+                      (role === null
+                      ? "Please sign in."
+                      : "Alumni cannot access these.")
                     }
                   />
                 ))}

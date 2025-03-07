@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./ProfilePage.css";
 import NavBar from "./NavBar";
-import { fetchUserInfo } from "./fetchData";
+import { fetchExperience, fetchProfile, fetchUserInfo } from "./fetchData";
 import { useUser } from "../context/userContext";
 import defaultProfilePic from "../media/default-profile.png";
 
@@ -22,21 +22,22 @@ const domains = [
 const ProfilePage = () => {
   const { user } = useUser();
   const [profile, setProfile] = useState({
-    fullName: "John Doe",
+    username:"username",
     role: "ALUMNI",
     profilePic: defaultProfilePic,
     alumniProfile: {
-      presentCompany: "Not specified",
-      yearsOfExperience: "0",
-      domain: "Not specified",
+      fullName: null,
+      presentCompany: null,
+      yearsOfExperience: null,
+      domain: null,
       experiences: [],
     },
     studentProfile: {
       cgpa: null,
-      cv: "",
-      department: "",
-      rollno: "",
-      domain: "Not specified",
+      cv: null,
+      department: null,
+      rollno: null,
+      domain: null,
       experiences: [],
     },
   });
@@ -61,10 +62,11 @@ const ProfilePage = () => {
   useEffect(() => {
     if (user) {
       setProfile({
-        fullName: user.fullName,
+        username: user.username,
         role: user.role,
         profilePic: user.profilePic || defaultProfilePic,
         alumniProfile: {
+          fullName: "Alumniiii Hiiiii",
           presentCompany: user.presentCompany || "Not specified",
           yearsOfExperience: user.yearsOfExperience || "0",
           domain: user.domain || "Not specified",
@@ -80,6 +82,16 @@ const ProfilePage = () => {
         },
       });
     }
+
+    // Nisrayani's code
+    // if(user){
+    //   const fetchCompleteProfile = async ()=>{
+    //     const url=(role==="ALUMNI")?"alumni/getBasicProfile":"student/getBasicProfile"
+    //     const profiledata=await fetchProfile();
+    //     const pastExperiences=await fetchExperience();
+    //     //set the fields here
+    //   }
+    // }
   }, [user]);
 
   const handleInputChange = (e) => {
@@ -204,7 +216,7 @@ const ProfilePage = () => {
                     alt="Profile"
                     className="profile-photo"
                   />
-                  <h2>{profile.fullName}</h2>
+                  <h2>{profile.username}</h2>
                   <div className="role-pill">{profile.role}</div>
                 </div>
               </div>

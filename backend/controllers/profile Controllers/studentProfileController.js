@@ -99,15 +99,15 @@ const addExperience = async (req, res) => {
 
 const getBasicProfile = async (req, res) => {
   try {
-    const student = await prisma.student.findUnique({
+    const basicProfile = await prisma.student.findUnique({
       where: { id: req.studentId },
     });
 
-    if (!student) {
+    if (!basicProfile) {
       return res.status(404).json({ message: "Student not found" });
     }
 
-    res.status(200).json(student);
+    res.status(200).json({basicProfile});
   } catch (error) {
     res.status(500).json({ message: "Error retrieving student profile", error });
   }
@@ -115,11 +115,11 @@ const getBasicProfile = async (req, res) => {
 
 const getExperience = async (req, res) => {
   try {
-    const experiences = await prisma.studentExperience.findMany({
+    const pastExperiences = await prisma.studentExperience.findMany({
       where: { studentId: req.studentId },
     });
 
-    res.status(200).json(experiences);
+    res.status(200).json({pastExperiences});
   } catch (error) {
     res.status(500).json({ message: "Error retrieving experience", error });
   }
