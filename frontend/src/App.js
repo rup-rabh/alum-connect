@@ -16,37 +16,6 @@ import JobDetails from "./screens/JobDetails";
 import ProfilePage from "./screens/ProfilePage";
 import { UserProvider, useUser } from "./context/userContext";
 
-const PublicRoutes = () => {
-  return (
-    <Routes>
-      <Route path="/signin" element={<SignIn />} />
-      <Route path="/register" element={<SignUp />} />
-      <Route path="/linkedin/callback" element={<LinkedInCallback />} />
-      <Route path="*" element={<Navigate to="/signin" />} />
-    </Routes>
-  );
-};
-
-const ProtectedRoutes = () => {
-  const { user, setUser, userInfoLoading } = useUser();
-  if (userInfoLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!user) {
-    return <Navigate to="/signin"></Navigate>;
-  }
-
-  return (
-    <Routes>
-      <Route path="/" element={<HomeScreen />} />
-      <Route path="/internships" element={<InternshipPage />} />
-      <Route path="/jobs/:id" element={<JobDetails />} />
-      <Route path="/profile" element={<ProfilePage />} />
-    </Routes>
-  );
-};
-
 function App() {
   return (
     <UserProvider>
