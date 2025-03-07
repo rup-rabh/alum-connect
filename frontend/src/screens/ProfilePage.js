@@ -1,11 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import './ProfilePage.css';
 import NavBar from './NavBar';
 import { fetchUserInfo } from './fetchData';
 import defaultProfilePic from '../media/default-profile.png';
-
-
 
 const domains = [
   "SOFTWARE",
