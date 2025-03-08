@@ -3,6 +3,7 @@ import "./ProfilePage.css";
 import NavBar from "./NavBar";
 import { useUser } from "../context/userContext";
 import defaultProfilePic from "../media/default-profile.png";
+import { fetchExperience, fetchProfile } from "./fetchData";
 
 const domains = [
   "SOFTWARE",
@@ -20,9 +21,10 @@ const domains = [
 
 const ProfilePage = () => {
   const { user } = useUser();
+
   const [profile, setProfile] = useState({
-    username: "username",
-    role: "ALUMNI",
+    username: user.username,
+    role: user.role,
     profilePic: defaultProfilePic,
     alumniProfile: {
       fullName: null,
@@ -54,46 +56,75 @@ const ProfilePage = () => {
       },
     },
   });
-
   const [isEditing, setIsEditing] = useState(false);
   const [isAddingExperience, setIsAddingExperience] = useState(false);
 
+  const [isProfileLoading, setIsProfileLoading] = useState(true);
+
   useEffect(() => {
     if (user) {
-      setProfile({
-        username: user.username,
-        role: user.role,
-        profilePic: user.profilePic || defaultProfilePic,
-        alumniProfile: {
-          fullName: user.fullName || "name",
-          presentCompany: user.presentCompany || "Not specified",
-          yearsOfExperience: user.yearsOfExperience || "0",
-          domain: user.domain || "Not specified",
-          experiences: user.experiences || [],
-          newExperience: {
-            company: "",
-            role: "",
-            startDate: "",
-            endDate: "",
-            description: "",
-          },
-        },
-        studentProfile: {
-          cgpa: user.cgpa || null,
-          cv: user.cv || "",
-          department: user.department || "",
-          rollno: user.rollno || "",
-          domain: user.domain || "Not specified",
-          experiences: user.experiences || [],
-          newExperience: {
-            title: "",
-            techStacks: [],
-            startDate: "",
-            endDate: "",
-            description: "",
-          },
-        },
-      });
+      const fetchCompleteProfile = async () => {
+        try {
+          const isAlumni = user.role === "ALUMNI";
+          const basicProfileUrl = isAlumni
+            ? "alumni/getBasicProfile"
+            : "student/getBasicProfile";
+          const experienceUrl = isAlumni
+            ? "alumni/getExperience"
+            : "student/getExperience";
+
+          // Fetch profile and experience in parallel
+          const [basicProfile, experiences] = await Promise.all([
+            fetchProfile(basicProfileUrl),
+            fetchExperience(experienceUrl),
+          ]);
+
+          // Set profile state correctly
+          setProfile((prevProfile) => ({
+            ...prevProfile,
+            ...(isAlumni
+              ? {
+                  alumniProfile: {
+                    fullName: basicProfile.fullName || null,
+                    presentCompany: basicProfile.presentCompany || null,
+                    yearsOfExperience: basicProfile.yearsOfExperience || null,
+                    domain: basicProfile.domain || null,
+                    experiences: experiences || [],
+                    newExperience: {
+                      company: "",
+                      role: "",
+                      startDate: "",
+                      endDate: "",
+                      description: "",
+                    },
+                  },
+                }
+              : {
+                  studentProfile: {
+                    cgpa: basicProfile.cgpa || null,
+                    cv: basicProfile.cv || null,
+                    department: basicProfile.department || null,
+                    rollno: basicProfile.rollno || null,
+                    domain: basicProfile.domain || null,
+                    experiences: experiences || [],
+                    newExperience: {
+                      title: "",
+                      techStacks: [],
+                      startDate: "",
+                      endDate: "",
+                      description: "",
+                    },
+                  },
+                }),
+          }));
+        } catch (error) {
+          console.error("Error fetching profile data:", error);
+        } finally {
+          setIsProfileLoading(false);
+        }
+      };
+
+      fetchCompleteProfile();
     }
   }, [user]);
 
@@ -201,6 +232,21 @@ const ProfilePage = () => {
     profile[profile.role === "ALUMNI" ? "alumniProfile" : "studentProfile"];
   const currentExperiences = currentProfile.experiences;
 
+  if (isProfileLoading) {
+    return (
+      <div
+        style={{
+          textAlign: "center",
+          fontSize: "18px",
+          fontWeight: "bold",
+          color: "#C45A12",
+          padding: "20px",
+        }}
+      >
+        Fetching profile data, please wait...
+      </div>
+    );
+  }
   return (
     <>
       <NavBar />
