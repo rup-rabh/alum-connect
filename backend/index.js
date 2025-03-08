@@ -8,7 +8,7 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes= require("./routes/userRoutes");
 const alumniRoutes= require("./routes/alumniRoutes");
 const studentRoutes=require("./routes/studentRoutes");
-
+const mentorRoutes = require("./routes/mentorRoutes")
 const app = express();
 const PORT = 3000;
 
@@ -22,6 +22,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user",userRoutes)
 app.use("/api/alumni",alumniRoutes)
 app.use("/api/student",studentRoutes)
+app.use("/api/mentor",mentorRoutes)
 
 
 app.listen(PORT, () => console.log(`Server listening on port:${PORT}`));
