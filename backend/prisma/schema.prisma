@@ -12,10 +12,14 @@ model User {
   username String  @unique
   email    String  @unique
   password String? // LinkedIn sign-ins may have null password
-  role     Role
+  role     Role     //will prolly create issue in linkedIn signup
 
   student Student?
   alumni  Alumni?
+  mentor  Mentor?
+  createdGroups Group[]
+  groups   UserGroup[]
+  mentorships Mentorship[]
 }
 
 model Student {
@@ -45,6 +49,65 @@ model Alumni {
 
   user   User @relation(fields: [userId], references: [id])
   userId Int  @unique
+}
+
+model Mentor {
+  id              Int       @id @default(autoincrement())
+  user           User      @relation(fields: [userId], references: [id])
+  userId         Int       @unique
+
+  keywords       Domain[]  // Sectors of interest (e.g., AI, Blockchain, Startup, etc.)
+  experience     Int?      // Years of experience
+  interaction    InteractionLevel? // Level of interaction (hours per month)
+  
+  maxMentees     Int?       @default(5) // Maximum mentees they can take
+  currentMentees Int?       @default(0) // Current mentees count
+  
+  levelsOfMentees MenteeLevel[]  // Allowed mentee levels
+  interests      MentorInterest[] // Type of mentorship support they provide
+  
+  linkedinProfile String?
+  currentOrganization String?
+  passingYear    Int?
+
+  mentorships    Mentorship[]
+}
+
+model Mentorship {
+  id        Int       @id @default(autoincrement())
+  mentor    Mentor    @relation(fields: [mentorId], references: [id])
+  mentorId  Int
+  mentee    User      @relation(fields: [menteeId], references: [id])
+  menteeId  Int
+  createdAt DateTime  @default(now())
+
+  status    MentorshipStatus @default(PENDING)
+
+  @@unique([mentorId, menteeId]) // Prevent duplicate mentorship requests
+}
+
+model Group {
+  id           Int      @id @default(autoincrement())
+  name         String   @unique
+  description  String?
+  createdAt    DateTime @default(now())
+
+  groupCreatedBy   User @relation(fields: [groupCreatedById], references: [id])
+  groupCreatedById Int
+
+  members     UserGroup[]
+}
+
+model UserGroup {
+  id      Int    @id @default(autoincrement())
+  user    User   @relation(fields: [userId], references: [id])
+  userId  Int
+  group   Group  @relation(fields: [groupId], references: [id])
+  groupId Int
+
+  role    GroupRole @default(MEMBER)
+    //unque connections
+  @@unique([userId, groupId])
 }
 
 model StudentExperience {
@@ -133,4 +196,39 @@ enum ApplicationStatus {
   INTERVIEW_SCHEDULED
   ACCEPTED
   REJECTED
+}
+
+enum InteractionLevel {
+  VERY_LOW  // 0-3 hours per month
+  MODERATE  // 3-8 hours per month
+  HIGH      // 8+ hours per month
+}
+
+enum MenteeLevel {
+  SECOND_YEAR
+  THIRD_YEAR
+  FOURTH_YEAR
+  FIFTH_YEAR
+  RESEARCH
+}
+
+enum MentorInterest {
+  PRO_BONO_HELP
+  MENTORING_AND_PARTNERSHIP
+  INVESTING
+  HELPING_IN_NETWORKING
+  FLOATING_OWN_PROJECTS
+}
+
+enum MentorshipStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+  REJECTED
+}
+
+enum GroupRole {
+  MEMBER
+  ADMIN
+  OWNER
 }

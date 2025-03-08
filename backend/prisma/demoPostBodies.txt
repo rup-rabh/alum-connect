@@ -1,0 +1,28 @@
+//check respective prisma/schema.prisma for all possible entries
+**setProfile and getProfile requries basic profile of respective roles to be fulfilled 
+POST to /api/mentor/setProfile
+{
+  "keywords": ["SOFTWARE", "BLOCKCHAIN"],
+  "experience": 5,
+  "interaction": "HIGH",
+  "maxMentees": 10,
+  "currentMentees": 3,
+  "levelsOfMentees": ["SECOND_YEAR", "FOURTH_YEAR"],
+  "interests": ["PRO_BONO_HELP", "MENTORING_AND_PARTNERSHIP"],
+  "linkedinProfile": "https://www.linkedin.com/in/example-profile/",
+  "currentOrganization": "Google",
+  "passingYear": 2015
+}
+
+
+POST to /api/mentor/connectMentor
+**below mentorId is id of mentor not userId
+{
+    "mentorId":1
+}
+
+PATCH to api/mentor/acceptMentorship
+
+{
+  "mentorshipId": 1
+}

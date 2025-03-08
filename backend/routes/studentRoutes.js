@@ -1,6 +1,6 @@
 const express = require("express");
 const authenticationToken = require("../middleware/auth");
-const { getAllInternships, applyInternship, getAppliedInternships, getAcceptedInternships,getRejectedInternships } = require("../controllers/studentController");
+const { getAllInternships, applyInternship, getAppliedInternships, getAcceptedInternships,getRejectedInternships,getAllMentors,connectToMentor} = require("../controllers/studentController");
 const { isStudent, isStudentWithBasicProfile } = require("../middleware/studentMiddleware");
 const { addBasicProfile, addExperience, getBasicProfile, getExperience } = require("../controllers/profile Controllers/studentProfileController");
 
@@ -24,5 +24,7 @@ router.post("getAcceptedInternships",authenticationToken,isStudentWithBasicProfi
 router.get("/getRejectedInternships",authenticationToken,isStudentWithBasicProfile,getRejectedInternships)
 
 // Become a mentee Routes
+router.get("/getMentors",authenticationToken,isStudent,getAllMentors);
+router.post("/connectMentor",authenticationToken,isStudent,connectToMentor)
 
 module.exports=router
