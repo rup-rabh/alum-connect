@@ -167,16 +167,6 @@ const updateInternship = async (req, res) => {
   }
 };
 
-const getAllMentors = async (req,res)=>{
-  try {
-      const mentors = await prisma.mentor.findMany();
-      return res.status(201).json({mentors});
-  } catch (error) {
-      console.error("Error in getAllMentors:", error);
-      return res.status(500).json({ message: "Internal server error" });
-  }
-}
-
 const acceptMentorship = async (req, res) => {
   try {
     const { mentorshipId } = req.body; 
@@ -239,7 +229,6 @@ module.exports = {
   closeInternship,
   updateInternship,
   getPostedInternships,
-  getAllMentors,
   acceptMentorship,
   sendMentorStatus,
 };
