@@ -219,7 +219,7 @@ const acceptMentorship = async (req, res) => {
   }
 };
 const sendMentorStatus = async(req,res)=>{
-  if(req.mentorId){
+  if(req.mentorId ){
     res.status(200).json({
       isMentor:true,
     })

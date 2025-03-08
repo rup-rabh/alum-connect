@@ -11,7 +11,7 @@ async function main() {
   await prisma.alumni.deleteMany();
   await prisma.studentExperience.deleteMany();
   await prisma.student.deleteMany();
-  await prisma.user.deleteMany();
+  // await prisma.user.deleteMany();
 
   console.log("🗑️ Deleted existing users and dependent records");
 
@@ -101,6 +101,23 @@ async function main() {
       postedById: alumniUser.alumni.id,
     },
   });
+
+  await prisma.mentor.create({
+    data:{
+      "keywords": ["SOFTWARE", "BLOCKCHAIN"],
+      "experience": 5,
+      "interaction": "HIGH",
+      "maxMentees": 10,
+      "currentMentees": 3,
+      "levelsOfMentees": ["SECOND_YEAR", "FOURTH_YEAR"],
+      "interests": ["PRO_BONO_HELP", "MENTORING_AND_PARTNERSHIP"],
+      "linkedinProfile": "https://www.linkedin.com/in/example-profile/",
+      "currentOrganization": "Google",
+      "passingYear": 2015
+    }
+  })
+
+
   console.log("📢 Posted internship");
 
   console.log("🎉 Seeding complete!");
