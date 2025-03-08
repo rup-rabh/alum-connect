@@ -2,10 +2,23 @@ const express = require("express");
 const authenticationToken = require("../middleware/auth");
 const { isAlumni, isAlumWithBasicProfile ,isMentor} = require("../middleware/alumniMiddleware")
 const router = express.Router();
+const { addBasicProfile, 
+    addExperience, 
+    getBasicProfile, 
+    getExperience, 
+    addMentorProfile, 
+    getMentorProfile } = require("../controllers/profile Controllers/alumniProfileController");
+const { postInternship, 
+    getPendingApplications,
+    acceptStudent,
+    rejectStudent,
+    closeInternship,
+    updateInternship,
+    getPostedInternships,
+    getMentorshipsForMentor,
+    acceptMentorship,
+    sendMentorStatus } = require("../controllers/alumniController");
 
-const { addBasicProfile, addExperience, getBasicProfile, getExperience, addMentorProfile, getMentorProfile } = require("../controllers/profile Controllers/alumniProfileController");
-const { postInternship, getPendingApplications, acceptStudent, rejectStudent, closeInternship, updateInternship, getPostedInternships,acceptMentorship,sendMentorStatus } = require("../controllers/alumniController");
-const {getAllMentors} = require("../controllers/studentController")
 const { route } = require("./authRoutes");
 
 // Protected Routes - Only Alumni can access
@@ -30,7 +43,9 @@ router.get("/mentorshipStatus",authenticationToken,isAlumWithBasicProfile,isMent
 
 router.post("/setMentorProfile", authenticationToken, isAlumWithBasicProfile, addMentorProfile);
 router.get("/getMentorProfile", authenticationToken, isAlumWithBasicProfile, isMentor, getMentorProfile);
-router.get("/getMentors",authenticationToken,getAllMentors);
+
+
+router.get("/getMentorshipsForMentors",authenticationToken,isAlumWithBasicProfile,isMentor,getMentorshipsForMentor);
 router.patch("/acceptMentorship",authenticationToken,isAlumWithBasicProfile,isMentor,acceptMentorship);
 
 module.exports = router;

@@ -11,7 +11,9 @@ async function main() {
   await prisma.alumni.deleteMany();
   await prisma.studentExperience.deleteMany();
   await prisma.student.deleteMany();
-  // await prisma.user.deleteMany();
+  await prisma.mentorship.deleteMany();
+  await prisma.mentor.deleteMany();
+  await prisma.user.deleteMany();
 
   console.log("🗑️ Deleted existing users and dependent records");
 
@@ -87,6 +89,7 @@ async function main() {
   // Post an Internship
   await prisma.internship.create({
     data: {
+      
       company: "Tech Corp",
       title: "Frontend Developer Intern",
       jd: "Build UI components using React and TailwindCSS.",
@@ -102,24 +105,47 @@ async function main() {
     },
   });
 
-  await prisma.mentor.create({
-    data:{
-      "keywords": ["SOFTWARE", "BLOCKCHAIN"],
-      "experience": 5,
-      "interaction": "HIGH",
-      "maxMentees": 10,
-      "currentMentees": 3,
-      "levelsOfMentees": ["SECOND_YEAR", "FOURTH_YEAR"],
-      "interests": ["PRO_BONO_HELP", "MENTORING_AND_PARTNERSHIP"],
-      "linkedinProfile": "https://www.linkedin.com/in/example-profile/",
-      "currentOrganization": "Google",
-      "passingYear": 2015
-    }
-  })
-
-
   console.log("📢 Posted internship");
 
+  const mentor = await prisma.mentor.create({
+    data:{
+      userId: alumniUser.alumni.userId,
+      keywords: ["SOFTWARE", "BLOCKCHAIN"],
+      experience: 5,
+      interaction: "HIGH",
+      maxMentees: 10,
+      currentMentees: 3,
+      levelsOfMentees: ["SECOND_YEAR", "FOURTH_YEAR"],
+      interests: ["PRO_BONO_HELP", "MENTORING_AND_PARTNERSHIP"],
+      linkedinProfile: "https://www.linkedin.com/in/example-profile/",
+      currentOrganization: "Google",
+      passingYear: 2016
+    },include:{user:true},
+  })
+  
+  console.log("Φ created mentor!",mentor.id);
+  const mentorShip = await prisma.mentorship.create({
+      data :{
+      mentorId  : mentor.id,
+      menteeId  :studentUser.student.userId,
+      status  :  "PENDING"
+      }, include : {mentor: true}
+    }
+  )
+  
+  console.log("🎉 created mentorship!", "status ", mentorShip.status);
+  const mentorShipAccepted = await prisma.mentorship.update({
+    where: { id: mentorShip.id },
+    data: {
+      status: "ACTIVE", 
+      mentor: {
+        update: {
+          currentMentees: { increment: 1 }, 
+        },
+      },
+    },
+  });
+  console.log("🎉 mentorship accepted!", "status ", mentorShipAccepted.status);
   console.log("🎉 Seeding complete!");
 }
 
