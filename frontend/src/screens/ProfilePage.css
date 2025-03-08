@@ -373,16 +373,6 @@
   }
 }
 
-.tech-stacks-input::after {
-  content: "Comma separated";
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: rgba(154, 52, 18, 0.5);
-  font-size: 0.8rem;
-}
-
 [data-profile-type="alumni"] .experience-item {
   border-left-color: rgba(154, 52, 18, 0.3);
 }

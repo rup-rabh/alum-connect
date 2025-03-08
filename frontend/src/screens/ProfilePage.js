@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./ProfilePage.css";
 import NavBar from "./NavBar";
-import { fetchExperience, fetchProfile, fetchUserInfo } from "./fetchData";
 import { useUser } from "../context/userContext";
 import defaultProfilePic from "../media/default-profile.png";
 
@@ -22,7 +21,7 @@ const domains = [
 const ProfilePage = () => {
   const { user } = useUser();
   const [profile, setProfile] = useState({
-    username:"username",
+    username: "username",
     role: "ALUMNI",
     profilePic: defaultProfilePic,
     alumniProfile: {
@@ -31,6 +30,13 @@ const ProfilePage = () => {
       yearsOfExperience: null,
       domain: null,
       experiences: [],
+      newExperience: {
+        company: "",
+        role: "",
+        startDate: "",
+        endDate: "",
+        description: "",
+      },
     },
     studentProfile: {
       cgpa: null,
@@ -39,25 +45,18 @@ const ProfilePage = () => {
       rollno: null,
       domain: null,
       experiences: [],
+      newExperience: {
+        title: "",
+        techStacks: [],
+        startDate: "",
+        endDate: "",
+        description: "",
+      },
     },
   });
 
   const [isEditing, setIsEditing] = useState(false);
   const [isAddingExperience, setIsAddingExperience] = useState(false);
-  const [newAlumniExperience, setNewAlumniExperience] = useState({
-    company: "",
-    role: "",
-    startDate: "",
-    endDate: "",
-    description: "",
-  });
-  const [newStudentExperience, setNewStudentExperience] = useState({
-    title: "",
-    techStacks: [],
-    startDate: "",
-    endDate: "",
-    description: "",
-  });
 
   useEffect(() => {
     if (user) {
@@ -66,122 +65,129 @@ const ProfilePage = () => {
         role: user.role,
         profilePic: user.profilePic || defaultProfilePic,
         alumniProfile: {
-          fullName: "Alumniiii Hiiiii",
+          fullName: user.fullName || "name",
           presentCompany: user.presentCompany || "Not specified",
           yearsOfExperience: user.yearsOfExperience || "0",
           domain: user.domain || "Not specified",
-          experiences: user.pastExperiences || [],
+          experiences: user.experiences || [],
+          newExperience: {
+            company: "",
+            role: "",
+            startDate: "",
+            endDate: "",
+            description: "",
+          },
         },
         studentProfile: {
           cgpa: user.cgpa || null,
           cv: user.cv || "",
           department: user.department || "",
           rollno: user.rollno || "",
-          domain: user.studentDomain || "Not specified",
-          experiences: user.studentExperiences || [],
+          domain: user.domain || "Not specified",
+          experiences: user.experiences || [],
+          newExperience: {
+            title: "",
+            techStacks: [],
+            startDate: "",
+            endDate: "",
+            description: "",
+          },
         },
       });
     }
-
-    // Nisrayani's code
-    // if(user){
-    //   const fetchCompleteProfile = async ()=>{
-    //     const url=(role==="ALUMNI")?"alumni/getBasicProfile":"student/getBasicProfile"
-    //     const profiledata=await fetchProfile();
-    //     const pastExperiences=await fetchExperience();
-    //     //set the fields here
-    //   }
-    // }
   }, [user]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (name.startsWith("alumniProfile.")) {
-      const field = name.split(".")[1];
-      setProfile((prev) => ({
-        ...prev,
-        alumniProfile: {
-          ...prev.alumniProfile,
-          [field]: value,
-        },
-      }));
-    } else if (name.startsWith("studentProfile.")) {
-      const field = name.split(".")[1];
-      setProfile((prev) => ({
-        ...prev,
-        studentProfile: {
-          ...prev.studentProfile,
-          [field]: value,
-        },
-      }));
-    } else {
-      setProfile((prev) => ({ ...prev, [name]: value }));
-    }
-  };
-
-  const handleAddExperienceClick = () => {
-    setIsAddingExperience(true);
-    if (profile.role === "ALUMNI") {
-      setNewAlumniExperience({
-        company: "",
-        role: "",
-        startDate: "",
-        endDate: "",
-        description: "",
-      });
-    } else {
-      setNewStudentExperience({
-        title: "",
-        techStacks: [],
-        startDate: "",
-        endDate: "",
-        description: "",
-      });
-    }
+    const [profileType, field] = name.split(".");
+    setProfile((prev) => ({
+      ...prev,
+      [profileType]: {
+        ...prev[profileType],
+        [field]: value,
+      },
+    }));
   };
 
   const handleExperienceInputChange = (e) => {
     const { name, value } = e.target;
-    if (profile.role === "ALUMNI") {
-      setNewAlumniExperience((prev) => ({ ...prev, [name]: value }));
-    } else {
-      setNewStudentExperience((prev) => ({
-        ...prev,
-        [name]:
-          name === "techStacks" ? value.split(",").map((t) => t.trim()) : value,
-      }));
-    }
+    const profileType =
+      profile.role === "ALUMNI" ? "alumniProfile" : "studentProfile";
+
+    setProfile((prev) => ({
+      ...prev,
+      [profileType]: {
+        ...prev[profileType],
+        newExperience: {
+          ...prev[profileType].newExperience,
+          [name]:
+            name === "techStacks"
+              ? value.split(",").map((t) => t.trim())
+              : value,
+        },
+      },
+    }));
+  };
+
+  const handleAddExperienceClick = () => {
+    setIsAddingExperience(true);
+    const profileType =
+      profile.role === "ALUMNI" ? "alumniProfile" : "studentProfile";
+
+    setProfile((prev) => ({
+      ...prev,
+      [profileType]: {
+        ...prev[profileType],
+        newExperience:
+          profile.role === "ALUMNI"
+            ? {
+                company: "",
+                role: "",
+                startDate: "",
+                endDate: "",
+                description: "",
+              }
+            : {
+                title: "",
+                techStacks: [],
+                startDate: "",
+                endDate: "",
+                description: "",
+              },
+      },
+    }));
   };
 
   const handleSaveNewExperience = () => {
-    if (profile.role === "ALUMNI") {
-      setProfile((prev) => ({
-        ...prev,
-        alumniProfile: {
-          ...prev.alumniProfile,
-          experiences: [...prev.alumniProfile.experiences, newAlumniExperience],
-        },
-      }));
-    } else {
-      setProfile((prev) => ({
-        ...prev,
-        studentProfile: {
-          ...prev.studentProfile,
-          experiences: [
-            ...prev.studentProfile.experiences,
-            {
-              ...newStudentExperience,
-              techStacks:
-                typeof newStudentExperience.techStacks === "string"
-                  ? newStudentExperience.techStacks
-                      .split(",")
-                      .map((t) => t.trim())
-                  : newStudentExperience.techStacks,
-            },
-          ],
-        },
-      }));
-    }
+    const profileType =
+      profile.role === "ALUMNI" ? "alumniProfile" : "studentProfile";
+
+    setProfile((prev) => ({
+      ...prev,
+      [profileType]: {
+        ...prev[profileType],
+        experiences: [
+          ...prev[profileType].experiences,
+          prev[profileType].newExperience,
+        ],
+        newExperience:
+          profile.role === "ALUMNI"
+            ? {
+                company: "",
+                role: "",
+                startDate: "",
+                endDate: "",
+                description: "",
+              }
+            : {
+                title: "",
+                techStacks: [],
+                startDate: "",
+                endDate: "",
+                description: "",
+              },
+      },
+    }));
     setIsAddingExperience(false);
   };
 
@@ -192,11 +198,8 @@ const ProfilePage = () => {
   };
 
   const currentProfile =
-    profile.role === "ALUMNI" ? profile.alumniProfile : profile.studentProfile;
-  const currentExperiences =
-    profile.role === "ALUMNI"
-      ? profile.alumniProfile.experiences
-      : profile.studentProfile.experiences;
+    profile[profile.role === "ALUMNI" ? "alumniProfile" : "studentProfile"];
+  const currentExperiences = currentProfile.experiences;
 
   return (
     <>
@@ -330,7 +333,7 @@ const ProfilePage = () => {
                             type="text"
                             className="form-input"
                             name="company"
-                            value={newAlumniExperience.company}
+                            value={currentProfile.newExperience.company}
                             onChange={handleExperienceInputChange}
                           />
                         </div>
@@ -340,7 +343,7 @@ const ProfilePage = () => {
                             type="text"
                             className="form-input"
                             name="role"
-                            value={newAlumniExperience.role}
+                            value={currentProfile.newExperience.role}
                             onChange={handleExperienceInputChange}
                           />
                         </div>
@@ -353,7 +356,7 @@ const ProfilePage = () => {
                             type="text"
                             className="form-input"
                             name="title"
-                            value={newStudentExperience.title}
+                            value={currentProfile.newExperience.title}
                             onChange={handleExperienceInputChange}
                           />
                         </div>
@@ -363,7 +366,9 @@ const ProfilePage = () => {
                             type="text"
                             className="form-input"
                             name="techStacks"
-                            value={newStudentExperience.techStacks.join(", ")}
+                            value={currentProfile.newExperience.techStacks.join(
+                              ", "
+                            )}
                             onChange={handleExperienceInputChange}
                           />
                         </div>
@@ -376,11 +381,7 @@ const ProfilePage = () => {
                           type="date"
                           className="form-input"
                           name="startDate"
-                          value={
-                            profile.role === "ALUMNI"
-                              ? newAlumniExperience.startDate
-                              : newStudentExperience.startDate
-                          }
+                          value={currentProfile.newExperience.startDate}
                           onChange={handleExperienceInputChange}
                         />
                       </div>
@@ -390,11 +391,7 @@ const ProfilePage = () => {
                           type="date"
                           className="form-input"
                           name="endDate"
-                          value={
-                            profile.role === "ALUMNI"
-                              ? newAlumniExperience.endDate
-                              : newStudentExperience.endDate
-                          }
+                          value={currentProfile.newExperience.endDate}
                           onChange={handleExperienceInputChange}
                         />
                       </div>
@@ -404,11 +401,7 @@ const ProfilePage = () => {
                       <textarea
                         className="form-textarea"
                         name="description"
-                        value={
-                          profile.role === "ALUMNI"
-                            ? newAlumniExperience.description
-                            : newStudentExperience.description
-                        }
+                        value={currentProfile.newExperience.description}
                         onChange={handleExperienceInputChange}
                       />
                     </div>
@@ -451,8 +444,10 @@ const ProfilePage = () => {
               <input
                 type="text"
                 className="form-input"
-                name="fullName"
-                value={profile.fullName}
+                name={`${
+                  profile.role === "ALUMNI" ? "alumniProfile" : "studentProfile"
+                }.fullName`}
+                value={currentProfile.fullName || ""}
                 onChange={handleInputChange}
                 required
               />
@@ -466,7 +461,7 @@ const ProfilePage = () => {
                     type="text"
                     className="form-input"
                     name="alumniProfile.presentCompany"
-                    value={profile.alumniProfile.presentCompany}
+                    value={currentProfile.presentCompany}
                     onChange={handleInputChange}
                   />
                 </div>
@@ -476,7 +471,7 @@ const ProfilePage = () => {
                     type="number"
                     className="form-input"
                     name="alumniProfile.yearsOfExperience"
-                    value={profile.alumniProfile.yearsOfExperience}
+                    value={currentProfile.yearsOfExperience}
                     onChange={handleInputChange}
                   />
                 </div>
@@ -489,7 +484,7 @@ const ProfilePage = () => {
                     type="text"
                     className="form-input"
                     name="studentProfile.rollno"
-                    value={profile.studentProfile.rollno}
+                    value={currentProfile.rollno}
                     onChange={handleInputChange}
                     required
                   />
@@ -500,7 +495,7 @@ const ProfilePage = () => {
                     type="text"
                     className="form-input"
                     name="studentProfile.department"
-                    value={profile.studentProfile.department}
+                    value={currentProfile.department}
                     onChange={handleInputChange}
                     required
                   />
@@ -514,7 +509,7 @@ const ProfilePage = () => {
                     max="10"
                     className="form-input"
                     name="studentProfile.cgpa"
-                    value={profile.studentProfile.cgpa || ""}
+                    value={currentProfile.cgpa || ""}
                     onChange={handleInputChange}
                   />
                 </div>
@@ -524,7 +519,7 @@ const ProfilePage = () => {
                     type="url"
                     className="form-input"
                     name="studentProfile.cv"
-                    value={profile.studentProfile.cv}
+                    value={currentProfile.cv}
                     onChange={handleInputChange}
                   />
                 </div>
@@ -536,19 +531,18 @@ const ProfilePage = () => {
               <select
                 className="form-select"
                 value={currentProfile.domain}
-                onChange={(e) => {
-                  const profileKey =
-                    profile.role === "ALUMNI"
-                      ? "alumniProfile"
-                      : "studentProfile";
-                  setProfile((prev) => ({
-                    ...prev,
-                    [profileKey]: {
-                      ...prev[profileKey],
-                      domain: e.target.value,
+                onChange={(e) =>
+                  handleInputChange({
+                    target: {
+                      name: `${
+                        profile.role === "ALUMNI"
+                          ? "alumniProfile"
+                          : "studentProfile"
+                      }.domain`,
+                      value: e.target.value,
                     },
-                  }));
-                }}
+                  })
+                }
               >
                 <option value="">Select Domain</option>
                 {domains.map((domain) => (
