@@ -22,7 +22,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user",userRoutes)
 app.use("/api/alumni",alumniRoutes)
 app.use("/api/student",studentRoutes)
-app.use("/api/mentor",mentorRoutes)
+
 
 
 app.listen(PORT, () => console.log(`Server listening on port:${PORT}`));

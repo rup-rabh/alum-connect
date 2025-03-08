@@ -43,5 +43,28 @@ const isAlumWithBasicProfile = async (req, res, next) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+const isMentor = async (req,res,next) =>{
 
-module.exports = {isAlumni, isAlumWithBasicProfile};
+  try{
+    const profile = await prisma.mentor.findUnique({
+      where: { userId: req.userId },
+    });
+    if (!profile) {
+      return res.status(403).json({
+        message:
+          "Profile incomplete. Please complete your profile before proceeding.",
+      });
+    }
+    req.mentorId = profile.id;
+  
+    next();
+
+  }
+  catch(error){
+    console.error("Error in isMentor middleware:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+
+}
+
+module.exports = {isAlumni, isAlumWithBasicProfile,isMentor};

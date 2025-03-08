@@ -44,7 +44,7 @@ const MentorSchema = z.object({
 ///////////////MENTORSHIP
 
 const MentorshipSchema = z.object({
-  id: z.number().int().positive(), 
+  // id: z.number().int().positive(), 
   mentorId: z.number().int().positive(), 
   menteeId: z.number().int().positive(), 
   createdAt: z.date().optional().refine((date) => date <= new Date(), {message: "Creation date cannot be in the future.",}),

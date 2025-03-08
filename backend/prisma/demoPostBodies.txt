@@ -13,3 +13,16 @@ POST to /api/mentor/setProfile
   "currentOrganization": "Google",
   "passingYear": 2015
 }
+
+
+POST to /api/mentor/connectMentor
+**below mentorId is id of mentor not userId
+{
+    "mentorId":1
+}
+
+PATCH to api/mentor/acceptMentorship
+
+{
+  "mentorshipId": 1
+}
