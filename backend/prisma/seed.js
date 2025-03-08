@@ -11,7 +11,9 @@ async function main() {
   await prisma.alumni.deleteMany();
   await prisma.studentExperience.deleteMany();
   await prisma.student.deleteMany();
-  // await prisma.user.deleteMany();
+  await prisma.mentor.deleteMany();
+  await prisma.mentorship.deleteMany();
+  await prisma.user.deleteMany();
 
   console.log("🗑️ Deleted existing users and dependent records");
 
@@ -104,6 +106,7 @@ async function main() {
 
   await prisma.mentor.create({
     data:{
+      "id":1,
       "keywords": ["SOFTWARE", "BLOCKCHAIN"],
       "experience": 5,
       "interaction": "HIGH",
