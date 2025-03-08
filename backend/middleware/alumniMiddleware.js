@@ -49,6 +49,7 @@ const isMentor = async (req,res,next) =>{
     const profile = await prisma.mentor.findUnique({
       where: { userId: req.userId },
     });
+    console.log("here");
     if (!profile) {
       return res.status(403).json({
         message:
@@ -56,7 +57,6 @@ const isMentor = async (req,res,next) =>{
       });
     }
     req.mentorId = profile.id;
-  
     next();
 
   }
