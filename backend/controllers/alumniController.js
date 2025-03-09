@@ -167,15 +167,34 @@ const updateInternship = async (req, res) => {
   }
 };
 
-const getAllMentors = async (req,res)=>{
+const getMentorshipsForMentor = async (req, res) => {
   try {
-      const mentors = await prisma.mentor.findMany();
-      return res.status(201).json({mentors});
+    const mentorId = req.mentorId; // Assuming mentor's ID is retrieved from the authenticated user
+
+    // Fetch all mentorships for the mentor
+    const mentorships = await prisma.mentorship.findMany({
+      where: {
+        mentorId: mentorId,
+      },
+      include: {
+        mentee: true, // Include mentee details (User model)
+      },
+    });
+
+    if (!mentorships || mentorships.length === 0) {
+      return res.status(404).json({ message: "No mentorships found for this mentor" });
+    }
+
+    return res.status(200).json({
+      message: "Mentorships fetched successfully",
+      mentorships,
+    });
   } catch (error) {
-      console.error("Error in getAllMentors:", error);
-      return res.status(500).json({ message: "Internal server error" });
+    console.error("Error fetching mentorships for mentor:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
-}
+};
+
 
 const acceptMentorship = async (req, res) => {
   try {
@@ -239,7 +258,7 @@ module.exports = {
   closeInternship,
   updateInternship,
   getPostedInternships,
-  getAllMentors,
+  getMentorshipsForMentor,
   acceptMentorship,
   sendMentorStatus,
 };

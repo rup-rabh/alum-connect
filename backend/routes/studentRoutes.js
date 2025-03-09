@@ -6,7 +6,6 @@ const { addBasicProfile, addExperience, getBasicProfile, getExperience, updateBa
 
 const router = express.Router();
 
-
 // Protected Routes
 // complete student profile
 router.post("/addBasicProfile",authenticationToken ,isStudent,addBasicProfile)
@@ -26,6 +25,7 @@ router.get("/getRejectedInternships",authenticationToken,isStudentWithBasicProfi
 
 // Become a mentee Routes
 router.get("/getMentors",authenticationToken,isStudent,getAllMentors);
+router.get("/getMentorProfile", authenticationToken, isStudentWithBasicProfile, getMentorProfile);
 router.post("/connectMentor",authenticationToken,isStudent,connectToMentor)
 
 module.exports=router

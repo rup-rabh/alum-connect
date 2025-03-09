@@ -163,17 +163,19 @@ const addMentorProfile = async (req, res) => {
 
 const getMentorProfile = async (req, res) => {
   try {
+    
+    
     const basicProfile = await prisma.mentor.findUnique({
-      where: { id: req.mentorId },
+      where: { id: req.body.mentorId },
     });
 
     if (!basicProfile) {
-      return res.status(404).json({ message: "Student not found" });
+      return res.status(404).json({ message: "Mentor not found" });
     }
 
     res.status(200).json({basicProfile});
   } catch (error) {
-    res.status(500).json({ message: "Error retrieving student profile", error });
+    res.status(500).json({ message: "Error retrieving Mentor profile", error });
   }
 };
 

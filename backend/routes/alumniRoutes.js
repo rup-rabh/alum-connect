@@ -2,9 +2,24 @@ const express = require("express");
 const authenticationToken = require("../middleware/auth");
 const { isAlumni, isAlumWithBasicProfile ,isMentor} = require("../middleware/alumniMiddleware")
 const router = express.Router();
+const { addBasicProfile, 
+    addExperience, 
+    getBasicProfile, 
+    getExperience, 
+    addMentorProfile, 
+    getMentorProfile,
+    updateBasicProfile} = require("../controllers/profile Controllers/alumniProfileController");
+const { postInternship, 
+    getPendingApplications,
+    acceptStudent,
+    rejectStudent,
+    closeInternship,
+    updateInternship,
+    getPostedInternships,
+    getMentorshipsForMentor,
+    acceptMentorship,
+    sendMentorStatus } = require("../controllers/alumniController");
 
-const { addBasicProfile, addExperience, getBasicProfile, getExperience, addMentorProfile, getMentorProfile, updateBasicProfile } = require("../controllers/profile Controllers/alumniProfileController");
-const { postInternship, getPendingApplications, acceptStudent, rejectStudent, closeInternship, updateInternship, getPostedInternships,acceptMentorship,sendMentorStatus } = require("../controllers/alumniController");
 const { route } = require("./authRoutes");
 
 // Protected Routes - Only Alumni can access
@@ -28,11 +43,13 @@ router.patch("/rejectStudent/:id", authenticationToken, isAlumWithBasicProfile, 
 router.patch("/closeInternship/:id", authenticationToken, isAlumWithBasicProfile, closeInternship);
 router.put("/updateInternship/:id", authenticationToken, isAlumWithBasicProfile, updateInternship);
 //mentorship routes
-router.get("/mentorshipStatus",authenticationToken,isAlumWithBasicProfile,isAlumni,sendMentorStatus)
+router.get("/mentorshipStatus",authenticationToken,isAlumWithBasicProfile,isMentor,sendMentorStatus)
 
 router.post("/setMentorProfile", authenticationToken, isAlumWithBasicProfile, addMentorProfile);
 router.get("/getMentorProfile", authenticationToken, isAlumWithBasicProfile, isMentor, getMentorProfile);
 
+
+router.get("/getMentorshipsForMentors",authenticationToken,isAlumWithBasicProfile,isMentor,getMentorshipsForMentor);
 router.patch("/acceptMentorship",authenticationToken,isAlumWithBasicProfile,isMentor,acceptMentorship);
 
 module.exports = router;
