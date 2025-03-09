@@ -71,6 +71,17 @@ const addBasicProfile = async (req, res) => {
     .json({ message: "Student profile completed successfully.", student });
 };
 
+const updateBasicProfile=async (req,res)=>{
+  const studentId=req.studentId;
+  const basicProfile=req.body;
+  const updatedBasicProfile=await prisma.alumni.update({
+    where:{id:studentId},
+    data:basicProfile
+  })
+
+  return res.status(403).json({message:"Basic profile updated sucessfully!",updateBasicProfile});
+}
+
 const addExperience = async (req, res) => {
   const experiences = experiencesSchema.safeParse(req.body);
 
@@ -128,6 +139,7 @@ const getExperience = async (req, res) => {
 
 module.exports = {
   addBasicProfile,
+  updateBasicProfile,
   addExperience,
   getBasicProfile,
   getExperience,

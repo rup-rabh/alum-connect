@@ -2,15 +2,14 @@ const express = require("express");
 const authenticationToken = require("../middleware/auth");
 const { getAllInternships, applyInternship, getAppliedInternships, getAcceptedInternships,getRejectedInternships,getAllMentors,connectToMentor} = require("../controllers/studentController");
 const { isStudent, isStudentWithBasicProfile } = require("../middleware/studentMiddleware");
-const { addBasicProfile, addExperience, getBasicProfile, getExperience } = require("../controllers/profile Controllers/studentProfileController");
-const {getMentorProfile} = require("../controllers/profile Controllers/alumniProfileController");
+const { addBasicProfile, addExperience, getBasicProfile, getExperience, updateBasicProfile } = require("../controllers/profile Controllers/studentProfileController");
 
 const router = express.Router();
-
 
 // Protected Routes
 // complete student profile
 router.post("/addBasicProfile",authenticationToken ,isStudent,addBasicProfile)
+router.put("/updateBasicProfile",authenticationToken ,isStudentWithBasicProfile,updateBasicProfile)
 router.post("/addExperience",authenticationToken,isStudentWithBasicProfile,addExperience)
 
 router.get("/getBasicProfile",authenticationToken ,isStudentWithBasicProfile,getBasicProfile)
