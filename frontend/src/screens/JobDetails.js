@@ -1,47 +1,63 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import "./JobDetails.css";
 import NavBar from "./NavBar";
+import axios from"axios"
 
 const JobDetails = () => {
   const { id } = useParams(); 
-  const [job, setJob] = useState(null);
+  const [job,setJob]=useState(null);
 
   useEffect(() => {
     const fetchJobDetails = async () => {
-      // Replace this with an API call to fetch job details by ID
-      const sampleJobs = [
-        {
-          id: 1,
-          company: "Tech Corp",
-          title: "Software Engineer Intern",
-          location: "India",
-          compensation: "₹50,000/month",
-          duration: "6 months",
-          fullDescription: "Work on core product development...",
-          responsibilities: ["Develop features", "Write clean code"],
-        },
-        {
-          id: 2,
-          company: "Design Studio",
-          title: "UI/UX Intern",
-          location: "Remote",
-          compensation: "₹40,000/month",
-          duration: "3 months",
-          fullDescription: "Collaborate on client projects...",
-          responsibilities: ["Design interfaces", "Create prototypes"],
-        },
-        // Add more sample jobs...
-      ];
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          `http://localhost:3000/api/internship/getInternship/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-      const jobDetails = sampleJobs.find((job) => job.id === parseInt(id));
-      setJob(jobDetails);
+        setJob({
+          ...response.data,
+          responsibilities: response.data.responsibilities || [
+            "Collaborate with team members",
+            "Write clean and maintainable code",
+            "Debug and troubleshoot issues",
+          ], 
+        });
+      } catch (error) {
+        console.error("Error fetching job details:", error);
+      }
     };
 
-    fetchJobDetails();
-  }, [id]);
+    if (!job && id) {
+      fetchJobDetails();
+    }
+  }, [id, job]);
 
-  if (!job) return <div>Loading...</div>;
+
+  if (!job) return (
+    <div
+    style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      height: "100vh",
+      width: "100vw",
+      textAlign: "center",
+      fontSize: "18px",
+      fontWeight: "bold",
+      color: "#C45A12",
+      backgroundColor: "#f9f9f9",
+    }}
+  >
+    Loading, please wait...
+  </div>
+  )
 
   return (
     <>
