@@ -91,7 +91,7 @@
     margin-bottom: 1.5rem;
   }
   
-  .apply-button, .modify-button {
+  .intern-apply-button, .intern-modify-button {
     background-color: #7c2d12;
   color: white;
   border: none;
@@ -106,10 +106,46 @@
   display: block;
   }
   
-  .modify-button {
+  .intern-modify-button {
     background-color: #5b1e0e;
   }
   
-  .apply-button:hover, .modify-button:hover {
+  .intern-apply-button:hover, .intern-modify-button:hover {
     background-color: #4a180b;
   }
+
+  /* .intern-apply-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .apply-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .apply-button.applied {
+    background-color: green !important;
+    cursor: default;
+  } */
+  
+  .spinner {
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid white;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 5px;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  

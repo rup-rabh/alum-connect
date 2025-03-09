@@ -3,7 +3,7 @@ import "./InternshipPage.css";
 import InternCard from "../components/InternCard";
 import NavBar from "./NavBar";
 import { useUser } from "../context/userContext";
-import { fetchInternships } from "./fetchData";
+import { fetchInternships, fetchUserInfo } from "./fetchData";
 
 const domains = [
   "SOFTWARE",
@@ -30,10 +30,13 @@ const locations = [
   "Remote",
 ];
 
+const statuses=["NEW","ACCEPTED","PENDING","REJECTED"];
+
 const InternshipPage = () => {
   const [internships, setInternships] = useState([]);
   const [selectedDomains, setSelectedDomains] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
   const [openDropdown, setOpenDropdown] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -49,24 +52,50 @@ const InternshipPage = () => {
     criteria: '',
     weeklyHours: '',
   });
+  const [role, setRole] = useState(null);
+  const [token, setToken] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const filterRef = useRef(null);
-  const { user } = useUser();
+
+  // Fetch user role on component mount
+  useEffect(() => {
+    const getUserRole = async () => {
+      try {
+        const userInfo = await fetchUserInfo();
+        if (userInfo) {
+          setRole(userInfo.role);
+          setToken(userInfo.token);
+        }
+      } catch (error) {
+        console.log("Error:", error.message);
+      }
+    };
+    getUserRole();
+  }, []);
 
   useEffect(() => {
-    if (!user) return;
-    
-    const url = user.role === "ALUMNI" 
-      ? "alumni/getPostedInternships" 
-      : "student/getAllInternships";
-  
-    const fetchData = async () => {
-      const internships = await fetchInternships(url);
-      setInternships(internships);
-    };
-  
-    fetchData();
-  }, [user]);
+    if (!role) return;
 
+    const url =
+      role === "ALUMNI"
+        ? "alumni/getPostedInternships"
+        : "student/getAllInternships";
+
+    const fetchData = async () => {
+      try {
+        const internships = await fetchInternships(url,role);
+        setInternships(internships);
+      } catch (error) {
+        console.log("Error while fetching internships:", error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [role]);
+
+  // Click outside handler
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (filterRef.current && !filterRef.current.contains(event.target)) {
@@ -94,71 +123,97 @@ const InternshipPage = () => {
     setOpenDropdown(null);
   };
 
+  const handleStatusSelect = (status) => {
+    setSelectedStatus(status === selectedStatus ? "" : status);
+    setOpenDropdown(null);
+  };
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const payload = {
-      ...formData,
-      startTime: new Date(formData.startTime).toISOString(),
-      endTime: new Date(formData.endTime).toISOString(),
+      e.preventDefault();
+      const payload = {
+        ...formData,
+        startTime: new Date(formData.startTime).toISOString(),
+        endTime: new Date(formData.endTime).toISOString(),
+      };
+      
+      if (!payload.company) delete payload.company;
+      if (!payload.weeklyHours) delete payload.weeklyHours;
+  
+      try {
+        const response = await fetch('/api/alumni/postInternship', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization':' Bearer ${token}',
+          },
+          body: JSON.stringify(payload),
+        });
+  
+        if (response.ok) {
+          const url = role === "ALUMNI" 
+            ? "alumni/getPostedInternships" 
+            : "student/getAllInternships";
+          const internships = await fetchInternships(url);
+          setInternships(internships);
+          setShowForm(false);
+          setFormData({
+            company: '',
+            title: '',
+            jd: '',
+            domain: '',
+            location: '',
+            compensation: '',
+            duration: '',
+            startTime: '',
+            endTime: '',
+            criteria: '',
+            weeklyHours: '',
+          });
+          alert('Internship posted successfully!');
+        } else {
+          alert('Failed to post internship');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while posting the internship');
+      }
+    };
+
+    const handleChange = (e) => {
+      setFormData({
+        ...formData,
+        [e.target.name]: e.target.value
+      });
     };
     
-    if (!payload.company) delete payload.company;
-    if (!payload.weeklyHours) delete payload.weeklyHours;
-
-    try {
-      const response = await fetch('/api/alumni/postInternship', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.token}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (response.ok) {
-        const url = user.role === "ALUMNI" 
-          ? "alumni/getPostedInternships" 
-          : "student/getAllInternships";
-        const internships = await fetchInternships(url);
-        setInternships(internships);
-        setShowForm(false);
-        setFormData({
-          company: '',
-          title: '',
-          jd: '',
-          domain: '',
-          location: '',
-          compensation: '',
-          duration: '',
-          startTime: '',
-          endTime: '',
-          criteria: '',
-          weeklyHours: '',
-        });
-        alert('Internship posted successfully!');
-      } else {
-        alert('Failed to post internship');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('An error occurred while posting the internship');
-    }
-  };
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
   const filteredInternships = internships.filter((intern) => {
-    const matchesDomain = selectedDomains.length === 0 || 
-      selectedDomains.includes(intern.domain);
-    const matchesLocation = !selectedLocation || 
-      intern.location === selectedLocation;
+    const matchesDomain =
+      selectedDomains.length === 0 || selectedDomains.includes(intern.domain);
+    const matchesLocation =
+      !selectedLocation || intern.location === selectedLocation;
     return matchesDomain && matchesLocation;
   });
+
+  if (isLoading) {
+    return (
+      <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        width: "100vw",
+        textAlign: "center",
+        fontSize: "18px",
+        fontWeight: "bold",
+        color: "#C45A12",
+        backgroundColor: "#f9f9f9",
+      }}
+    >
+      Loading, please wait...
+    </div>
+    )
+  }
 
   return (
     <>
@@ -175,7 +230,7 @@ const InternshipPage = () => {
               >
                 <span>
                   {selectedLocation
-                    ? `Hiring in ${selectedLocation}`
+                    ?' Hiring in ${selectedLocation}'
                     : "All Locations"}
                 </span>
                 <i
@@ -209,7 +264,7 @@ const InternshipPage = () => {
               >
                 <span>
                   {selectedDomains.length > 0
-                    ? `${selectedDomains.length} Domains Selected`
+                    ?' ${selectedDomains.length} Domains Selected'
                     : "All Domains"}
                 </span>
                 <i
@@ -238,10 +293,46 @@ const InternshipPage = () => {
                 </div>
               )}
             </div>
+
+            {role === "STUDENT" && (
+              <div className="filter-group">
+                <div
+                  className="filter-input"
+                  onClick={() => toggleDropdown("status")}
+                >
+                  <span>
+                    {selectedStatus
+                      ?' Status: ${selectedStatus}'
+                      : "Status"}
+                  </span>
+                  <i
+                    className={`fas fa-chevron-${
+                      openDropdown === "status" ? "up" : "down"
+                    }`}
+                  ></i>
+                </div>
+
+                {openDropdown === "status" && (
+                  <div className="dropdown-menu">
+                    {statuses.map((status) => (
+                      <div
+                        key={status}
+                        className={`dropdown-item ${
+                          selectedStatus === status ? "active" : ""
+                        }`}
+                        onClick={() => handleStatusSelect(status)}
+                      >
+                        {status}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="add-intern-div">
-          {user?.role === "ALUMNI" && (
+          {role === "ALUMNI" && (
             <button 
               className="add-button"
               onClick={() => setShowForm(true)}
@@ -404,6 +495,7 @@ const InternshipPage = () => {
               key={internship.id}
               {...internship}
               company={internship.company} 
+              role={role}
             />
           ))}
         </div>

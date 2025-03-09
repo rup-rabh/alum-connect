@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./ProfilePage.css";
 import NavBar from "./NavBar";
-import { useUser } from "../context/userContext";
 import defaultProfilePic from "../media/default-profile.png";
-import { fetchExperience, fetchProfile } from "./fetchData";
+import { fetchExperience, fetchProfile, fetchUserInfo } from "./fetchData";
+import { updateBasicProfile } from "./postData";
 
 const domains = [
   "SOFTWARE",
@@ -20,11 +20,11 @@ const domains = [
 ];
 
 const ProfilePage = () => {
-  const { user } = useUser();
+  const [user,setuser]=useState(null);
 
   const [profile, setProfile] = useState({
-    username: user.username,
-    role: user.role,
+    username: null,
+    role:null,
     profilePic: defaultProfilePic,
     alumniProfile: {
       fullName: null,
@@ -61,7 +61,24 @@ const ProfilePage = () => {
 
   const [isProfileLoading, setIsProfileLoading] = useState(true);
 
+
   useEffect(() => {
+      const getUserInfo = async () => {
+        try {
+          const userInfo = await fetchUserInfo();
+          if (userInfo) {
+            setuser(userInfo);
+          }
+        } catch (error) {
+          console.log("Error:", error.message);
+        } 
+      };
+  
+      getUserInfo();
+    }, []);
+
+  useEffect(() => {
+    if(!user) return
     if (user) {
       const fetchCompleteProfile = async () => {
         try {
@@ -82,6 +99,8 @@ const ProfilePage = () => {
           // Set profile state correctly
           setProfile((prevProfile) => ({
             ...prevProfile,
+            username:user.username,
+            role:user.role,
             ...(isAlumni
               ? {
                   alumniProfile: {
@@ -219,14 +238,39 @@ const ProfilePage = () => {
               },
       },
     }));
+
+    // const url=(profile.role==="ALUMNI")?"alumni/addExperience":"student/addExperience";
+    // const experienceData=(profile.role==="ALUMNI")?
     setIsAddingExperience(false);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsEditing(false);
+    try {
+      const url = profile.role === "ALUMNI" 
+        ? "alumni/updateBasicProfile" 
+        : "student/updateBasicProfile";
+  
+      const profileData = profile.role === "ALUMNI" 
+        ? profile.alumniProfile 
+        : profile.studentProfile;
+  
+      const updatedProfile = await updateBasicProfile(url, profileData);
+  
+      setProfile((prev) => ({
+        ...prev,
+        [prev.role === "ALUMNI" ? "alumniProfile" : "studentProfile"]: updatedProfile,
+      }));
+  
+      console.log("Updated Profile:", updatedProfile);
+    } catch (error) {
+      console.error("Profile update failed:", error);
+    } finally {
+      setIsEditing(false);
+    }
     console.log("Updated Profile:", profile);
   };
+  
 
   const currentProfile =
     profile[profile.role === "ALUMNI" ? "alumniProfile" : "studentProfile"];
@@ -235,17 +279,22 @@ const ProfilePage = () => {
   if (isProfileLoading) {
     return (
       <div
-        style={{
-          textAlign: "center",
-          fontSize: "18px",
-          fontWeight: "bold",
-          color: "#C45A12",
-          padding: "20px",
-        }}
-      >
-        Fetching profile data, please wait...
-      </div>
-    );
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        width: "100vw",
+        textAlign: "center",
+        fontSize: "18px",
+        fontWeight: "bold",
+        color: "#C45A12",
+        backgroundColor: "#f9f9f9",
+      }}
+    >
+      Loading, please wait...
+    </div>
+    )
   }
   return (
     <>

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchUserInfo } from "../screens/fetchData";
 import { Link } from "react-router-dom";
 import { useUser } from "../context/userContext";
+import axios from "axios";
 
 const domainMap = {
   SOFTWARE: "Software Engineering",
@@ -32,45 +33,68 @@ const InternCard = ({
   criteria,
   weeklyHours,
   company,
+  role,
 }) => {
   const navigate = useNavigate();
-  const {user,setUser}=useUser();
-
-  // // Fetch user role on component mount
-  // useEffect(() => {
-  //   const getUserRole = async () => {
-  //     const userInfo = await fetchUserInfo();
-  //     if (userInfo) {
-  //       setRole(userInfo.role);
-  //     }
-  //   };
-  //   getUserRole();
-  // }, []);
-
-  useEffect(()=>{
-    if(!user) return;
-
-    console.log("User:",user)
-  },[user])
+  const [isApplying, setIsApplying] = useState(false);
+  const [hasApplied, setHasApplied] = useState(false);
 
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "short", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  // default link behavior
-  const handleApplyClick = (e) => {
+  const handleApplyClick = async (e) => {
     e.preventDefault();
-    navigate(`/apply/${id}`);
+    setIsApplying(true); 
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        `http://localhost:3000/api/student/applyInternship/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setHasApplied(true);
+    } catch (error) {
+      console.error("Application failed:", error);
+    } finally {
+      setIsApplying(false);
+    }
   };
 
   const handleModifyClick = (e) => {
     e.preventDefault();
-    navigate(`/modify/${id}`);
+    navigate(`/modify/${id}`, { state: { role } });
   };
 
   return (
-    <Link to={`/jobs/${id}`} className="intern-card-link">
+    <Link
+      to={`/jobs/${id}`}
+      state={{
+        role,
+        job: {
+          id,
+          title,
+          jd,
+          domain,
+          location,
+          compensation,
+          duration,
+          startTime,
+          endTime,
+          criteria,
+          weeklyHours,
+          company,
+        },
+      }}
+      className="intern-card-link"
+    >
       <div className="intern-card">
         <div className="card-header">
           <h2 className="title">
@@ -115,13 +139,24 @@ const InternCard = ({
           </div>
 
           {/* Conditional rendering based on role */}
-          {user.role === "STUDENT" && (
-            <button className="apply-button" onClick={handleApplyClick}>
-              Apply Now
+          {role === "STUDENT" && (
+            <button
+              className={`intern-apply-button ${hasApplied ? "applied" : ""}`}
+              onClick={handleApplyClick}
+              disabled={isApplying || hasApplied} // Disable if applying or already applied
+            >
+              {isApplying ? (
+                <span className="spinner"></span> // Show spinner while applying
+              ) : hasApplied ? (
+                "Applied ✅"
+              ) : (
+                "Apply Now"
+              )}
             </button>
           )}
-          {user.role === "ALUMNI" && (
-            <button className="modify-button" onClick={handleModifyClick}>
+
+          {role === "ALUMNI" && (
+            <button className="intern-modify-button" onClick={handleModifyClick}>
               Manage
             </button>
           )}

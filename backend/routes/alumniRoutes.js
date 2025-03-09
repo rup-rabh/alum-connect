@@ -7,7 +7,8 @@ const { addBasicProfile,
     getBasicProfile, 
     getExperience, 
     addMentorProfile, 
-    getMentorProfile } = require("../controllers/profile Controllers/alumniProfileController");
+    getMentorProfile,
+    updateBasicProfile} = require("../controllers/profile Controllers/alumniProfileController");
 const { postInternship, 
     getPendingApplications,
     acceptStudent,
@@ -24,10 +25,13 @@ const { route } = require("./authRoutes");
 // Protected Routes - Only Alumni can access
 // complete profile
 router.post("/addBasicProfile", authenticationToken, isAlumni, addBasicProfile)
+router.put("/updateBasicProfile", authenticationToken, isAlumWithBasicProfile, updateBasicProfile)
+
 router.post("/addExperience", authenticationToken, isAlumWithBasicProfile, addExperience)
 
 router.get("/getBasicProfile", authenticationToken, isAlumWithBasicProfile, getBasicProfile)
 router.get("/getExperience", authenticationToken, isAlumWithBasicProfile, getExperience)
+
 
 // feature routes
 router.post("/postInternship", authenticationToken, isAlumWithBasicProfile, postInternship);
