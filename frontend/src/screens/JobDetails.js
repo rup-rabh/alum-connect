@@ -2,10 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./JobDetails.css";
 import NavBar from "./NavBar";
+import { useUser } from "../context/userContext";
 
 const JobDetails = () => {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const [job, setJob] = useState(null);
+
+  const { user } = useUser();
 
   useEffect(() => {
     const fetchJobDetails = async () => {
@@ -76,8 +79,18 @@ const JobDetails = () => {
 
           <div className="sidebar">
             <div className="apply-box">
-              <button className="apply-button">Apply Now</button>
-              <button className="save-button">Save Job</button>
+              {user?.role === "STUDENT" ? (
+                <>
+                  <button className="apply-button">Apply Now</button>
+                  <button className="save-button">Save Job</button>
+                </>
+              ) : user?.role === "ALUMNI" ? (
+                <>
+                  <button className="view-button">View Applications</button>
+                  <button className="close-button">Close Internship</button>
+                </>
+              ) : null}
+
               <div className="job-details-meta">
                 <p>
                   <strong>Location:</strong> {job.location}

@@ -34,30 +34,39 @@ const InternshipPage = () => {
   const [internships, setInternships] = useState([]);
   const [selectedDomains, setSelectedDomains] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState("");
-  const [openDropdown, setOpenDropdown] = useState(null); // 'domain' or 'location'
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
+    company: '',
+    title: '',
+    jd: '',
+    domain: '',
+    location: '',
+    compensation: '',
+    duration: '',
+    startTime: '',
+    endTime: '',
+    criteria: '',
+    weeklyHours: '',
+  });
   const filterRef = useRef(null);
-  const {user} = useUser();
+  const { user } = useUser();
 
   useEffect(() => {
     if (!user) return;
     
-    console.log("User:",user); 
-    
-    const url =
-      user.role === "ALUMNI"
-        ? "alumni/getPostedInternships"
-        : "student/getAllInternships";
+    const url = user.role === "ALUMNI" 
+      ? "alumni/getPostedInternships" 
+      : "student/getAllInternships";
   
     const fetchData = async () => {
       const internships = await fetchInternships(url);
       setInternships(internships);
     };
   
-    fetchData(); 
-  }, [user]); 
-  
+    fetchData();
+  }, [user]);
 
-  // Click outside handler
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (filterRef.current && !filterRef.current.contains(event.target)) {
@@ -85,11 +94,69 @@ const InternshipPage = () => {
     setOpenDropdown(null);
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const payload = {
+      ...formData,
+      startTime: new Date(formData.startTime).toISOString(),
+      endTime: new Date(formData.endTime).toISOString(),
+    };
+    
+    if (!payload.company) delete payload.company;
+    if (!payload.weeklyHours) delete payload.weeklyHours;
+
+    try {
+      const response = await fetch('/api/alumni/postInternship', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        const url = user.role === "ALUMNI" 
+          ? "alumni/getPostedInternships" 
+          : "student/getAllInternships";
+        const internships = await fetchInternships(url);
+        setInternships(internships);
+        setShowForm(false);
+        setFormData({
+          company: '',
+          title: '',
+          jd: '',
+          domain: '',
+          location: '',
+          compensation: '',
+          duration: '',
+          startTime: '',
+          endTime: '',
+          criteria: '',
+          weeklyHours: '',
+        });
+        alert('Internship posted successfully!');
+      } else {
+        alert('Failed to post internship');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred while posting the internship');
+    }
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
   const filteredInternships = internships.filter((intern) => {
-    const matchesDomain =
-      selectedDomains.length === 0 || selectedDomains.includes(intern.domain);
-    const matchesLocation =
-      !selectedLocation || intern.location === selectedLocation;
+    const matchesDomain = selectedDomains.length === 0 || 
+      selectedDomains.includes(intern.domain);
+    const matchesLocation = !selectedLocation || 
+      intern.location === selectedLocation;
     return matchesDomain && matchesLocation;
   });
 
@@ -100,79 +167,236 @@ const InternshipPage = () => {
         <h1>Internship Opportunities</h1>
 
         <div className="filters-container" ref={filterRef}>
-          {/* Location Filter */}
-          <div className="filter-group">
-            <div
-              className="filter-input"
-              onClick={() => toggleDropdown("location")}
-            >
-              <span>
-                {selectedLocation
-                  ? `Hiring in ${selectedLocation}`
-                  : "All Locations"}
-              </span>
-              <i
-                className={`fas fa-chevron-${
-                  openDropdown === "location" ? "up" : "down"
-                }`}
-              ></i>
+          <div className="filter-row">
+            <div className="filter-group">
+              <div
+                className="filter-input"
+                onClick={() => toggleDropdown("location")}
+              >
+                <span>
+                  {selectedLocation
+                    ? `Hiring in ${selectedLocation}`
+                    : "All Locations"}
+                </span>
+                <i
+                  className={`fas fa-chevron-${
+                    openDropdown === "location" ? "up" : "down"
+                  }`}
+                ></i>
+              </div>
+
+              {openDropdown === "location" && (
+                <div className="dropdown-menu">
+                  {locations.map((location) => (
+                    <div
+                      key={location}
+                      className={`dropdown-item ${
+                        selectedLocation === location ? "active" : ""
+                      }`}
+                      onClick={() => handleLocationSelect(location)}
+                    >
+                      {location}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {openDropdown === "location" && (
-              <div className="dropdown-menu">
-                {locations.map((location) => (
-                  <div
-                    key={location}
-                    className={`dropdown-item ${
-                      selectedLocation === location ? "active" : ""
-                    }`}
-                    onClick={() => handleLocationSelect(location)}
-                  >
-                    {location}
-                  </div>
-                ))}
+            <div className="filter-group">
+              <div
+                className="filter-input"
+                onClick={() => toggleDropdown("domain")}
+              >
+                <span>
+                  {selectedDomains.length > 0
+                    ? `${selectedDomains.length} Domains Selected`
+                    : "All Domains"}
+                </span>
+                <i
+                  className={`fas fa-chevron-${
+                    openDropdown === "domain" ? "up" : "down"
+                  }`}
+                ></i>
               </div>
-            )}
+
+              {openDropdown === "domain" && (
+                <div className="dropdown-menu">
+                  {domains.map((domain) => (
+                    <div
+                      key={domain}
+                      className={`dropdown-item ${
+                        selectedDomains.includes(domain) ? "active" : ""
+                      }`}
+                      onClick={() => handleDomainSelect(domain)}
+                    >
+                      {domain.replace(/_/g, " ")}
+                      {selectedDomains.includes(domain) && (
+                        <i className="fas fa-check"></i>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Domain Filter */}
-          <div className="filter-group">
-            <div
-              className="filter-input"
-              onClick={() => toggleDropdown("domain")}
+          <div className="add-intern-div">
+          {user?.role === "ALUMNI" && (
+            <button 
+              className="add-button"
+              onClick={() => setShowForm(true)}
             >
-              <span>
-                {selectedDomains.length > 0
-                  ? `${selectedDomains.length} Domains Selected`
-                  : "All Domains"}
-              </span>
-              <i
-                className={`fas fa-chevron-${
-                  openDropdown === "domain" ? "up" : "down"
-                }`}
-              ></i>
-            </div>
-
-            {openDropdown === "domain" && (
-              <div className="dropdown-menu">
-                {domains.map((domain) => (
-                  <div
-                    key={domain}
-                    className={`dropdown-item ${
-                      selectedDomains.includes(domain) ? "active" : ""
-                    }`}
-                    onClick={() => handleDomainSelect(domain)}
-                  >
-                    {domain.replace(/_/g, " ")}
-                    {selectedDomains.includes(domain) && (
-                      <i className="fas fa-check"></i>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
+              Add Internship
+            </button>
+          )}
           </div>
         </div>
+
+        {showForm && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <h2>Add New Internship</h2>
+              <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label>Company (optional)</label>
+                  <input
+                    type="text"
+                    name="company"
+                    value={formData.company}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Title*</label>
+                  <input
+                    type="text"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Job Description*</label>
+                  <textarea
+                    name="jd"
+                    value={formData.jd}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Domain*</label>
+                  <select
+                    name="domain"
+                    value={formData.domain}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Select Domain</option>
+                    {domains.map(domain => (
+                      <option key={domain} value={domain}>
+                        {domain.replace(/_/g, ' ')}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Location*</label>
+                  <select
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Select Location</option>
+                    {[...locations, 'ONLINE'].map(location => (
+                      <option key={location} value={location}>
+                        {location}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Compensation*</label>
+                  <input
+                    type="text"
+                    name="compensation"
+                    value={formData.compensation}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Duration*</label>
+                  <input
+                    type="text"
+                    name="duration"
+                    value={formData.duration}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Start Date*</label>
+                  <input
+                    type="datetime-local"
+                    name="startTime"
+                    value={formData.startTime}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>End Date*</label>
+                  <input
+                    type="datetime-local"
+                    name="endTime"
+                    value={formData.endTime}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Eligibility Criteria*</label>
+                  <input
+                    type="text"
+                    name="criteria"
+                    value={formData.criteria}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Weekly Hours (optional)</label>
+                  <input
+                    type="text"
+                    name="weeklyHours"
+                    value={formData.weeklyHours}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="form-buttons">
+                  <button type="submit">Submit</button>
+                  <button type="button" onClick={() => setShowForm(false)}>
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
 
         <div className="internship-list">
           {filteredInternships.map((internship) => (
