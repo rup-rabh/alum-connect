@@ -3,7 +3,8 @@ const prisma = require("../../utils/prismaClient");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { z } = require("zod");
-const {MentorSchema,MentorshipSchema} = require("../zodSchemas/mentorModel")
+const {MentorSchema,MentorshipSchema} = require("../zodSchemas/mentorModel");
+const { json } = require("body-parser");
 const basicProfileSchema = z.object({
   fullName: z.string().min(1, { message: "Full name is required." }),
   presentCompany: z.string().min(1, { message: "Company name is required." }),
@@ -71,6 +72,17 @@ const addBasicProfile = async (req, res) => {
     .status(201)
     .json({ message: "Alumni profile completed successfully.", alumni });
 };
+
+const updateBasicProfile=async (req,res)=>{
+  const alumniId=req.alumniId;
+  const basicProfile=req.body;
+  const updatedBasicProfile=await prisma.alumni.update({
+    where:{id:alumniId},
+    data:basicProfile
+  })
+
+  return res.status(403).json({message:"Basic profile updated sucessfully!",updatedBasicProfile});
+}
 
 const addExperience = async (req, res) => {
   const alumniId = req.alumniId;
@@ -167,6 +179,7 @@ const getMentorProfile = async (req, res) => {
 
 module.exports = {
   addBasicProfile,
+  updateBasicProfile,
   addExperience,
   getBasicProfile,
   getExperience,

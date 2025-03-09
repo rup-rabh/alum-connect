@@ -3,17 +3,20 @@ const authenticationToken = require("../middleware/auth");
 const { isAlumni, isAlumWithBasicProfile ,isMentor} = require("../middleware/alumniMiddleware")
 const router = express.Router();
 
-const { addBasicProfile, addExperience, getBasicProfile, getExperience, addMentorProfile, getMentorProfile } = require("../controllers/profile Controllers/alumniProfileController");
+const { addBasicProfile, addExperience, getBasicProfile, getExperience, addMentorProfile, getMentorProfile, updateBasicProfile } = require("../controllers/profile Controllers/alumniProfileController");
 const { postInternship, getPendingApplications, acceptStudent, rejectStudent, closeInternship, updateInternship, getPostedInternships,acceptMentorship,sendMentorStatus } = require("../controllers/alumniController");
 const { route } = require("./authRoutes");
 
 // Protected Routes - Only Alumni can access
 // complete profile
 router.post("/addBasicProfile", authenticationToken, isAlumni, addBasicProfile)
+router.put("/updateBasicProfile", authenticationToken, isAlumWithBasicProfile, updateBasicProfile)
+
 router.post("/addExperience", authenticationToken, isAlumWithBasicProfile, addExperience)
 
 router.get("/getBasicProfile", authenticationToken, isAlumWithBasicProfile, getBasicProfile)
 router.get("/getExperience", authenticationToken, isAlumWithBasicProfile, getExperience)
+
 
 // feature routes
 router.post("/postInternship", authenticationToken, isAlumWithBasicProfile, postInternship);

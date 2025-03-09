@@ -91,7 +91,7 @@
     margin-bottom: 1.5rem;
   }
   
-  .apply-button, .modify-button {
+  .intern-apply-button, .intern-modify-button {
     background-color: #7c2d12;
   color: white;
   border: none;
@@ -106,15 +106,15 @@
   display: block;
   }
   
-  .modify-button {
+  .intern-modify-button {
     background-color: #5b1e0e;
   }
   
-  .apply-button:hover, .modify-button:hover {
+  .intern-apply-button:hover, .intern-modify-button:hover {
     background-color: #4a180b;
   }
 
-  .apply-button {
+  /* .intern-apply-button {
     background-color: #007bff;
     color: white;
     border: none;
@@ -130,7 +130,7 @@
   .apply-button.applied {
     background-color: green !important;
     cursor: default;
-  }
+  } */
   
   .spinner {
     border: 3px solid rgba(255, 255, 255, 0.3);

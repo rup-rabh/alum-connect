@@ -13,7 +13,8 @@ const formatDate = (dateString) => {
 };
 
 const getAllInternships=async (req,res)=>{
-    const internships=await prisma.internship.findMany({})
+    const internships=await prisma.internship.findMany({
+    })
     return res.status(200).json({internships})
 }
 

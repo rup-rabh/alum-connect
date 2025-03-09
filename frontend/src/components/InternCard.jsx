@@ -141,7 +141,7 @@ const InternCard = ({
           {/* Conditional rendering based on role */}
           {role === "STUDENT" && (
             <button
-              className={`apply-button ${hasApplied ? "applied" : ""}`}
+              className={`intern-apply-button ${hasApplied ? "applied" : ""}`}
               onClick={handleApplyClick}
               disabled={isApplying || hasApplied} // Disable if applying or already applied
             >
@@ -156,7 +156,7 @@ const InternCard = ({
           )}
 
           {role === "ALUMNI" && (
-            <button className="modify-button" onClick={handleModifyClick}>
+            <button className="intern-modify-button" onClick={handleModifyClick}>
               Manage
             </button>
           )}
