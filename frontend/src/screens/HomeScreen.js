@@ -77,7 +77,8 @@ const HomeScreen = () => {
   const [currentIndexStudents, setCurrentIndexStudents] = useState(0);
   const cardsPerPage = 4;
   const [role, setRole] = useState(null);
-  const { user, setUser, userInfoLoading, setUserInfoLoading }=useUser();
+  // const { user, setUser, userInfoLoading, setUserInfoLoading }=useUser();
+  const [userInfoLoading, setUserInfoLoading] = useState(true);
 
   const nextPageAlumni = () => {
     if (currentIndexAlumni + 1 < alumniCards.length) {
@@ -105,16 +106,41 @@ const HomeScreen = () => {
 
   useEffect(() => {
     const getUserInfo = async () => {
-      const userInfo = await fetchUserInfo(); // Use the utility function
-      if (userInfo) {
-        setRole(userInfo.role); 
-        setUser(userInfo);
+      try {
+        const userInfo = await fetchUserInfo();
+        if (userInfo) {
+          setRole(userInfo.role);
+        }
+      } catch (error) {
+        console.log("Error:", error.message);
+      } finally {
         setUserInfoLoading(false);
       }
     };
 
     getUserInfo();
   }, []);
+
+  if(userInfoLoading){
+    return (
+      <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        width: "100vw",
+        textAlign: "center",
+        fontSize: "18px",
+        fontWeight: "bold",
+        color: "#C45A12",
+        backgroundColor: "#f9f9f9",
+      }}
+    >
+      Loading, please wait...
+    </div>
+    )
+  }
 
   return (
     <>
@@ -156,9 +182,9 @@ const HomeScreen = () => {
                     link={card.link}
                     disabled={role === "STUDENT" || role === null}
                     disabledMessage={
-                     (role === null
-                      ? "Please sign in."
-                      : "Students cannot access these")
+                      role === null
+                        ? "Please sign in."
+                        : "Students cannot access these"
                     }
                   />
                 ))}
@@ -204,9 +230,9 @@ const HomeScreen = () => {
                     link={card.link}
                     disabled={role === "ALUMNI" || role === null}
                     disabledMessage={
-                      (role === null
-                      ? "Please sign in."
-                      : "Alumni cannot access these.")
+                      role === null
+                        ? "Please sign in."
+                        : "Alumni cannot access these."
                     }
                   />
                 ))}

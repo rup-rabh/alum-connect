@@ -8,6 +8,7 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes= require("./routes/userRoutes");
 const alumniRoutes= require("./routes/alumniRoutes");
 const studentRoutes=require("./routes/studentRoutes");
+const internshipRoutes=require("./routes/internshipRoutes");
 
 const app = express();
 const PORT = 3000;
@@ -22,6 +23,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user",userRoutes)
 app.use("/api/alumni",alumniRoutes)
 app.use("/api/student",studentRoutes)
+app.use("/api/internship",internshipRoutes)
 
 
 

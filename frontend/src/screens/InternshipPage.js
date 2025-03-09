@@ -3,7 +3,7 @@ import "./InternshipPage.css";
 import InternCard from "../components/InternCard";
 import NavBar from "./NavBar";
 import { useUser } from "../context/userContext";
-import { fetchInternships } from "./fetchData";
+import { fetchInternships, fetchUserInfo } from "./fetchData";
 
 const domains = [
   "SOFTWARE",
@@ -36,26 +36,45 @@ const InternshipPage = () => {
   const [selectedLocation, setSelectedLocation] = useState("");
   const [openDropdown, setOpenDropdown] = useState(null); // 'domain' or 'location'
   const filterRef = useRef(null);
-  const {user} = useUser();
+  const [role, setRole] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch user role on component mount
+  useEffect(() => {
+    const getUserRole = async () => {
+      try {
+        const userInfo = await fetchUserInfo();
+        if (userInfo) {
+          setRole(userInfo.role);
+        }
+      } catch (error) {
+        console.log("Error:", error.message);
+      }
+    };
+    getUserRole();
+  }, []);
 
   useEffect(() => {
-    if (!user) return;
-    
-    console.log("User:",user); 
-    
+    if (!role) return;
+
     const url =
-      user.role === "ALUMNI"
+      role === "ALUMNI"
         ? "alumni/getPostedInternships"
         : "student/getAllInternships";
-  
+
     const fetchData = async () => {
-      const internships = await fetchInternships(url);
-      setInternships(internships);
+      try {
+        const internships = await fetchInternships(url);
+        setInternships(internships);
+      } catch (error) {
+        console.log("Error while fetching internships:", error.message);
+      } finally {
+        setIsLoading(false);
+      }
     };
-  
-    fetchData(); 
-  }, [user]); 
-  
+
+    fetchData();
+  }, [role]);
 
   // Click outside handler
   useEffect(() => {
@@ -92,6 +111,27 @@ const InternshipPage = () => {
       !selectedLocation || intern.location === selectedLocation;
     return matchesDomain && matchesLocation;
   });
+
+  if (isLoading) {
+    return (
+      <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        width: "100vw",
+        textAlign: "center",
+        fontSize: "18px",
+        fontWeight: "bold",
+        color: "#C45A12",
+        backgroundColor: "#f9f9f9",
+      }}
+    >
+      Loading, please wait...
+    </div>
+    )
+  }
 
   return (
     <>
@@ -179,7 +219,8 @@ const InternshipPage = () => {
             <InternCard
               key={internship.id}
               {...internship}
-              company={internship.company} 
+              company={internship.company}
+              role={role}
             />
           ))}
         </div>
