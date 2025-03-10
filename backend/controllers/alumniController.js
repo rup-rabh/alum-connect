@@ -1,5 +1,5 @@
 require("dotenv").config({ path: "../.env" });
-const prisma=require("../utils/prismaClient");
+const prisma = require("../utils/prismaClient");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { z } = require("zod");
@@ -56,48 +56,68 @@ const getPostedInternships = async (req, res) => {
   return res.status(200).json({ internships });
 };
 
-const getPendingApplications=async(req,res)=>{
-  const internshipId=parseInt(req.params.id);
+const getAllApplications = async (req, res) => {
+  const internshipId = parseInt(req.params.id);
 
-  const appliedStudents=await prisma.internApplication.findMany({
-    where:{internshipId:internshipId,status:"PENDING"},
-    include:{
-      student:{
-        include:{
-          experiences:true
-        }
-      }
-    }
-  })
+  const appliedStudents = await prisma.internApplication.findMany({
+    where: {
+      internshipId: internshipId,
+      status: { in: ["ACCEPTED", "PENDING"] },
+    },
+    include: {
+      student: {
+        include: {
+          experiences: true,
+        },
+      },
+    },
+  });
 
-  return res.status(201).json({appliedStudents});
-}
+  return res.status(201).json({ appliedStudents });
+};
 
-const acceptStudent=async(req,res)=>{
-  const internshipId=parseInt(req.params.id)
-  const studentId=req.body.studentId
+const acceptStudent = async (req, res) => {
+  const internshipId = parseInt(req.params.id);
+  const studentId = parseInt(req.body.studentId);
 
-  const applications=await prisma.internApplication.update({
-    where:{studentId,internshipId},
-    data:{status:"ACCEPTED"}
-  })
+  const applications = await prisma.internApplication.update({
+    where: {
+      studentId_internshipId: {
+        studentId: studentId,
+        internshipId: internshipId,
+      },
+    },
+    data: {
+      status: "ACCEPTED",
+    },
+  });
+  
 
-  return res.status(201).json({message:"Successfully accepted the student's application for this internship"})
-}
+  return res
+    .status(201)
+    .json({
+      message:
+        "Successfully accepted the student's application for this internship",
+    });
+};
 
-const rejectStudent=async(req,res)=>{
-  const internshipId=parseInt(req.params.id);
-  const studentId=req.body.studentId
+const rejectStudent = async (req, res) => {
+  const internshipId = parseInt(req.params.id);
+  const studentId = req.body.studentId;
 
-  const application=await prisma.internApplication.update({
-    where:{studentId,internshipId},
-    data:{
-      status:"REJECTED"
-    }
-  })
+  const application = await prisma.internApplication.update({
+    where: { studentId, internshipId },
+    data: {
+      status: "REJECTED",
+    },
+  });
 
-  return res.status(201).json({message:"successfully rejected the student for this internship."})
-}
+  return res
+    .status(201)
+    .json({
+      message: "successfully rejected the student for this internship.",
+    });
+};
 
 const closeInternship = async (req, res) => {
   try {
@@ -122,7 +142,9 @@ const closeInternship = async (req, res) => {
       data: { closed: true },
     });
 
-    return res.status(200).json({ message: "Internship closed successfully", internship });
+    return res
+      .status(200)
+      .json({ message: "Internship closed successfully", internship });
   } catch (error) {
     console.error("Error closing internship:", error);
     return res.status(500).json({ message: "Internal server error." });
@@ -182,7 +204,9 @@ const getMentorshipsForMentor = async (req, res) => {
     });
 
     if (!mentorships || mentorships.length === 0) {
-      return res.status(404).json({ message: "No mentorships found for this mentor" });
+      return res
+        .status(404)
+        .json({ message: "No mentorships found for this mentor" });
     }
 
     return res.status(200).json({
@@ -195,10 +219,9 @@ const getMentorshipsForMentor = async (req, res) => {
   }
 };
 
-
 const acceptMentorship = async (req, res) => {
   try {
-    const { mentorshipId } = req.body; 
+    const { mentorshipId } = req.body;
     const mentorship = await prisma.mentorship.findUnique({
       where: { id: mentorshipId },
       include: { mentor: true },
@@ -209,20 +232,26 @@ const acceptMentorship = async (req, res) => {
     }
 
     if (mentorship.status !== "PENDING") {
-      return res.status(400).json({ message: "Mentorship is not in a pending state" });
+      return res
+        .status(400)
+        .json({ message: "Mentorship is not in a pending state" });
     }
 
     if (mentorship.mentor.currentMentees >= mentorship.mentor.maxMentees) {
-      return res.status(400).json({ message: "This mentor has reached their maximum mentee limit" });
+      return res
+        .status(400)
+        .json({
+          message: "This mentor has reached their maximum mentee limit",
+        });
     }
 
     const updatedMentorship = await prisma.mentorship.update({
       where: { id: mentorshipId },
       data: {
-        status: "ACTIVE", 
+        status: "ACTIVE",
         mentor: {
           update: {
-            currentMentees: { increment: 1 }, 
+            currentMentees: { increment: 1 },
           },
         },
       },
@@ -237,22 +266,21 @@ const acceptMentorship = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-const sendMentorStatus = async(req,res)=>{
-  if(req.mentorId ){
+const sendMentorStatus = async (req, res) => {
+  if (req.mentorId) {
     res.status(200).json({
-      isMentor:true,
-    })
-  }else{
+      isMentor: true,
+    });
+  } else {
     res.status(200).json({
-      isMentor:false,
-    })
+      isMentor: false,
+    });
   }
-}
-
+};
 
 module.exports = {
   postInternship,
-  getPendingApplications,
+  getAllApplications,
   acceptStudent,
   rejectStudent,
   closeInternship,

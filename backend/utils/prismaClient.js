@@ -10,7 +10,7 @@ if (!global.__prisma) {
   global.__prisma
     .$connect()
     .then(() => {
-      console.log("✅ Successfully connected to the database!");
+      console.log("Connected to the Postgres database.");
     })
     .catch((error) => {
       console.error("❌ Failed to connect to the database:", error);

@@ -94,8 +94,8 @@ export const fetchInternshipApplications=async(id)=>{
     );
 
 
-    const appliedStudents=response.data.appliedStudents.map(({student,...application})=>{
-      return student;
+    const appliedStudents=response.data.appliedStudents.map(({status,student,...application})=>{
+      return {status,student};
     })
 
     return appliedStudents; 
