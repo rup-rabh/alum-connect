@@ -17,6 +17,7 @@ import ProfilePage from "./screens/ProfilePage";
 import { UserProvider, useUser } from "./context/userContext";
 import Mentor_Dashboard from "./screens/Mentor_Dashboard";
 import Mentor_Registration from "./screens/Mentor_Registration";
+import InternApplications from "./screens/InternApplications";
 
 function App() {
   return (
@@ -32,7 +33,9 @@ function App() {
           <Route path="/jobs/:id" element={<JobDetails />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/mentorDashboard" element={<Mentor_Dashboard />} />
-          <Route path="mentorRegistartion" element={<Mentor_Registration/>}></Route>
+          <Route path="mentorRegistartion" element={<Mentor_Registration/>} />  
+          <Route   path="/intern-applications/:id"  element={<InternApplications />}
+          />
         </Routes>
       </Router>
     </UserProvider>
