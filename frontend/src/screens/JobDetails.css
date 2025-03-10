@@ -161,3 +161,10 @@
     position: static;
   }
 }
+
+
+.closed-text {
+  font-weight: bold;
+  color: red;
+  font-size: 16px;
+}

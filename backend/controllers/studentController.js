@@ -12,11 +12,33 @@ const formatDate = (dateString) => {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate()); // Time set to 00:00:00
 };
 
-const getAllInternships=async (req,res)=>{
-    const internships=await prisma.internship.findMany({
-    })
-    return res.status(200).json({internships})
-}
+const getAllInternships = async (req, res) => {
+  try {
+    const studentId = req.studentId; 
+
+    const internships = await prisma.internship.findMany({
+      include: {
+        applications: {
+          where: { studentId },
+          select: { status: true }, 
+        },
+      },
+    });
+
+    const formattedInternships = internships.map(({applications, ...internship}) => ({
+      ...internship,
+      applicationStatus: applications.length > 0 
+        ? applications[0].status 
+        : null, 
+    }));
+
+    return res.status(200).json({ internships: formattedInternships });
+  } catch (error) {
+    console.error("Error fetching internships:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 
 const applyInternship=async (req,res)=>{
     const internshipId=parseInt(req.params.id);

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import StudentCard from '../components/Studentcard';
 import { useParams } from 'react-router-dom';
 import './InternApplications.css';
 import NavBar from './NavBar';
+import { fetchInternshipApplications } from './fetchData';
 
 // Dummy data
 const dummyApplicants = [
@@ -41,7 +42,49 @@ const dummyApplicants = [
 ];
 
 const InternApplications = () => {
-  const { id } = useParams(); // Get internship ID from URL
+  const { id } = useParams(); 
+  const [loading,setLoading]=useState(true);
+  const [applications,setApplications]=useState([]);
+
+  useEffect(() => {
+    const getApplications = async () => {
+      setLoading(true);
+      try {
+        const appliedStudents = await fetchInternshipApplications(id);
+        console.log(appliedStudents);
+        setApplications(appliedStudents);
+      } catch (error) {
+        console.error("Failed to fetch applications:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      getApplications();
+    }
+  }, [id]);
+
+  if(loading){
+    return (
+      <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        width: "100vw",
+        textAlign: "center",
+        fontSize: "18px",
+        fontWeight: "bold",
+        color: "#C45A12",
+        backgroundColor: "#f9f9f9",
+      }}
+    >
+      Loading, please wait...
+    </div>
+    )
+  }
 
   return (
     <>

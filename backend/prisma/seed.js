@@ -49,9 +49,11 @@ async function main() {
       role: "STUDENT",
       student: {
         create: {
+          fullName:"Student",
           cgpa: 3.8,
           department: "Computer Science",
           rollno: "CS2025001",
+          cv: "https://drive.google.com/example-resume",
           domain: "FRONTEND",
         },
       },
