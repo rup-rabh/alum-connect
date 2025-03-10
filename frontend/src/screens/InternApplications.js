@@ -8,6 +8,7 @@ import { fetchInternshipApplications } from './fetchData';
 // Dummy data
 const dummyApplicants = [
   {
+    fullName:'student1',
     rollno: 'CS2023001',
     department: 'Computer Science',
     cgpa: 9.2,
@@ -24,6 +25,7 @@ const dummyApplicants = [
     ]
   },
   {
+    fullName:'stduent2',
     rollno: 'EC2023002',
     department: 'Electronics',
     cgpa: 8.8,
@@ -45,16 +47,16 @@ const InternApplications = () => {
   const { id } = useParams(); 
   const [loading,setLoading]=useState(true);
   const [applications,setApplications]=useState([]);
-
+  const [error, setError] = useState(null);
   useEffect(() => {
     const getApplications = async () => {
       setLoading(true);
       try {
-        const appliedStudents = await fetchInternshipApplications(id);
-        console.log(appliedStudents);
-        setApplications(appliedStudents);
+        const applicationsData = await fetchInternshipApplications(id);
+        setApplications(applicationsData);
       } catch (error) {
-        console.error("Failed to fetch applications:", error);
+        setError("Failed to load applications");
+        console.error("Error:", error);
       } finally {
         setLoading(false);
       }
@@ -89,22 +91,25 @@ const InternApplications = () => {
   return (
     <>
      <NavBar />
-    <div className="applications-container">
-      <h2 className="applications-header">Applications </h2>
-      <div className="applications-grid">
-        {dummyApplicants.map((student, index) => (
-          <StudentCard
-            key={index}
-            rollno={student.rollno}
-            department={student.department}
-            cgpa={student.cgpa}
-            domain={student.domain}
-            cv={student.cv}
-            experiences={student.experiences}
-          />
-        ))}
+     <div className="applications-container">
+        <h2 className="applications-header">Applications</h2>
+        
+          <div className="applications-grid">
+            {applications.map((student, index) => (
+              <StudentCard
+                key={index}
+                fullName={student.fullName}
+                rollno={student.rollno}
+                department={student.department}
+                cgpa={student.cgpa}
+                domain={student.domain}
+                cv={student.cv}
+                experiences={student.experiences}
+              />
+            ))}
+          </div>
+        
       </div>
-    </div>
     </>
   );
 };

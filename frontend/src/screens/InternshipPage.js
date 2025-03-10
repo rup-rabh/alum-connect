@@ -20,13 +20,12 @@ const domains = [
 ];
 
 const locations = [
-  "India",
-  "United States",
-  "United Kingdom",
-  "Germany",
-  "Canada",
-  "Australia",
-  "Singapore",
+  "Banglore",
+  "Chennai",
+  "Hyderabad",
+  "Pune",
+  "Mumbai",
+  "Noida",
   "Remote",
 ];
 
@@ -191,7 +190,13 @@ const InternshipPage = () => {
       selectedDomains.length === 0 || selectedDomains.includes(intern.domain);
     const matchesLocation =
       !selectedLocation || intern.location === selectedLocation;
-    return matchesDomain && matchesLocation;
+      const matchesStatus =
+    !selectedStatus || 
+    (selectedStatus === "NEW" 
+      ? intern.applicationStatus === null 
+      : intern.applicationStatus === selectedStatus);
+
+    return matchesDomain && matchesLocation && matchesStatus;
   });
 
   if (isLoading) {

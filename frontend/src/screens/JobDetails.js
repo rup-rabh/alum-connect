@@ -14,7 +14,8 @@ const JobDetails = () => {
   const [role, setRole] = useState(null);
   const [token, setToken] = useState(null);
   const navigate = useNavigate();
-
+  const [isApplying, setIsApplying] = useState(false);
+    const [hasApplied, setHasApplied] = useState(false);
 
   useEffect(() => {
     const fetchJobDetails = async () => {
@@ -73,6 +74,30 @@ const JobDetails = () => {
       console.error("Failed to close internship:", error);
     }
   }
+
+  const handleApplyClick = async (e) => {
+    e.preventDefault();
+    setIsApplying(true); 
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        `http://localhost:3000/api/student/applyInternship/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setHasApplied(true);
+    } catch (error) {
+      console.error("Application failed:", error);
+    } finally {
+      setIsApplying(false);
+    }
+  };
 
   if (!job)
     return (
@@ -141,7 +166,19 @@ const JobDetails = () => {
                 </>
               ) : (
                 <>
-                  <button className="apply-button">Apply Now</button>
+                 <button
+              className={`apply-button ${hasApplied ? "applied" : ""}`}
+              onClick={handleApplyClick}
+              disabled={isApplying || hasApplied} // Disable if applying or already applied
+            >
+              {isApplying ? (
+                <span className="spinner"></span> // Show spinner while applying
+              ) : hasApplied ? (
+                "Applied ✅"
+              ) : (
+                "Apply Now"
+              )}
+            </button>
                 </>
               )}
               <div className="job-details-meta">
