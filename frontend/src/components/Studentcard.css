@@ -45,7 +45,7 @@ card-header {
   font-weight: 500;
   width: fit-content;
 }
- 
+
 /* Keep original CV link styling */
 .cv-section {
   margin: 1.5rem 0;
@@ -131,20 +131,80 @@ card-header {
   color: #ccc;
 }
 
+.name-section {
+  margin-bottom: 0.5rem;
+}
+
+.full-name {
+  font-size: 1.4rem;
+  color: #7c2d12;
+  margin: 0;
+}
+
+.student-id {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(154, 52, 18, 0.1);
+}
+
+.accept-button,
+.reject-button {
+  flex: 1;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.accept-button {
+  background-color: #7c2d12;
+  color: white;
+}
+
+.accept-button:hover {
+  background-color: #5b1e0e;
+}
+
+.reject-button {
+  background-color: #eee;
+  color: #5a5a5a;
+}
+
+.reject-button:hover {
+  background-color: #ddd;
+}
+
+@media (max-width: 768px) {
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
 @media (max-width: 768px) {
   .student-id {
     font-size: 1.5rem;
   }
-  
+
   .experience-header {
     flex-direction: column;
     gap: 0.25rem;
   }
-  
+
   .tech-stack {
     gap: 0.5rem;
   }
-  
+
   .tech-stack span {
     padding-right: 0.75rem;
   }

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "./InternCard.css";
 import { useNavigate } from "react-router-dom";
-import { fetchUserInfo } from "../screens/fetchData";
+import { fetchInternships, fetchUserInfo } from "../screens/fetchData";
 import { Link } from "react-router-dom";
 import { useUser } from "../context/userContext";
 import axios from "axios";
+
+
 
 const domainMap = {
   SOFTWARE: "Software Engineering",
@@ -38,11 +40,54 @@ const InternCard = ({
   const navigate = useNavigate();
   const [isApplying, setIsApplying] = useState(false);
   const [hasApplied, setHasApplied] = useState(false);
+ const [internships, setInternships] = useState([]);
+ const [Role, setRole] = useState(null);
+  const [token, setToken] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "short", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
+
+useEffect(() => {
+    const getUserRole = async () => {
+      try {
+        const userInfo = await fetchUserInfo();
+        if (userInfo) {
+          setRole(userInfo.Role);
+          setToken(userInfo.token);
+        }
+      } catch (error) {
+        console.log("Error:", error.message);
+      }
+    };
+    getUserRole();
+  }, []);
+
+
+  useEffect(() => {
+    if (!Role) return;
+
+    const url =
+      Role === "ALUMNI"
+        ? "alumni/getPostedInternships"
+        : "student/getAllInternships";
+
+    const fetchData = async () => {
+      try {
+        const internships = await fetchInternships(url,Role);
+        setInternships(internships);
+      } catch (error) {
+        console.log("Error while fetching internships:", error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [Role]);
+
 
   const handleApplyClick = async (e) => {
     e.preventDefault();
@@ -139,7 +184,7 @@ const InternCard = ({
           </div>
 
           {/* Conditional rendering based on role */}
-          {role === "STUDENT" && (
+          {role === "STUDENT" && internships.applicationStatus===null && (
             <button
               className={`intern-apply-button ${hasApplied ? "applied" : ""}`}
               onClick={handleApplyClick}
