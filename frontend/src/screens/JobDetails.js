@@ -131,7 +131,7 @@ const JobDetails = () => {
                 <>
                   <button
                     className="view-applications-button"
-                    onClick={() => navigate(`/intern-applications/${job._id}`)}
+                    onClick={() => navigate(`/intern-applications/${job.id}`)}
                   >
                     View Applications
                   </button>
