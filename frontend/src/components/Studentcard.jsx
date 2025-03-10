@@ -16,12 +16,14 @@ const domainMap = {
 };
 
 const StudentCard = ({
+  id,
+  fullName,
   rollno,
   department,
   cgpa,
   domain,
   cv,
-  experiences = []
+  experiences = [],
 }) => {
   const formatDate = (dateString) => {
     if (!dateString) return "Present";
@@ -31,11 +33,26 @@ const StudentCard = ({
     return date.toLocaleDateString(undefined, options);
   };
 
+  const handleAccept = () => {
+    console.log("Accepted application for", rollno);
+    // Add your acceptance logic here
+  };
+
+  const handleReject = () => {
+    console.log("Rejected application for", rollno);
+    // Add your rejection logic here
+  };
+
+
+  
   return (
     <div className="student-card">
       <div className="card-header">
         <div className="left-section">
-          <h2 className="student-id">{rollno}</h2>
+          <div className="name-section">
+            <h2 className="full-name">{fullName}</h2>
+            <p className="student-id">{rollno}</p>
+          </div>
           <div className="domain-pill">{domainMap[domain]}</div>
         </div>
         <div className="academic-details">
@@ -46,7 +63,12 @@ const StudentCard = ({
 
       {cv && (
         <div className="cv-section">
-          <a href={cv} target="_blank" rel="noopener noreferrer" className="cv-link">
+          <a
+            href={cv}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cv-link"
+          >
             <i className="fas fa-file-pdf"></i>
             View CV
           </a>
@@ -57,29 +79,42 @@ const StudentCard = ({
         <div className="experience-section">
           <h3>Work Experience</h3>
           {experiences.map((exp, index) => {
-            const isCurrent = !exp.endDate || new Date(exp.endDate) > new Date();
-            
+            const isCurrent =
+              !exp.endDate || new Date(exp.endDate) > new Date();
+
             return (
               <div key={index} className="experience-item">
                 <div className="experience-header">
                   <h4>{exp.title}</h4>
                   <span className="experience-duration">
-                    {formatDate(exp.startDate)} - {isCurrent ? "Present" : formatDate(exp.endDate)}
+                    {formatDate(exp.startDate)} -{" "}
+                    {isCurrent ? "Present" : formatDate(exp.endDate)}
                   </span>
                 </div>
                 <p className="experience-description">{exp.description}</p>
                 {exp.techStacks?.length > 0 && (
                   <div className="tech-stack">
                     {exp.techStacks.map((tech, techIndex) => (
-                      <span key={techIndex} className="tech-pill">{tech}</span>
+                      <span key={techIndex} className="tech-pill">
+                        {tech}
+                      </span>
                     ))}
                   </div>
                 )}
               </div>
-            )}
-          )}
+            );
+          })}
         </div>
       )}
+
+      <div className="action-buttons">
+        <button className="accept-button" onClick={handleAccept}>
+          Accept
+        </button>
+        <button className="reject-button" onClick={handleReject}>
+          Reject
+        </button>
+      </div>
     </div>
   );
 };
