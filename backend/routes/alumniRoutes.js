@@ -10,7 +10,7 @@ const { addBasicProfile,
     getMentorProfile,
     updateBasicProfile} = require("../controllers/profile Controllers/alumniProfileController");
 const { postInternship, 
-    getPendingApplications,
+    getAllApplications,
     acceptStudent,
     rejectStudent,
     closeInternship,
@@ -36,8 +36,8 @@ router.get("/getExperience", authenticationToken, isAlumWithBasicProfile, getExp
 // feature routes
 router.post("/postInternship", authenticationToken, isAlumWithBasicProfile, postInternship);
 router.get("/getPostedInternships", authenticationToken, isAlumWithBasicProfile, getPostedInternships);
-router.get("/getPendingApplications/:id", authenticationToken, isAlumWithBasicProfile, getPendingApplications);
-router.patch("/acceptInternship/:id", authenticationToken, isAlumWithBasicProfile, acceptStudent);
+router.get("/getAllApplications/:id", authenticationToken, isAlumWithBasicProfile, getAllApplications);
+router.patch("/acceptStudent/:id", authenticationToken, isAlumWithBasicProfile, acceptStudent);
 router.patch("/rejectStudent/:id", authenticationToken, isAlumWithBasicProfile, rejectStudent);
 
 router.patch("/closeInternship/:id", authenticationToken, isAlumWithBasicProfile, closeInternship);

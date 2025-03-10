@@ -40,28 +40,6 @@ async function main() {
   });
   console.log("👨‍🎓 Created alumni user");
 
-  // Create Student User
-  const studentUser = await prisma.user.create({
-    data: {
-      username: "student",
-      email: "student@gmail.com",
-      password: hashedPassword,
-      role: "STUDENT",
-      student: {
-        create: {
-          fullName:"Student",
-          cgpa: 3.8,
-          department: "Computer Science",
-          rollno: "CS2025001",
-          cv: "https://drive.google.com/example-resume",
-          domain: "FRONTEND",
-        },
-      },
-    },
-    include: { student: true },
-  });
-  console.log("🎓 Created student user");
-
   // Add Alumni Experience
   await prisma.alumniExperience.create({
     data: {
@@ -74,6 +52,28 @@ async function main() {
     },
   });
   console.log("💼 Added alumni experience");
+
+  // Create Student User
+  const studentUser = await prisma.user.create({
+    data: {
+      username: "student",
+      email: "student@gmail.com",
+      password: hashedPassword,
+      role: "STUDENT",
+      student: {
+        create: {
+          fullName: "Student",
+          cgpa: 3.8,
+          department: "Computer Science",
+          rollno: "CS2025001",
+          cv: "https://drive.google.com/example-resume",
+          domain: "FRONTEND",
+        },
+      },
+    },
+    include: { student: true },
+  });
+  console.log("🎓 Created student user");
 
   // Add Student Experience
   await prisma.studentExperience.create({
@@ -88,10 +88,47 @@ async function main() {
   });
   console.log("🛠️ Added student experience");
 
+
+  // ✅ Create Second Student User
+  const studentUser2 = await prisma.user.create({
+    data: {
+      username: "student2",
+      email: "student2@gmail.com",
+      password: hashedPassword,
+      role: "STUDENT",
+      student: {
+        create: {
+          fullName: "Student Two",
+          cgpa: 3.7,
+          department: "Information Technology",
+          rollno: "IT2025002",
+          cv: "https://drive.google.com/example-resume-2",
+          domain: "BACKEND",
+        },
+      },
+    },
+    include: { student: true },
+  });
+
+  console.log("🎓 Created second student user");
+
+  // ✅ Add Experience for Second Student
+  await prisma.studentExperience.create({
+    data: {
+      title: "Backend Intern",
+      description: "Developed REST APIs using Node.js and Express.",
+      techStacks: ["Node.js", "Express", "PostgreSQL"],
+      startDate: new Date("2023-07-01"),
+      endDate: new Date("2023-10-01"),
+      studentId: studentUser2.student.id,
+    },
+  });
+
+  console.log("🛠️ Added experience for second student");
+
   // Post an Internship
   await prisma.internship.create({
     data: {
-      
       company: "Tech Corp",
       title: "Frontend Developer Intern",
       jd: "Build UI components using React and TailwindCSS.",
@@ -110,7 +147,7 @@ async function main() {
   console.log("📢 Posted internship");
 
   const mentor = await prisma.mentor.create({
-    data:{
+    data: {
       userId: alumniUser.alumni.userId,
       keywords: ["SOFTWARE", "BLOCKCHAIN"],
       experience: 5,
@@ -121,28 +158,29 @@ async function main() {
       interests: ["PRO_BONO_HELP", "MENTORING_AND_PARTNERSHIP"],
       linkedinProfile: "https://www.linkedin.com/in/example-profile/",
       currentOrganization: "Google",
-      passingYear: 2016
-    },include:{user:true},
-  })
-  
-  console.log("Φ created mentor!",mentor.id);
+      passingYear: 2016,
+    },
+    include: { user: true },
+  });
+
+  console.log("Φ created mentor!", mentor.id);
   const mentorShip = await prisma.mentorship.create({
-      data :{
-      mentorId  : mentor.id,
-      menteeId  :studentUser.student.userId,
-      status  :  "PENDING"
-      }, include : {mentor: true}
-    }
-  )
-  
+    data: {
+      mentorId: mentor.id,
+      menteeId: studentUser.student.userId,
+      status: "PENDING",
+    },
+    include: { mentor: true },
+  });
+
   console.log("🎉 created mentorship!", "status ", mentorShip.status);
   const mentorShipAccepted = await prisma.mentorship.update({
     where: { id: mentorShip.id },
     data: {
-      status: "ACTIVE", 
+      status: "ACTIVE",
       mentor: {
         update: {
-          currentMentees: { increment: 1 }, 
+          currentMentees: { increment: 1 },
         },
       },
     },
