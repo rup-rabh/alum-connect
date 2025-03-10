@@ -17,6 +17,9 @@ const getAllInternships = async (req, res) => {
     const studentId = req.studentId; 
 
     const internships = await prisma.internship.findMany({
+      where:{
+        closed:false
+      },
       include: {
         applications: {
           where: { studentId },
