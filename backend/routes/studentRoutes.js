@@ -25,7 +25,7 @@ router.get("/getRejectedInternships",authenticationToken,isStudentWithBasicProfi
 
 // Become a mentee Routes
 router.get("/getMentors",authenticationToken,isStudent,getAllMentors);
-router.get("/getMentorProfile", authenticationToken, isStudentWithBasicProfile, getMentorProfile);
+// router.get("/getMentorProfile", authenticationToken, isStudentWithBasicProfile, getMentorProfile);
 router.post("/connectMentor",authenticationToken,isStudent,connectToMentor)
 
 module.exports=router

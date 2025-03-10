@@ -1,20 +1,37 @@
 import React, { useState } from "react";
 import "./Card.css";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const Card = ({
-  title,
-  description,
-  icon,
-  link,
-  disabled,
-  disabledMessage,
-}) => {
+const Card = ({ title, description, icon, link, disabled, disabledMessage }) => {
   const navigate = useNavigate();
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [showTooltip, setShowTooltip] = useState(false);
+  const [isMentor, setIsMentor] = useState(null);
 
-  const handleClick = () => {
+  const handleClick = async () => {
+    if (title === "Enroll as Startup Mentors") {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+  
+      try {
+        const response = await axios.get("http://localhost:3001/api/alumni/mentorshipStatus", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        
+        // Navigate based on API response
+        navigate(response.data.isMentor ? "/mentorDashboard" : "/mentorRegistration");
+        
+      } catch (error) {
+        console.error("Error checking mentor status:", error);
+        alert("Failed to check mentor status. Please try again.");
+      }
+      return;
+    }
+  
     if (!disabled) navigate(link);
   };
 
