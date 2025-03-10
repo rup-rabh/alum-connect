@@ -77,3 +77,30 @@ export const fetchExperience = async (url) => {
     console.error("Error fetching profile:", error);
   }
 };
+
+export const fetchInternshipApplications=async(id)=>{
+  console.log("inside ftehcApplicatiosn")
+  console.log("internship Id :",id);
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(
+      `http://localhost:3000/api/alumni/getPendingApplications/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+
+    const appliedStudents=response.data.appliedStudents.map(({student,...application})=>{
+      return student;
+    })
+
+    return appliedStudents; 
+  } catch (error) {
+    console.error("Error fetching internship applications:", error);
+    throw error;
+  }
+}

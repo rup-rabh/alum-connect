@@ -5,6 +5,7 @@ import NavBar from "./NavBar";
 import axios from "axios";
 import { fetchUserInfo } from "./fetchData";
 import { useNavigate } from 'react-router-dom';
+import { closeInternship } from "./postData";
 
 
 const JobDetails = () => {
@@ -61,6 +62,17 @@ const JobDetails = () => {
     };
     getUserRole();
   }, []);
+
+  const handleCloseInternship= async ()=>{
+    try {
+      const updatedJob=await closeInternship(id);
+      console.log("Internship closed successfully!");
+      setJob(updatedJob);
+      
+    } catch (error) {
+      console.error("Failed to close internship:", error);
+    }
+  }
 
   if (!job)
     return (
@@ -123,14 +135,13 @@ const JobDetails = () => {
                   >
                     View Applications
                   </button>
-                  <button className="close-internship-button">
+                  <button className="close-internship-button" onClick={handleCloseInternship}>
                     Close Internship
                   </button>
                 </>
               ) : (
                 <>
                   <button className="apply-button">Apply Now</button>
-                  <button className="save-button">Save Job</button>
                 </>
               )}
               <div className="job-details-meta">

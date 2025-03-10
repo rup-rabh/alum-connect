@@ -60,7 +60,7 @@ const getPendingApplications=async(req,res)=>{
   const internshipId=parseInt(req.params.id);
 
   const appliedStudents=await prisma.internApplication.findMany({
-    where:{internshipId,status:"PENDING"},
+    where:{internshipId:internshipId,status:"PENDING"},
     include:{
       student:{
         include:{
@@ -122,7 +122,7 @@ const closeInternship = async (req, res) => {
       data: { closed: true },
     });
 
-    return res.status(200).json({ message: "Internship closed successfully" });
+    return res.status(200).json({ message: "Internship closed successfully", internship });
   } catch (error) {
     console.error("Error closing internship:", error);
     return res.status(500).json({ message: "Internal server error." });

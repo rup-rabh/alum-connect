@@ -12,23 +12,24 @@ model User {
   username String  @unique
   email    String  @unique
   password String? // LinkedIn sign-ins may have null password
-  role     Role     //will prolly create issue in linkedIn signup
+  role     Role //will prolly create issue in linkedIn signup
 
-  student Student?
-  alumni  Alumni?
-  mentor  Mentor?
+  student       Student?
+  alumni        Alumni?
+  mentor        Mentor?
   createdGroups Group[]
-  groups   UserGroup[]
-  mentorships Mentorship[]
+  groups        UserGroup[]
+  mentorships   Mentorship[]
 }
 
 model Student {
   id         Int     @id @default(autoincrement())
-  cgpa       Float?
-  cv         String? // Drive link for resume
-  department String?
-  rollno     String?
-  domain     Domain?
+  fullName   String
+  cgpa       Float
+  cv         String // Drive link for resume
+  department String
+  rollno     String
+  domain     Domain
 
   experiences  StudentExperience[]
   applications InternApplication[]
@@ -40,9 +41,9 @@ model Student {
 model Alumni {
   id                Int     @id @default(autoincrement())
   fullName          String
-  presentCompany    String?
+  presentCompany    String
   yearsOfExperience Int
-  domain            Domain?
+  domain            Domain
 
   pastExperiences   AlumniExperience[]
   postedInternships Internship[]
@@ -52,61 +53,62 @@ model Alumni {
 }
 
 model Mentor {
-  id              Int       @id @default(autoincrement())
-  user           User      @relation(fields: [userId], references: [id])
-  userId         Int       @unique
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
 
-  keywords       Domain[]  // Sectors of interest (e.g., AI, Blockchain, Startup, etc.)
-  experience     Int?      // Years of experience
-  interaction    InteractionLevel? // Level of interaction (hours per month)
-  
-  maxMentees     Int?       @default(5) // Maximum mentees they can take
-  currentMentees Int?       @default(0) // Current mentees count
-  
-  levelsOfMentees MenteeLevel[]  // Allowed mentee levels
-  interests      MentorInterest[] // Type of mentorship support they provide
-  
-  linkedinProfile String?
+  keywords    Domain[] // Sectors of interest (e.g., AI, Blockchain, Startup, etc.)
+  experience  Int? // Years of experience
+  interaction InteractionLevel? // Level of interaction (hours per month)
+
+  maxMentees     Int? @default(5) // Maximum mentees they can take
+  currentMentees Int? @default(0) // Current mentees count
+
+  levelsOfMentees MenteeLevel[] // Allowed mentee levels
+  interests       MentorInterest[] // Type of mentorship support they provide
+
+  linkedinProfile     String?
   currentOrganization String?
-  passingYear    Int?
+  passingYear         Int?
 
-  mentorships    Mentorship[]
+  mentorships Mentorship[]
 }
 
 model Mentorship {
-  id        Int       @id @default(autoincrement())
-  mentor    Mentor    @relation(fields: [mentorId], references: [id])
+  id        Int      @id @default(autoincrement())
+  mentor    Mentor   @relation(fields: [mentorId], references: [id])
   mentorId  Int
-  mentee    User      @relation(fields: [menteeId], references: [id])
+  mentee    User     @relation(fields: [menteeId], references: [id])
   menteeId  Int
-  createdAt DateTime  @default(now())
+  createdAt DateTime @default(now())
 
-  status    MentorshipStatus @default(PENDING)
+  status MentorshipStatus @default(PENDING)
 
   @@unique([mentorId, menteeId]) // Prevent duplicate mentorship requests
 }
 
 model Group {
-  id           Int      @id @default(autoincrement())
-  name         String   @unique
-  description  String?
-  createdAt    DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
 
   groupCreatedBy   User @relation(fields: [groupCreatedById], references: [id])
   groupCreatedById Int
 
-  members     UserGroup[]
+  members UserGroup[]
 }
 
 model UserGroup {
-  id      Int    @id @default(autoincrement())
-  user    User   @relation(fields: [userId], references: [id])
+  id      Int   @id @default(autoincrement())
+  user    User  @relation(fields: [userId], references: [id])
   userId  Int
-  group   Group  @relation(fields: [groupId], references: [id])
+  group   Group @relation(fields: [groupId], references: [id])
   groupId Int
 
-  role    GroupRole @default(MEMBER)
-    //unque connections
+  role GroupRole @default(MEMBER)
+
+  //unque connections
   @@unique([userId, groupId])
 }
 
@@ -192,16 +194,14 @@ enum Domain {
 
 enum ApplicationStatus {
   PENDING
-  SHORTLISTED
-  INTERVIEW_SCHEDULED
   ACCEPTED
   REJECTED
 }
 
 enum InteractionLevel {
-  VERY_LOW  // 0-3 hours per month
-  MODERATE  // 3-8 hours per month
-  HIGH      // 8+ hours per month
+  VERY_LOW // 0-3 hours per month
+  MODERATE // 3-8 hours per month
+  HIGH // 8+ hours per month
 }
 
 enum MenteeLevel {
