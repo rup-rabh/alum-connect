@@ -46,7 +46,7 @@ const dummyApplicants = [
 const InternApplications = () => {
   const { id } = useParams(); 
   const [loading,setLoading]=useState(true);
-  const [applications,setApplications]=useState([]);
+  const [applications,setApplications]=useState(null)
   const [error, setError] = useState(null);
   useEffect(() => {
     const getApplications = async () => {
@@ -58,6 +58,7 @@ const InternApplications = () => {
         setError("Failed to load applications");
         console.error("Error:", error);
       } finally {
+        console.log("applications in applications.js:",applications)
         setLoading(false);
       }
     };
@@ -95,7 +96,7 @@ const InternApplications = () => {
         <h2 className="applications-header">Applications</h2>
         
           <div className="applications-grid">
-            {applications.map((student, index) => (
+            {dummyApplicants.map((student, index) => (
               <StudentCard
                 key={index}
                 fullName={student.fullName}

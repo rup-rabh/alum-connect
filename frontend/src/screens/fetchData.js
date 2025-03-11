@@ -38,7 +38,6 @@ export const fetchInternships = async (url) => {
     const internships = data.map((internship) => {
       return {
         ...internship,
-        company: "Google",
         startTime: internship.startTime.split("T")[0],
         endTime: internship.endTime.split("T")[0],
       };
@@ -85,7 +84,7 @@ export const fetchInternshipApplications=async(id)=>{
     const token = localStorage.getItem("token");
 
     const response = await axios.get(
-      `http://localhost:3000/api/alumni/getPendingApplications/${id}`,
+      `http://localhost:3000/api/alumni/getAllApplications/${id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -97,6 +96,8 @@ export const fetchInternshipApplications=async(id)=>{
     const appliedStudents=response.data.appliedStudents.map(({status,student,...application})=>{
       return {status,student};
     })
+
+    console.log("applied students returned by fetch function:",appliedStudents)
 
     return appliedStudents; 
   } catch (error) {
