@@ -24,6 +24,7 @@ const StudentCard = ({
   domain,
   cv,
   experiences = [],
+  status,
 }) => {
   const formatDate = (dateString) => {
     if (!dateString) return "Present";

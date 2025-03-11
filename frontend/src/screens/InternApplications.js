@@ -99,6 +99,7 @@ const InternApplications = () => {
             {dummyApplicants.map((student, index) => (
               <StudentCard
                 key={index}
+                status={status}
                 fullName={student.fullName}
                 rollno={student.rollno}
                 department={student.department}
