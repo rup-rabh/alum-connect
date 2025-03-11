@@ -128,55 +128,60 @@ const InternshipPage = () => {
   };
 
   const handleSubmit = async (e) => {
-      e.preventDefault();
-      const payload = {
-        ...formData,
-        startTime: new Date(formData.startTime).toISOString(),
-        endTime: new Date(formData.endTime).toISOString(),
-      };
-      
-      if (!payload.company) delete payload.company;
-      if (!payload.weeklyHours) delete payload.weeklyHours;
-  
-      try {
-        const response = await fetch('/api/alumni/postInternship', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization':' Bearer ${token}',
-          },
-          body: JSON.stringify(payload),
-        });
-  
-        if (response.ok) {
+    e.preventDefault();
+    const payload = {
+      ...formData,
+      startTime: new Date(formData.startTime).toISOString(),
+      endTime: new Date(formData.endTime).toISOString(),
+    };
+
+    if (!payload.company) delete payload.company;
+    if (!payload.weeklyHours) delete payload.weeklyHours;
+
+    try {
+      const response = await fetch('/api/alumni/postInternship', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, 
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        try {
           const url = role === "ALUMNI" 
             ? "alumni/getPostedInternships" 
             : "student/getAllInternships";
-          const internships = await fetchInternships(url);
+          const internships = await fetchInternships(url, role);
           setInternships(internships);
-          setShowForm(false);
-          setFormData({
-            company: '',
-            title: '',
-            jd: '',
-            domain: '',
-            location: '',
-            compensation: '',
-            duration: '',
-            startTime: '',
-            endTime: '',
-            criteria: '',
-            weeklyHours: '',
-          });
           alert('Internship posted successfully!');
-        } else {
-          alert('Failed to post internship');
+        } catch (error) {
+          alert('Posted successfully but failed to refresh list');
         }
-      } catch (error) {
-        console.error('Error:', error);
-        alert('An error occurred while posting the internship');
+   
+        setShowForm(false);
+        setFormData({
+          company: '',
+          title: '',
+          jd: '',
+          domain: '',
+          location: '',
+          compensation: '',
+          duration: '',
+          startTime: '',
+          endTime: '',
+          criteria: '',
+          weeklyHours: '',
+        });
+      } else {
+        alert('Failed to post internship');
       }
-    };
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred while posting the internship');
+    }
+  };
 
     const handleChange = (e) => {
       setFormData({
