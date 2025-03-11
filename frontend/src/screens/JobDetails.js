@@ -204,7 +204,7 @@ const JobDetails = () => {
                     {isApplying ? (
                       <span className="spinner"></span>
                     ) : internships.applicationStatus !== null ? (
-                      "Applied ✅"
+                      "Applied "
                     ) : (
                       "Apply Now"
                     )}

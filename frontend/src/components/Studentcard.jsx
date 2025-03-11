@@ -44,8 +44,6 @@ const StudentCard = ({
     // Add your rejection logic here
   };
 
-
-  
   return (
     <div className="student-card">
       <div className="card-header">
@@ -108,14 +106,16 @@ const StudentCard = ({
         </div>
       )}
 
-      <div className="action-buttons">
-        <button className="accept-button" onClick={handleAccept}>
-          Accept
-        </button>
-        <button className="reject-button" onClick={handleReject}>
-          Reject
-        </button>
-      </div>
+      {status === "PENDING" && (
+        <div className="action-buttons">
+          <button className="accept-button" onClick={handleAccept}>
+            Accept
+          </button>
+          <button className="reject-button" onClick={handleReject}>
+            Reject
+          </button>
+        </div>
+      )}
     </div>
   );
 };
