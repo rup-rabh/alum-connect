@@ -3,10 +3,9 @@ import { useLocation, useParams } from "react-router-dom";
 import "./JobDetails.css";
 import NavBar from "./NavBar";
 import axios from "axios";
-import { fetchUserInfo } from "./fetchData";
-import { useNavigate } from 'react-router-dom';
+import { fetchInternships, fetchUserInfo } from "./fetchData";
+import { useNavigate } from "react-router-dom";
 import { closeInternship } from "./postData";
-
 
 const JobDetails = () => {
   const { id } = useParams();
@@ -15,8 +14,10 @@ const JobDetails = () => {
   const [token, setToken] = useState(null);
   const navigate = useNavigate();
   const [isApplying, setIsApplying] = useState(false);
-    const [hasApplied, setHasApplied] = useState(false);
-
+  const [hasApplied, setHasApplied] = useState(false);
+  const [internships, setInternships] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+ 
   useEffect(() => {
     const fetchJobDetails = async () => {
       try {
@@ -50,6 +51,7 @@ const JobDetails = () => {
 
   // Fetch user role on component mount
   useEffect(() => {
+    
     const getUserRole = async () => {
       try {
         const userInfo = await fetchUserInfo();
@@ -64,20 +66,41 @@ const JobDetails = () => {
     getUserRole();
   }, []);
 
-  const handleCloseInternship= async ()=>{
+  useEffect(() => {
+      if (!role) return;
+  
+      const url =
+        role === "ALUMNI"
+          ? "alumni/getPostedInternships"
+          : "student/getAllInternships";
+  
+      const fetchData = async () => {
+        try {
+          const internships = await fetchInternships(url,role);
+          setInternships(internships);
+        } catch (error) {
+          console.log("Error while fetching internships:", error.message);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+  
+      fetchData();
+    }, [role]);
+
+  const handleCloseInternship = async () => {
     try {
-      const updatedJob=await closeInternship(id);
+      const updatedJob = await closeInternship(id);
       console.log("Internship closed successfully!");
       setJob(updatedJob);
-      
     } catch (error) {
       console.error("Failed to close internship:", error);
     }
-  }
+  };
 
   const handleApplyClick = async (e) => {
     e.preventDefault();
-    setIsApplying(true); 
+    setIsApplying(true);
 
     try {
       const token = localStorage.getItem("token");
@@ -160,25 +183,32 @@ const JobDetails = () => {
                   >
                     View Applications
                   </button>
-                  <button className="close-internship-button" onClick={handleCloseInternship}>
+                  <button
+                    className="close-internship-button"
+                    onClick={handleCloseInternship}
+                  >
                     Close Internship
                   </button>
                 </>
               ) : (
                 <>
-                 <button
-              className={`apply-button ${hasApplied ? "applied" : ""}`}
-              onClick={handleApplyClick}
-              disabled={isApplying || hasApplied} // Disable if applying or already applied
-            >
-              {isApplying ? (
-                <span className="spinner"></span> // Show spinner while applying
-              ) : hasApplied ? (
-                "Applied ✅"
-              ) : (
-                "Apply Now"
-              )}
-            </button>
+                  <button
+                    className={`apply-button ${
+                      internships.applicationStatus !== null ? "applied" : ""
+                    }`}
+                    onClick={handleApplyClick}
+                    disabled={
+                      isApplying || internships.applicationStatus !== null
+                    }
+                  >
+                    {isApplying ? (
+                      <span className="spinner"></span>
+                    ) : internships.applicationStatus !== null ? (
+                      "Applied "
+                    ) : (
+                      "Apply Now"
+                    )}
+                  </button>
                 </>
               )}
               <div className="job-details-meta">

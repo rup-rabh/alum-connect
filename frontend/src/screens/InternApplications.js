@@ -96,9 +96,10 @@ const InternApplications = () => {
         <h2 className="applications-header">Applications</h2>
         
           <div className="applications-grid">
-            {dummyApplicants.map((student, index) => (
+            {applications.map(({status,student}, index) => (
               <StudentCard
                 key={index}
+                status={status}
                 fullName={student.fullName}
                 rollno={student.rollno}
                 department={student.department}

@@ -6,8 +6,6 @@ import { Link } from "react-router-dom";
 import { useUser } from "../context/userContext";
 import axios from "axios";
 
-
-
 const domainMap = {
   SOFTWARE: "Software Engineering",
   FRONTEND: "Frontend Development",
@@ -40,8 +38,8 @@ const InternCard = ({
   const navigate = useNavigate();
   const [isApplying, setIsApplying] = useState(false);
   const [hasApplied, setHasApplied] = useState(false);
- const [internships, setInternships] = useState([]);
- const [Role, setRole] = useState(null);
+  const [internships, setInternships] = useState([]);
+  const [Role, setRole] = useState(null);
   const [token, setToken] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -50,7 +48,7 @@ const InternCard = ({
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-useEffect(() => {
+  useEffect(() => {
     const getUserRole = async () => {
       try {
         const userInfo = await fetchUserInfo();
@@ -65,7 +63,6 @@ useEffect(() => {
     getUserRole();
   }, []);
 
-
   useEffect(() => {
     if (!Role) return;
 
@@ -76,7 +73,7 @@ useEffect(() => {
 
     const fetchData = async () => {
       try {
-        const internships = await fetchInternships(url,Role);
+        const internships = await fetchInternships(url, Role);
         setInternships(internships);
       } catch (error) {
         console.log("Error while fetching internships:", error.message);
@@ -88,10 +85,9 @@ useEffect(() => {
     fetchData();
   }, [Role]);
 
-
   const handleApplyClick = async (e) => {
     e.preventDefault();
-    setIsApplying(true); 
+    setIsApplying(true);
 
     try {
       const token = localStorage.getItem("token");
@@ -104,7 +100,6 @@ useEffect(() => {
           },
         }
       );
-
       setHasApplied(true);
     } catch (error) {
       console.error("Application failed:", error);
@@ -115,13 +110,8 @@ useEffect(() => {
 
   const handleModifyClick = (e) => {
     e.preventDefault();
-    navigate(`/modify/${id}`, { state: { role } });
-  };
-
-  return (
-    <Link
-      to={`/jobs/${id}`}
-      state={{
+    navigate(`/jobs/${id}`, {
+      state: {
         role,
         job: {
           id,
@@ -137,77 +127,100 @@ useEffect(() => {
           weeklyHours,
           company,
         },
-      }}
-      className="intern-card-link"
-    >
-      <div className="intern-card">
-        <div className="card-header">
-          <h2 className="title">
-            {company} - {title}
-          </h2>
-          <div className="domain-pill">{domainMap[domain]}</div>
-        </div>
+      },
+    });
+  };
 
-        <p className="description">{jd}</p>
-
-        <div className="details">
-          <div className="detail-item">
-            <i className="fas fa-map-marker-alt"></i>
-            <span>{location}</span>
-          </div>
-          <div className="detail-item">
-            <i className="fas fa-money-bill-wave"></i>
-            <span>{compensation}</span>
-          </div>
-          <div className="detail-item">
-            <i className="fas fa-calendar-alt"></i>
-            <span>{duration}</span>
-          </div>
-          {weeklyHours && (
-            <div className="detail-item">
-              <i className="fas fa-clock"></i>
-              <span>{weeklyHours} hrs/week</span>
-            </div>
-          )}
-        </div>
-
-        <div className="footer-section">
-          <div className="timeline">
-            <span>{formatDate(startTime)}</span>
-            <span className="timeline-separator">-</span>
-            <span>{formatDate(endTime)}</span>
-          </div>
-
-          <div className="eligibility">
-            <i className="fas fa-user-graduate"></i>
-            <span>{criteria}</span>
-          </div>
-
-          {/* Conditional rendering based on role */}
-          {role === "STUDENT" && internships.applicationStatus===null && (
-            <button
-              className={`intern-apply-button ${hasApplied ? "applied" : ""}`}
-              onClick={handleApplyClick}
-              disabled={isApplying || hasApplied} // Disable if applying or already applied
-            >
-              {isApplying ? (
-                <span className="spinner"></span> // Show spinner while applying
-              ) : hasApplied ? (
-                "Applied ✅"
-              ) : (
-                "Apply Now"
-              )}
-            </button>
-          )}
-
-          {role === "ALUMNI" && (
-            <button className="intern-modify-button" onClick={handleModifyClick}>
-              Manage
-            </button>
-          )}
-        </div>
+  return (
+    <div className="intern-card">
+      <div className="card-header">
+        <h2 className="title">
+          <Link
+            to={`/jobs/${id}`}
+            state={{
+              role,
+              job: {
+                id,
+                title,
+                jd,
+                domain,
+                location,
+                compensation,
+                duration,
+                startTime,
+                endTime,
+                criteria,
+                weeklyHours,
+                company,
+              },
+            }}
+            className="intern-card-link"
+          >
+            {company}{" - " + title}
+          </Link>
+          
+        </h2>
+        <div className="domain-pill">{domainMap[domain]}</div>
       </div>
-    </Link>
+
+      <p className="description">{jd}</p>
+
+      <div className="details">
+        <div className="detail-item">
+          <i className="fas fa-map-marker-alt"></i>
+          <span>{location}</span>
+        </div>
+        <div className="detail-item">
+          <i className="fas fa-money-bill-wave"></i>
+          <span>{compensation}</span>
+        </div>
+        <div className="detail-item">
+          <i className="fas fa-calendar-alt"></i>
+          <span>{duration}</span>
+        </div>
+        {weeklyHours && (
+          <div className="detail-item">
+            <i className="fas fa-clock"></i>
+            <span>{weeklyHours} hrs/week</span>
+          </div>
+        )}
+      </div>
+
+      <div className="footer-section">
+        <div className="timeline">
+          <span>{formatDate(startTime)}</span>
+          <span className="timeline-separator">-</span>
+          <span>{formatDate(endTime)}</span>
+        </div>
+
+        <div className="eligibility">
+          <i className="fas fa-user-graduate"></i>
+          <span>{criteria}</span>
+        </div>
+
+        {role === "STUDENT" && internships.applicationStatus === null && (
+          <button
+            className={`intern-apply-button ${hasApplied ? "applied" : ""}`}
+            onClick={handleApplyClick}
+            disabled={isApplying || hasApplied}
+          >
+            {isApplying ? (
+              <span className="spinner"></span>
+            ) : hasApplied ? (
+              "Applied ✅"
+            ) : (
+              "Apply Now"
+            )}
+          </button>
+        )}
+
+        {role === "ALUMNI" && (
+          <button className="intern-modify-button" onClick={handleModifyClick}>
+            Manage
+          </button>
+        )}
+      </div>
+    </div>
   );
 };
 
