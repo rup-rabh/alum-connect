@@ -41,6 +41,7 @@ const ProfilePage = () => {
       },
     },
     studentProfile: {
+      fullName:null,
       cgpa: null,
       cv: null,
       department: null,
@@ -120,6 +121,7 @@ const ProfilePage = () => {
                 }
               : {
                   studentProfile: {
+                    fullName: basicProfile.fullName || null,
                     cgpa: basicProfile.cgpa || null,
                     cv: basicProfile.cv || null,
                     department: basicProfile.department || null,
