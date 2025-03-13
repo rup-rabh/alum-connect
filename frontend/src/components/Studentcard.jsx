@@ -16,7 +16,6 @@ const domainMap = {
 };
 
 const StudentCard = ({
-  id,
   fullName,
   rollno,
   department,
@@ -25,6 +24,9 @@ const StudentCard = ({
   cv,
   experiences = [],
   status,
+  onAccept,
+  onReject,
+  isProcessing,
 }) => {
   const formatDate = (dateString) => {
     if (!dateString) return "Present";
@@ -32,16 +34,6 @@ const StudentCard = ({
     if (isNaN(date)) return "Present";
     const options = { year: "numeric", month: "short" };
     return date.toLocaleDateString(undefined, options);
-  };
-
-  const handleAccept = () => {
-    console.log("Accepted application for", rollno);
-    // Add your acceptance logic here
-  };
-
-  const handleReject = () => {
-    console.log("Rejected application for", rollno);
-    // Add your rejection logic here
   };
 
   return (
@@ -80,7 +72,6 @@ const StudentCard = ({
           {experiences.map((exp, index) => {
             const isCurrent =
               !exp.endDate || new Date(exp.endDate) > new Date();
-
             return (
               <div key={index} className="experience-item">
                 <div className="experience-header">
@@ -108,11 +99,19 @@ const StudentCard = ({
 
       {status === "PENDING" && (
         <div className="action-buttons">
-          <button className="accept-button" onClick={handleAccept}>
-            Accept
+          <button
+            className="accept-button"
+            onClick={onAccept}
+            disabled={isProcessing}
+          >
+            {isProcessing ? <div className="button-spinner"></div> : "Accept"}
           </button>
-          <button className="reject-button" onClick={handleReject}>
-            Reject
+          <button
+            className="reject-button"
+            onClick={onReject}
+            disabled={isProcessing}
+          >
+            {isProcessing ? <div className="button-spinner"></div> : "Reject"}
           </button>
         </div>
       )}

@@ -4,7 +4,6 @@ import Card from "../components/Card";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import NavBar from "./NavBar";
 import { fetchUserInfo } from "./fetchData";
-import { useUser } from "../context/userContext";
 
 const HomeScreen = () => {
   const alumniCards = [
@@ -77,7 +76,6 @@ const HomeScreen = () => {
   const [currentIndexStudents, setCurrentIndexStudents] = useState(0);
   const cardsPerPage = 4;
   const [role, setRole] = useState(null);
-  // const { user, setUser, userInfoLoading, setUserInfoLoading }=useUser();
   const [userInfoLoading, setUserInfoLoading] = useState(true);
 
   const nextPageAlumni = () => {
@@ -117,135 +115,150 @@ const HomeScreen = () => {
         setUserInfoLoading(false);
       }
     };
-
     getUserInfo();
   }, []);
 
-  if(userInfoLoading){
+  if (userInfoLoading) {
     return (
       <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        width: "100vw",
-        textAlign: "center",
-        fontSize: "18px",
-        fontWeight: "bold",
-        color: "#C45A12",
-        backgroundColor: "#f9f9f9",
-      }}
-    >
-      Loading, please wait...
-    </div>
-    )
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          width: "100vw",
+          textAlign: "center",
+          fontSize: "18px",
+          fontWeight: "bold",
+          color: "#C45A12",
+          backgroundColor: "#f9f9f9",
+        }}
+      >
+        Loading, please wait...
+      </div>
+    );
   }
 
   return (
     <>
-      <NavBar></NavBar>
+      <NavBar />
       <div className="home-screen">
-        <section className="welcome-section">
-          <h1>Welcome to Alumni Connect</h1>
-          <p>
-            Empowering connections, fostering growth, and building a stronger
-            alumni community.
-          </p>
-          <button className="join-button">Join Our Network</button>
-        </section>
-        <section className="alumni-section">
-          <h2>
-            <i
-              className="fas fa-user-graduate"
-              style={{ marginRight: "8px" }}
-            ></i>
-            Connect with your Alumni
-          </h2>
-          <div className="carousel">
-            <button
-              onClick={prevPageAlumni}
-              disabled={currentIndexAlumni === 0}
-              className="carousel-button"
-            >
-              ❮
-            </button>
-            <div className="card-container">
-              {alumniCards
-                .slice(currentIndexAlumni, currentIndexAlumni + cardsPerPage)
-                .map((card, index) => (
-                  <Card
-                    key={index}
-                    title={card.title}
-                    description={card.description}
-                    icon={card.icon}
-                    link={card.link}
-                    disabled={role === "STUDENT" || role === null}
-                    disabledMessage={
-                      role === null
-                        ? "Please sign in."
-                        : "Students cannot access these"
-                    }
-                  />
-                ))}
-            </div>
-            <button
-              onClick={nextPageAlumni}
-              disabled={currentIndexAlumni + 1 >= alumniCards.length}
-              className="carousel-button"
-            >
-              ❯
-            </button>
-          </div>
-        </section>
+        {!role ? (
+          <>
+            <section className="welcome-section">
+              <h1>Welcome to Alumni Connect</h1>
+              <p>
+                Empowering connections, fostering growth, and building a
+                stronger alumni community.
+              </p>
+              <button className="join-button">Join Our Network</button>
+            </section>
 
-        <section className="students-section">
-          <h2>
-            <i
-              className="fas fa-graduation-cap"
-              style={{ marginRight: "8px" }}
-            ></i>
-            Students Corner
-          </h2>
-          <div className="carousel">
-            <button
-              onClick={prevPageStudents}
-              disabled={currentIndexStudents === 0}
-              className="carousel-button"
-            >
-              ❮
-            </button>
-            <div className="card-container">
-              {studentCards
-                .slice(
-                  currentIndexStudents,
-                  currentIndexStudents + cardsPerPage
-                )
-                .map((card, index) => (
-                  <Card
-                    key={index}
-                    title={card.title}
-                    description={card.description}
-                    icon={card.icon}
-                    link={card.link}
-                    disabled={role === "ALUMNI" || role === null}
-                    disabledMessage={
-                      role === null
-                        ? "Please sign in."
-                        : "Alumni cannot access these."
-                    }
-                  />
-                ))}
+            <section className="alumni-section">
+              <h2>
+                <i
+                  className="fas fa-user-graduate"
+                  style={{ marginRight: "8px" }}
+                ></i>
+                Connect with your Alumni
+              </h2>
+              <div className="carousel">
+                <button
+                  onClick={prevPageAlumni}
+                  disabled={currentIndexAlumni === 0}
+                  className="carousel-button"
+                >
+                  ❮
+                </button>
+                <div className="card-container">
+                  {alumniCards
+                    .slice(
+                      currentIndexAlumni,
+                      currentIndexAlumni + cardsPerPage
+                    )
+                    .map((card, index) => (
+                      <Card
+                        key={index}
+                        {...card}
+                        disabled={true}
+                        disabledMessage="Please sign in."
+                      />
+                    ))}
+                </div>
+                <button
+                  onClick={nextPageAlumni}
+                  disabled={currentIndexAlumni + 1 >= alumniCards.length}
+                  className="carousel-button"
+                >
+                  ❯
+                </button>
+              </div>
+            </section>
+
+            <section className="students-section">
+              <h2>
+                <i
+                  className="fas fa-graduation-cap"
+                  style={{ marginRight: "8px" }}
+                ></i>
+                Students Corner
+              </h2>
+              <div className="carousel">
+                <button
+                  onClick={prevPageStudents}
+                  disabled={currentIndexStudents === 0}
+                  className="carousel-button"
+                >
+                  ❮
+                </button>
+                <div className="card-container">
+                  {studentCards
+                    .slice(
+                      currentIndexStudents,
+                      currentIndexStudents + cardsPerPage
+                    )
+                    .map((card, index) => (
+                      <Card
+                        key={index}
+                        {...card}
+                        disabled={true}
+                        disabledMessage="Please sign in."
+                      />
+                    ))}
+                </div>
+                <button
+                  onClick={nextPageStudents}
+                  disabled={currentIndexStudents + 1 >= studentCards.length}
+                  className="carousel-button"
+                >
+                  ❯
+                </button>
+              </div>
+            </section>
+          </>
+        ) : role === "ALUMNI" ? (
+          <section className="alumni-section full-screen-grid">
+            <h2>
+              <i className="fas fa-user-graduate"></i>Alumni Dashboard
+            </h2>
+            <div className="cards-grid">
+              {alumniCards.map((card, index) => (
+                <Card key={index} {...card} disabled={false} />
+              ))}
             </div>
-            <button
-              onClick={nextPageStudents}
-              disabled={currentIndexStudents + 1 >= studentCards.length}
-              className="carousel-button"
-            >
-              ❯
-            </button>
-          </div>
-        </section>
+          </section>
+        ) : (
+          <section className="students-section full-screen-grid">
+            <h2>
+              <i className="fas fa-graduation-cap"></i>Students Dashboard
+            </h2>
+            <div className="cards-grid">
+              {studentCards.map((card, index) => (
+                <Card key={index} {...card} disabled={false} />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </>
   );

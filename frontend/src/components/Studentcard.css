@@ -1,14 +1,15 @@
 .student-card {
-  background-color: white;
+  background-color: rgb(255, 237, 213);
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   padding: 2rem;
   color: #333;
   font-family: "Inter", sans-serif;
   margin: 1rem 0;
+  min-width: 350px;
 }
 
-card-header {
+.card-header {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
@@ -46,7 +47,6 @@ card-header {
   width: fit-content;
 }
 
-/* Keep original CV link styling */
 .cv-section {
   margin: 1.5rem 0;
 }
@@ -66,14 +66,12 @@ card-header {
 .cv-link:hover {
   background-color: rgba(154, 52, 18, 0.05);
   border-color: #7c2d12;
-  text-decoration: none;
 }
 
 .fa-file-pdf {
   font-size: 1.2rem;
 }
 
-/* Rest of the new styling */
 .experience-section h3 {
   color: #7c2d12;
   font-size: 1.5rem;
@@ -100,7 +98,7 @@ card-header {
   margin: 0;
 }
 
-.experience-role {
+.experience-duration {
   color: #666;
   font-size: 0.9rem;
 }
@@ -114,21 +112,15 @@ card-header {
 .tech-stack {
   display: flex;
   gap: 1rem;
-  color: #7c2d12;
   font-size: 0.9rem;
   flex-wrap: wrap;
 }
 
-.tech-stack span {
-  position: relative;
-  padding-right: 1rem;
-}
-
-.tech-stack span:not(:last-child)::after {
-  content: "|";
-  position: absolute;
-  right: 0;
-  color: #ccc;
+.tech-pill {
+  background: #ecf0f1;
+  color: #2c3e50;
+  padding: 4px 12px;
+  border-radius: 12px;
 }
 
 .name-section {
@@ -184,14 +176,30 @@ card-header {
   background-color: #ddd;
 }
 
+.button-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #fff;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 @media (max-width: 768px) {
   .action-buttons {
     flex-direction: column;
     gap: 0.5rem;
   }
-}
 
-@media (max-width: 768px) {
   .student-id {
     font-size: 1.5rem;
   }
@@ -203,9 +211,5 @@ card-header {
 
   .tech-stack {
     gap: 0.5rem;
-  }
-
-  .tech-stack span {
-    padding-right: 0.75rem;
   }
 }
