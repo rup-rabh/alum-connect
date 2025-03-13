@@ -62,7 +62,6 @@ const getAllApplications = async (req, res) => {
   const appliedStudents = await prisma.internApplication.findMany({
     where: {
       internshipId: internshipId,
-      status: { in: ["ACCEPTED", "PENDING"] },
     },
     include: {
       student: {
@@ -105,8 +104,13 @@ const rejectStudent = async (req, res) => {
   const internshipId = parseInt(req.params.id);
   const studentId = req.body.studentId;
 
-  const application = await prisma.internApplication.update({
-    where: { studentId, internshipId },
+  const applications = await prisma.internApplication.update({
+    where: {
+      studentId_internshipId: {
+        studentId: studentId,
+        internshipId: internshipId,
+      },
+    },
     data: {
       status: "REJECTED",
     },

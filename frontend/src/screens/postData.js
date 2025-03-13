@@ -71,3 +71,44 @@ export const closeInternship = async (id) => {
     throw error;
   }
 };
+
+export const acceptInternshipApplication = async (internshipId, studentId) => {
+  try {
+    const token = localStorage.getItem("token");
+    await axios.patch(
+      `http://localhost:3000/api/alumni/acceptStudent/${internshipId}`,
+      {
+        studentId: studentId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  } catch (error) {
+    console.error("Error closing internship:", error);
+    throw error;
+  }
+};
+
+
+export const rejectInternshipApplication = async (internshipId, studentId) => {
+  try {
+    const token = localStorage.getItem("token");
+    await axios.patch(
+      `http://localhost:3000/api/alumni/rejectStudent/${internshipId}`,
+      {
+        studentId: studentId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  } catch (error) {
+    console.error("Error closing internship:", error);
+    throw error;
+  }
+};

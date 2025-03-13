@@ -2,6 +2,7 @@ const prisma = require("../../utils/prismaClient");
 const { z } = require("zod");
 
 const profileSchema = z.object({
+  fullName: z.string().min(1,{message:"full name cannot be empty."}),
   cgpa: z.number().min(0).max(10).optional(),
   cv: z
     .string()

@@ -34,7 +34,7 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/mentorDashboard" element={<Mentor_Dashboard />} />
           <Route path="mentorRegistartion" element={<Mentor_Registration/>} />  
-          <Route   path="/intern-applications/:id"  element={<InternApplications />}
+          <Route   path="/intern-applications/:internshipId"  element={<InternApplications />}
           />
         </Routes>
       </Router>

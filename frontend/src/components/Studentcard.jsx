@@ -1,5 +1,7 @@
 import React from "react";
 import "./Studentcard.css";
+import { useParams } from 'react-router-dom';
+import { acceptInternshipApplication, rejectInternshipApplication } from "../screens/postData";
 
 const domainMap = {
   SOFTWARE: "Software Engineering",
@@ -27,7 +29,12 @@ const StudentCard = ({
   onAccept,
   onReject,
   isProcessing,
+  onStatusChange
 }) => {
+
+  const {internshipId}=useParams();
+  console.log(internshipId)
+
   const formatDate = (dateString) => {
     if (!dateString) return "Present";
     const date = new Date(dateString);
