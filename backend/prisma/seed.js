@@ -1,6 +1,6 @@
 const prisma = require("../utils/prismaClient");
 const bcrypt = require("bcrypt");
-
+//node prisma/seed.js
 async function main() {
   console.log("🌱 Seeding database...");
 
@@ -21,7 +21,7 @@ async function main() {
   const hashedPassword = await bcrypt.hash("123456", 10);
 
   // Create Alumni User
-  const alumniUser = await prisma.user.create({
+  const alumniUser = await prisma.user.create({ //this guy becomes mentor later
     data: {
       username: "alumni",
       email: "alumni@gmail.com",
@@ -38,7 +38,26 @@ async function main() {
     },
     include: { alumni: true },
   });
-  console.log("👨‍🎓 Created alumni user");
+  console.log("👨‍🎓 Created an alumni ");
+
+  const alumniUser1 = await prisma.user.create({ //this guy becomes mentor later
+    data: {
+      username: "alum",
+      email: "alum@gmail.com",
+      password: hashedPassword,
+      role: "ALUMNI",
+      alumni: {
+        create: {
+          fullName: "Doe Jana",
+          presentCompany: "Tata",
+          yearsOfExperience: 3,
+          domain: "PRODUCT_MANAGEMENT",
+        },
+      },
+    },
+    include: { alumni: true },
+  });
+  console.log("👨‍🎓 Created another alumni user");
 
   // Add Alumni Experience
   await prisma.alumniExperience.create({
@@ -51,7 +70,19 @@ async function main() {
       alumniId: alumniUser.alumni.id,
     },
   });
-  console.log("💼 Added alumni experience");
+  console.log("💼 Added an alumni experience");
+
+  await prisma.alumniExperience.create({
+    data: {
+      company: "Tata",
+      role: "Sweeper",
+      startDate: new Date("2020-01-01"),
+      endDate: new Date("2023-01-01"),
+      description: "Was sweeping during the day and gaming on night",
+      alumniId: alumniUser1.alumni.id,
+    },
+  });
+  console.log("💼 Added another alumni experience");
 
   // Create Student User
   const studentUser = await prisma.user.create({

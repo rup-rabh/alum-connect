@@ -29,6 +29,7 @@ const isAlumWithBasicProfile = async (req, res, next) => {
       where: { userId: req.userId },
     });
 
+    
     if (!profile) {
       return res.status(403).json({
         message:
@@ -44,19 +45,18 @@ const isAlumWithBasicProfile = async (req, res, next) => {
   }
 };
 const isMentor = async (req,res,next) =>{
-
+  
+  
+  
   try{
     const profile = await prisma.mentor.findUnique({
       where: { userId: req.userId },
     });
-    console.log("here");
-    if (!profile) {
-      return res.status(403).json({
-        message:
-          "Profile incomplete. Please complete your profile before proceeding.",
-      });
+    // console.log("here");
+    if (profile) {
+
+      req.mentorId = profile.id;
     }
-    req.mentorId = profile.id;
     next();
 
   }

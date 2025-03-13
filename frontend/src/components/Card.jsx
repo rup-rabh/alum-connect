@@ -18,9 +18,11 @@ const Card = ({ title, description, icon, link, disabled, disabledMessage }) => 
       }
   
       try {
-        const response = await axios.get("http://localhost:3001/api/alumni/mentorshipStatus", {
+        const response = await axios.get("http://localhost:3000/api/alumni/mentorshipStatus", {
           headers: { Authorization: `Bearer ${token}` },
-        });
+        }).catch((error)=>console.log(error)
+        );
+        console.log(response.data.isMentor);
         
         // Navigate based on API response
         navigate(response.data.isMentor ? "/mentorDashboard" : "/mentorRegistration");
