@@ -105,6 +105,7 @@ const HomeScreen = () => {
   useEffect(() => {
     const getUserInfo = async () => {
       try {
+        
         const userInfo = await fetchUserInfo();
         if (userInfo) {
           setRole(userInfo.role);

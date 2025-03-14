@@ -88,7 +88,19 @@ const getRejectedInternships=async(req,res)=>{
 }
 const getAllMentors = async (req,res)=>{
   try {
-      const mentors = await prisma.mentor.findMany();
+      const mentors = await prisma.mentor.findMany({
+        include: {
+          user: {
+            include: {
+              alumni: {
+                select: {
+                  fullName: true, // Fetch only the name from Alumni
+                },
+              },
+            },
+          },
+        },
+      });
       return res.status(201).json({mentors});
   } catch (error) {
       console.error("Error in getAllMentors:", error);

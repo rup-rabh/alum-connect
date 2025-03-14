@@ -105,3 +105,80 @@ export const fetchInternshipApplications=async(id)=>{
     throw error;
   }
 }
+
+export const fetchMentors = async ()=>{
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(
+      `http://localhost:3000/api/student/getMentors`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+    
+  } catch (error) {
+    console.error("Error fetching Mentors : ", error);
+    throw error;
+  }
+}
+export const fetchMentorships = async ()=>{
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(
+      `http://localhost:3000/api/alumni/getMentorshipsForMentors`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+    
+  } catch (error) {
+    console.error("Error fetching Mentors : ", error);
+    throw error;
+  }
+}
+export const acceptMentorship = async (mentorshipId) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.patch('http://localhost:3000/api/alumni/acceptMentorship', {
+      mentorshipId: mentorshipId,
+    },{
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log('Response:', response.data);
+  } catch (error) {
+    console.error("Error accepting Mentorsship : ", error);
+  }
+};
+
+export const sendMentorshipRequest = async (mentorId) =>{
+  try {
+    const token = localStorage.getItem('token');
+    const body = {
+      mentorId: mentorId,
+    };
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    const response = await axios.post(
+      'http://localhost:3000/api/student/connectMentor', 
+      body,
+      { headers } 
+    );
+    console.log('Response:', response.data);
+  } catch (error) {
+    console.error("Error sending mentorship request : ", error);
+  }
+
+}
