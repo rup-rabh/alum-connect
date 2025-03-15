@@ -50,7 +50,7 @@ const HomeScreen = () => {
       title: "Find Mentors",
       description: "Get connected with mentors.",
       icon: <i className="fas fa-user-friends"></i>,
-      link: "/workshop2",
+      link: "/menteeDashboard",
     },
     {
       title: "Chatpoint",
