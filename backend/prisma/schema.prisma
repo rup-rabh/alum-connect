@@ -70,7 +70,7 @@ model Mentor {
   linkedinProfile     String?
   currentOrganization String?
   passingYear         Int?
-
+  availabilityStatus mentorAvailability @default(AVAILABLE)
   mentorships Mentorship[]
 }
 
@@ -231,4 +231,10 @@ enum GroupRole {
   MEMBER
   ADMIN
   OWNER
+}
+
+enum mentorAvailability {
+  AVAILABLE
+  BUSY
+  UNAVAILABLE
 }

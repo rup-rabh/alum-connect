@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Mentee_Dashboard.css";
 import MentorshipCard from "../components/MentorshipCard";
 import NavBar from "./NavBar";
-
+import {fetchMentors} from "./fetchData"
 const domains = [
   "SOFTWARE",
   "FRONTEND",
@@ -25,6 +25,8 @@ const Mentee_Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
+    
+    // fetchMentors().then(data => setMentorships(data));
     const dummyMentorships = [
       {
         id: 1,
@@ -74,6 +76,7 @@ const Mentee_Dashboard = () => {
 
     setMentorships(dummyMentorships);
     setIsLoading(false);
+    
   }, []);
 
   const toggleDropdown = (type) => {
