@@ -163,8 +163,6 @@ const addMentorProfile = async (req, res) => {
 
 const getMentorProfile = async (req, res) => {
   try {
-    
-    
     const basicProfile = await prisma.mentor.findUnique({
       where: { id: req.body.mentorId },
     });

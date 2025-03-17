@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Mentee_Dashboard.css";
 import MentorshipCard from "../components/MentorshipCard";
 import NavBar from "./NavBar";
-import {fetchMentors} from "./fetchData"
+import {fetchMentors,fetchMentorProfile} from "./fetchData"
 const domains = [
   "SOFTWARE",
   "FRONTEND",
@@ -27,6 +27,7 @@ const Mentee_Dashboard = () => {
   useEffect(() => {
     
     // fetchMentors().then(data => setMentorships(data));
+    // fetchMentorProfile(1).then(data=> console.log(data));
     const dummyMentorships = [
       {
         id: 1,

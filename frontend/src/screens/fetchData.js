@@ -182,3 +182,25 @@ export const sendMentorshipRequest = async (mentorId) =>{
   }
 
 }
+
+export const fetchMentorProfile = async(mentorId) =>{
+  try {
+    const token = localStorage.getItem('token');
+    const body = {
+      mentorId: mentorId,
+    };
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    const response = await axios.post(
+      'http://localhost:3000/api/student/getMentorProfile', 
+      body,
+      { headers } 
+    );
+    console.log('Response:', response.data);
+  } catch (error) {
+    console.error("Error fetching mentor profile : ", error);
+  }
+
+}
