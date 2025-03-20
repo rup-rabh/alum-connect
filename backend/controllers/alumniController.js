@@ -199,14 +199,18 @@ const getMentorshipsForMentor = async (req, res) => {
 
     // Fetch all mentorships for the mentor
     const mentorships = await prisma.mentorship.findMany({
-      where: {
-        mentorId: mentorId,
-      },
       include: {
-        mentee: true, // Include mentee details (User model)
+        mentee: {
+          include: {
+            student: {
+              select: {
+                fullName: true, // Fetch only the name from Student
+              },
+            },
+          },
+        },
       },
     });
-
     if (!mentorships || mentorships.length === 0) {
       return res
         .status(404)

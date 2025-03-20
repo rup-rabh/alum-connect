@@ -17,6 +17,7 @@ import ProfilePage from "./screens/ProfilePage";
 import Mentor_Dashboard from "./screens/Mentor_Dashboard";
 import Mentor_Registration from "./screens/Mentor_Registration";
 import InternApplications from "./screens/InternApplications";
+import Mentee_Dashboard from "./screens/Mentee_Dashboard";
 
 function App() {
   return (
@@ -31,9 +32,9 @@ function App() {
           <Route path="/jobs/:id" element={<JobDetails />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/mentorDashboard" element={<Mentor_Dashboard />} />
-          <Route path="mentorRegistartion" element={<Mentor_Registration/>} />  
-          <Route   path="/intern-applications/:internshipId"  element={<InternApplications />}
-          />
+          <Route path="/mentorRegistration" element={<Mentor_Registration/>} />  
+          <Route   path="/intern-applications/:internshipId"  element={<InternApplications />}/>
+          <Route path="/menteeDashboard" element={<Mentee_Dashboard/>}   />
         </Routes>
       </Router>
   );

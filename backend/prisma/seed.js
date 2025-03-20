@@ -205,18 +205,21 @@ async function main() {
   });
 
   console.log("🎉 created mentorship!", "status ", mentorShip.status);
-  const mentorShipAccepted = await prisma.mentorship.update({
-    where: { id: mentorShip.id },
-    data: {
-      status: "ACTIVE",
-      mentor: {
-        update: {
-          currentMentees: { increment: 1 },
-        },
-      },
-    },
-  });
-  console.log("🎉 mentorship accepted!", "status ", mentorShipAccepted.status);
+
+  /************Commented below to check test api */
+
+  // const mentorShipAccepted = await prisma.mentorship.update({
+  //   where: { id: mentorShip.id },
+  //   data: {
+  //     status: "ACTIVE",
+  //     mentor: {
+  //       update: {
+  //         currentMentees: { increment: 1 },
+  //       },
+  //     },
+  //   },
+  // });
+  // console.log("🎉 mentorship accepted!", "status ", mentorShipAccepted.status);
   console.log("🎉 Seeding complete!");
 }
 

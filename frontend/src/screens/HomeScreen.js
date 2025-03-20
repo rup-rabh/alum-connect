@@ -50,7 +50,7 @@ const HomeScreen = () => {
       title: "Find Mentors",
       description: "Get connected with mentors.",
       icon: <i className="fas fa-user-friends"></i>,
-      link: "/workshop2",
+      link: "/menteeDashboard",
     },
     {
       title: "Chatpoint",
@@ -105,6 +105,7 @@ const HomeScreen = () => {
   useEffect(() => {
     const getUserInfo = async () => {
       try {
+        
         const userInfo = await fetchUserInfo();
         if (userInfo) {
           setRole(userInfo.role);

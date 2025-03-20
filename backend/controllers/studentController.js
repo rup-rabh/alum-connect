@@ -86,15 +86,52 @@ const getRejectedInternships=async(req,res)=>{
 
   return res.status(201).json({rejectedInternships});
 }
-const getAllMentors = async (req,res)=>{
+const getAllMentors = async (req, res) => {
   try {
-      const mentors = await prisma.mentor.findMany();
-      return res.status(201).json({mentors});
+    const mentors = await prisma.mentor.findMany({
+      where: {
+        availabilityStatus: {
+          not: "UNAVAILABLE", // Exclude "UNAVAILABLE"
+        },
+      },
+      include: {
+        user: {
+          select: {
+            alumni: {
+              select: {
+                fullName: true, // Fetch fName
+              },
+            },
+          },
+        },
+      },
+    });
+
+    //  data in desired format
+    const formattedMentors = mentors.map((mentor) => ({
+      id: mentor.id,
+      mentorName: mentor.user.alumni.fullName, // Use fullName from alumni
+      keywords: mentor.keywords,
+      experience: mentor.experience,
+      interaction: mentor.interaction,
+      maxMentees: mentor.maxMentees,
+      currentMentees: mentor.currentMentees,
+      levelsOfMentees: mentor.levelsOfMentees,
+      interests: mentor.interests,
+      linkedinProfile: mentor.linkedinProfile,
+      currentOrganization: mentor.currentOrganization,
+      passingYear: mentor.passingYear,
+      status: mentor.availabilityStatus, 
+    }));
+
+    return res.status(200).json(formattedMentors); // Return formatted response
   } catch (error) {
-      console.error("Error in getAllMentors:", error);
-      return res.status(500).json({ message: "Internal server error" });
+    console.error("Error in getAllMentors:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
-}
+};
+
+
 const connectToMentor = async (req, res) => {
   try {
     const { mentorId } = req.body; 
