@@ -14,14 +14,12 @@ import "./App.css";
 import InternshipPage from "./screens/InternshipPage";
 import JobDetails from "./screens/JobDetails";
 import ProfilePage from "./screens/ProfilePage";
-import { UserProvider, useUser } from "./context/userContext";
 import Mentor_Dashboard from "./screens/Mentor_Dashboard";
 import Mentor_Registration from "./screens/Mentor_Registration";
 import InternApplications from "./screens/InternApplications";
 
 function App() {
   return (
-    <UserProvider>
       <Router>
         {/* Include the NavBar on every screen */}
         <Routes>
@@ -38,7 +36,6 @@ function App() {
           />
         </Routes>
       </Router>
-    </UserProvider>
   );
 }
 

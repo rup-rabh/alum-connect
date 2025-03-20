@@ -3,10 +3,11 @@ import StudentCard from "../components/Studentcard";
 import { useParams } from "react-router-dom";
 import "./InternApplications.css";
 import NavBar from "./NavBar";
-import { fetchInternshipApplications } from "./fetchData";
+import { fetchInternshipApplications } from "../components/fetchData";
+import { acceptInternshipApplication, rejectInternshipApplication } from "../components/postData";
 
 const InternApplications = () => {
-  const { id } = useParams();
+  const { internshipId } = useParams();
   const [loading, setLoading] = useState(true);
   const [applications, setApplications] = useState([]);
   const [error, setError] = useState(null);
@@ -15,10 +16,11 @@ const InternApplications = () => {
   const [currentAcceptedIndex, setCurrentAcceptedIndex] = useState(0);
 
   useEffect(() => {
+    console.log("In internship Applications:",internshipId);
     const getApplications = async () => {
       setLoading(true);
       try {
-        const applicationsData = await fetchInternshipApplications(id);
+        const applicationsData = await fetchInternshipApplications(internshipId);
         setApplications(applicationsData);
       } catch (error) {
         setError("Failed to load applications");
@@ -28,24 +30,24 @@ const InternApplications = () => {
       }
     };
 
-    if (id) getApplications();
-  }, [id]);
+    if (internshipId) getApplications();
+  }, [internshipId]);
 
   const handleApplicationAction = async (studentId, action) => {
     setProcessingStudents((prev) => [...prev, studentId]);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setApplications((prev) =>
-      prev.map((app) => {
-        if (app.student.rollno === studentId) {
-          return {
-            ...app,
-            status: action === "accept" ? "ACCEPTED" : "REJECTED",
-          };
-        }
-        return app;
-      })
-    );
-    setProcessingStudents((prev) => prev.filter((id) => id !== studentId));
+    try {
+      if (action === "accept") {
+        await acceptInternshipApplication(internshipId, studentId);
+        handleStatusChange(studentId, "ACCEPTED");
+      } else {
+        await rejectInternshipApplication(internshipId, studentId);
+        handleStatusChange(studentId, "REJECTED");
+      }
+    } catch (error) {
+      console.error(`Failed to ${action} application:`, error);
+    } finally {
+      setProcessingStudents((prev) => prev.filter((id) => id !== studentId));
+    }
   };
 
   const handleCarousel = (section, direction) => {
@@ -59,6 +61,14 @@ const InternApplications = () => {
       );
     }
   };
+
+  const handleStatusChange=(studentId,newStatus)=>{
+    setApplications((applications)=>{
+      return applications.map((app)=>{
+        return (app.student.id===studentId)?{...app,status:newStatus}:app;
+      })
+    })
+  }
 
   if (loading) {
     return (
@@ -101,6 +111,7 @@ const InternApplications = () => {
                     .map(({ status, student }, index) => (
                       <StudentCard
                         key={index}
+                        studentId={student.id}
                         status={status}
                         fullName={student.fullName}
                         rollno={student.rollno}

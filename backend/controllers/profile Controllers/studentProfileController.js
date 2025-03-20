@@ -38,9 +38,9 @@ const experienceSchema = z.object({
   endDate: z.union([z.string().datetime(), z.null()]).optional(),
 });
 
-const experiencesSchema = z
-  .array(experienceSchema)
-  .min(1, { message: "Enter atleast one experience." });
+// const experiencesSchema = z
+//   .array(experienceSchema)
+//   .min(1, { message: "Enter atleast one experience." });
 
 const addBasicProfile = async (req, res) => {
   const profile = profileSchema.safeParse(req.body);
@@ -84,25 +84,22 @@ const updateBasicProfile=async (req,res)=>{
 }
 
 const addExperience = async (req, res) => {
-  const experiences = experiencesSchema.safeParse(req.body);
+  const experience = experienceSchema.safeParse(req.body);
 
-  if (!experiences.success) {
-    const errors = experiences.error.errors.map((error) => ({
+  if (!experience.success) {
+    const errors = experience.error.errors.map((error) => ({
       message: error.message,
       path: error.path,
     }));
     return res.status(403).json({ message: "Zod validation errors.", errors });
   }
 
-  const experiencesData = experiences.data.map((exp) => {
-    return {
-      ...exp,
-      studentId: req.studentId,
-    };
-  });
-
-  await prisma.studentExperience.createMany({
-    data: experiencesData,
+  const experienceData = {
+    ...experience.data,
+    studentId
+  }
+  await prisma.studentExperience.create({
+    data: experienceData,
   });
   return res
     .status(201)

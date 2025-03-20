@@ -37,9 +37,9 @@ const experienceSchema = z.object({
   description: z.string().min(1, { message: "Description cannot be empty." }),
 });
 
-const experiencesSchema = z.array(experienceSchema).min(1, {
-  message: "At least one experience is required.",
-});
+// const experiencesSchema = z.array(experienceSchema).min(1, {
+//   message: "At least one experience is required.",
+// });
 
 const addBasicProfile = async (req, res) => {
   const profile = basicProfileSchema.safeParse(req.body);
@@ -81,15 +81,15 @@ const updateBasicProfile=async (req,res)=>{
     data:basicProfile
   })
 
-  return res.status(403).json({message:"Basic profile updated sucessfully!",updatedBasicProfile});
+  return res.status(200).json({message:"Basic profile updated sucessfully!",updatedBasicProfile});
 }
 
 const addExperience = async (req, res) => {
   const alumniId = req.alumniId;
-  const experiences = experiencesSchema.safeParse(req.body);
+  const experience = experienceSchema.safeParse(req.body);
 
-  if (!experiences.success) {
-    const errors = experiences.error.errors.map((error) => ({
+  if (!experience.success) {
+    const errors = experience.error.errors.map((error) => ({
       message: error.message,
       path: error.path,
     }));
@@ -98,15 +98,13 @@ const addExperience = async (req, res) => {
       .json({ message: "Zod validation errors.", errors });
   }
 
-  const experincesdata = experiences.data.map((exp) => {
-    return {
-      ...exp,
-      alumniId,
-    };
-  });
+  const experincedata = {
+    ...experience.data,
+    alumniId
+  }
 
-  await prisma.alumniExperience.createMany({
-    data: experincesdata,
+  await prisma.alumniExperience.create({
+    data:experincedata
   });
 
   return res

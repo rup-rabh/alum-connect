@@ -1,7 +1,7 @@
 import React from "react";
 import "./Studentcard.css";
 import { useParams } from 'react-router-dom';
-import { acceptInternshipApplication, rejectInternshipApplication } from "../screens/postData";
+import { acceptInternshipApplication, rejectInternshipApplication } from "./postData";
 
 const domainMap = {
   SOFTWARE: "Software Engineering",
@@ -18,6 +18,7 @@ const domainMap = {
 };
 
 const StudentCard = ({
+  studentId,
   fullName,
   rollno,
   department,
@@ -29,7 +30,6 @@ const StudentCard = ({
   onAccept,
   onReject,
   isProcessing,
-  onStatusChange
 }) => {
 
   const {internshipId}=useParams();

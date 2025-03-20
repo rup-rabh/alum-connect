@@ -3,9 +3,9 @@ import { useLocation, useParams } from "react-router-dom";
 import "./JobDetails.css";
 import NavBar from "./NavBar";
 import axios from "axios";
-import { fetchInternships, fetchUserInfo } from "./fetchData";
+import { fetchInternships, fetchUserInfo } from "../components/fetchData";
 import { useNavigate } from "react-router-dom";
-import { closeInternship } from "./postData";
+import { closeInternship } from "../components/postData";
 
 const JobDetails = () => {
   const { id } = useParams();
@@ -17,7 +17,7 @@ const JobDetails = () => {
   const [hasApplied, setHasApplied] = useState(false);
   const [internships, setInternships] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
- 
+
   useEffect(() => {
     const fetchJobDetails = async () => {
       try {
@@ -51,7 +51,6 @@ const JobDetails = () => {
 
   // Fetch user role on component mount
   useEffect(() => {
-    
     const getUserRole = async () => {
       try {
         const userInfo = await fetchUserInfo();
@@ -67,32 +66,34 @@ const JobDetails = () => {
   }, []);
 
   useEffect(() => {
-      if (!role) return;
-  
-      const url =
-        role === "ALUMNI"
-          ? "alumni/getPostedInternships"
-          : "student/getAllInternships";
-  
-      const fetchData = async () => {
-        try {
-          const internships = await fetchInternships(url,role);
-          setInternships(internships);
-        } catch (error) {
-          console.log("Error while fetching internships:", error.message);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-  
-      fetchData();
-    }, [role]);
+    if (!role) return;
+
+    const url =
+      role === "ALUMNI"
+        ? "alumni/getPostedInternships"
+        : "student/getAllInternships";
+
+    const fetchData = async () => {
+      try {
+        const internships = await fetchInternships(url, role);
+        setInternships(internships);
+      } catch (error) {
+        console.log("Error while fetching internships:", error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [role]);
 
   const handleCloseInternship = async () => {
+    setIsLoading(true);
     try {
       const updatedJob = await closeInternship(id);
       console.log("Internship closed successfully!");
       setJob(updatedJob);
+      setIsLoading(false);
     } catch (error) {
       console.error("Failed to close internship:", error);
     }
@@ -183,12 +184,16 @@ const JobDetails = () => {
                   >
                     View Applications
                   </button>
-                  <button
-                    className="close-internship-button"
-                    onClick={handleCloseInternship}
-                  >
-                    Close Internship
-                  </button>
+                  {job.closed ? (
+                    <span className="closed-text">Already closed</span>
+                  ) : (
+                    <button
+                      className="close-internship-button"
+                      onClick={handleCloseInternship}
+                    >
+                      Close Internship
+                    </button>
+                  )}
                 </>
               ) : (
                 <>

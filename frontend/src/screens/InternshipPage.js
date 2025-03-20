@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import "./InternshipPage.css";
 import InternCard from "../components/InternCard";
 import NavBar from "./NavBar";
-import { useUser } from "../context/userContext";
-import { fetchInternships, fetchUserInfo } from "./fetchData";
+import { fetchInternships, fetchUserInfo } from "../components/fetchData";
+import { postNewInternship } from "../components/postData";
 
 const domains = [
   "SOFTWARE",
@@ -56,7 +56,7 @@ const InternshipPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const filterRef = useRef(null);
 
-  // Fetch user role on component mount
+  
   useEffect(() => {
     const getUserRole = async () => {
       try {
@@ -135,27 +135,21 @@ const InternshipPage = () => {
       endTime: new Date(formData.endTime).toISOString(),
     };
 
-    if (!payload.company) delete payload.company;
-    if (!payload.weeklyHours) delete payload.weeklyHours;
+    
 
     try {
-      const response = await fetch('/api/alumni/postInternship', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`, 
-        },
-        body: JSON.stringify(payload),
-      });
+      const new_internship = await postNewInternship(payload);
 
-      if (response.ok) {
+      if (new_internship) {
         try {
+          setIsLoading(true);
           const url = role === "ALUMNI" 
             ? "alumni/getPostedInternships" 
             : "student/getAllInternships";
-          const internships = await fetchInternships(url, role);
+          const internships = await fetchInternships(url);
           setInternships(internships);
           alert('Internship posted successfully!');
+          setIsLoading(false)
         } catch (error) {
           alert('Posted successfully but failed to refresh list');
         }

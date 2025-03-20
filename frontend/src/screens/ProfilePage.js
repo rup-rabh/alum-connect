@@ -2,8 +2,12 @@ import React, { useState, useEffect } from "react";
 import "./ProfilePage.css";
 import NavBar from "./NavBar";
 import defaultProfilePic from "../media/default-profile.png";
-import { fetchExperience, fetchProfile, fetchUserInfo } from "./fetchData";
-import { updateBasicProfile } from "./postData";
+import {
+  fetchExperience,
+  fetchProfile,
+  fetchUserInfo,
+} from "../components/fetchData";
+import { addExperience, updateBasicProfile } from "../components/postData";
 
 const domains = [
   "SOFTWARE",
@@ -209,42 +213,59 @@ const ProfilePage = () => {
     }));
   };
 
-  const handleSaveNewExperience = () => {
-    const profileType =
-      profile.role === "ALUMNI" ? "alumniProfile" : "studentProfile";
-
-    setProfile((prev) => ({
-      ...prev,
-      [profileType]: {
-        ...prev[profileType],
-        experiences: [
-          ...prev[profileType].experiences,
-          prev[profileType].newExperience,
-        ],
-        newExperience:
-          profile.role === "ALUMNI"
-            ? {
-                company: "",
-                role: "",
-                startDate: "",
-                endDate: "",
-                description: "",
-              }
-            : {
-                title: "",
-                techStacks: [],
-                startDate: "",
-                endDate: "",
-                description: "",
-              },
-      },
-    }));
-
-    // const url=(profile.role==="ALUMNI")?"alumni/addExperience":"student/addExperience";
-    // const experienceData=(profile.role==="ALUMNI")?
-    setIsAddingExperience(false);
+  const handleSaveNewExperience = async () => {
+    const profileType = profile.role === "ALUMNI" ? "alumniProfile" : "studentProfile";
+  
+    if (!profile[profileType]?.newExperience) {
+      console.error("newExperience is undefined!");
+      return;
+    }
+  
+    try {
+      const url = profile.role === "ALUMNI"
+        ? "alumni/addExperience"
+        : "student/addExperience";
+  
+      const experienceData = profile.role === "ALUMNI"
+        ? {
+            company: profile[profileType].newExperience.company,
+            role: profile[profileType].newExperience.role,
+            startDate: profile[profileType].newExperience.startDate,
+            endDate: profile[profileType].newExperience.endDate,
+            description: profile[profileType].newExperience.description,
+          }
+        : {
+            title: profile[profileType].newExperience.title,
+            techStacks: profile[profileType].newExperience.techStacks,
+            startDate: profile[profileType].newExperience.startDate,
+            endDate: profile[profileType].newExperience.endDate,
+            description: profile[profileType].newExperience.description,
+          };
+  
+      const response = await addExperience(url, experienceData);
+  
+      if (response.ok) {
+        setProfile((prev) => ({
+          ...prev,
+          [profileType]: {
+            ...prev[profileType],
+            experiences: [
+              ...prev[profileType].experiences,
+              prev[profileType].newExperience,
+            ],
+            newExperience: profile.role === "ALUMNI"
+              ? { company: "", role: "", startDate: "", endDate: "", description: "" }
+              : { title: "", techStacks: [], startDate: "", endDate: "", description: "" },
+          },
+        }));
+      }
+    } catch (error) {
+      console.error("Error while saving new experience:", error.message);
+    } finally {
+      setIsAddingExperience(false);
+    }
   };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -255,15 +276,43 @@ const ProfilePage = () => {
 
       const profileData =
         profile.role === "ALUMNI"
-          ? profile.alumniProfile
-          : profile.studentProfile;
+          ? {
+              fullName: profile.alumniProfile.fullName,
+              presentCompany: profile.alumniProfile.presentCompany,
+              domain: profile.alumniProfile.domain,
+              yearsOfExperience: profile.alumniProfile.yearsOfExperience,
+            }
+          : {
+              fullName: profile.studentProfile.fullName,
+              domain: profile.studentProfile.domain,
+              rollno: profile.studentProfile.rollno,
+              department: profile.studentProfile.department,
+              cv: profile.studentProfile.cv,
+              cgpa: profile.studentProfile.cgpa,
+            };
 
       const updatedProfile = await updateBasicProfile(url, profileData);
 
       setProfile((prev) => ({
         ...prev,
-        [prev.role === "ALUMNI" ? "alumniProfile" : "studentProfile"]:
-          updatedProfile,
+        [prev.role === "ALUMNI" ? "alumniProfile" : "studentProfile"]: {
+          ...prev[prev.role === "ALUMNI" ? "alumniProfile" : "studentProfile"],
+          ...(prev.role === "ALUMNI"
+            ? {
+                fullName: updatedProfile.fullName,
+                presentCompany: updatedProfile.presentCompany,
+                domain: updatedProfile.domain,
+                yearsOfExperience: updatedProfile.yearsOfExperience,
+              }
+            : {
+                fullName: updatedProfile.fullName,
+                domain: updatedProfile.domain,
+                rollno: updatedProfile.rollno,
+                department: updatedProfile.department,
+                cv: updatedProfile.cv,
+                cgpa: updatedProfile.cgpa,
+              }),
+        },
       }));
 
       console.log("Updated Profile:", updatedProfile);
@@ -277,7 +326,7 @@ const ProfilePage = () => {
 
   const currentProfile =
     profile[profile.role === "ALUMNI" ? "alumniProfile" : "studentProfile"];
-    const currentExperiences = currentProfile?.experiences || [];
+  const currentExperiences = currentProfile?.experiences || [];
 
   if (isProfileLoading) {
     return (
@@ -576,7 +625,6 @@ const ProfilePage = () => {
               </>
             ) : (
               <>
-                
                 <div className="form-group">
                   <label className="form-label">Roll Number</label>
                   <input
