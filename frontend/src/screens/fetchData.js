@@ -125,6 +125,7 @@ export const fetchMentors = async ()=>{
     throw error;
   }
 }
+
 export const fetchMentorships = async ()=>{
   try {
     const token = localStorage.getItem("token");
@@ -144,6 +145,7 @@ export const fetchMentorships = async ()=>{
     throw error;
   }
 }
+
 export const acceptMentorship = async (mentorshipId) => {
   try {
     const token = localStorage.getItem("token");

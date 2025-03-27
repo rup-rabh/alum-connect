@@ -116,6 +116,7 @@ export const fetchMentorProfileForMentor = async(mentorUserId) =>{
   }
 
 }
+
 export const fetchMentorProfile = async(mentorUserId) =>{
   try {
     const token = localStorage.getItem('token');
