@@ -26,7 +26,7 @@ const Mentee_Dashboard = () => {
 
   useEffect(() => {
     
-    // fetchMentors().then(data => setMentorships(data));
+    
     // fetchMentorProfile(1).then(data=> console.log(data));
     const dummyMentorships = [
       {
@@ -74,8 +74,13 @@ const Mentee_Dashboard = () => {
         passingYear: 2016,
       },
     ];
-
-    setMentorships(dummyMentorships);
+    // setMentorships(dummyMentorships);
+    fetchMentors().then(data => {
+      setMentorships(data)
+      console.log(data);
+      console.log(dummyMentorships);
+      
+    });
     setIsLoading(false);
     
   }, []);

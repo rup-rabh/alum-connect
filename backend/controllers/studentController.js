@@ -88,6 +88,8 @@ const getRejectedInternships=async(req,res)=>{
 }
 const getAllMentors = async (req, res) => {
   try {
+    const menteeUserId = req.userId; // Assuming `req.user.id` contains the logged-in mentee's ID
+
     const mentors = await prisma.mentor.findMany({
       where: {
         availabilityStatus: {
@@ -99,30 +101,39 @@ const getAllMentors = async (req, res) => {
           select: {
             alumni: {
               select: {
-                fullName: true, // Fetch fName
+                fullName: true, // Fetch fullName from alumni
               },
             },
           },
         },
+        mentorships: {
+          where: { menteeId: menteeUserId }, // Check if a mentorship exists with the logged-in mentee
+          select: { status: true }, // Fetch only the status of the mentorship
+        },
       },
     });
 
-    //  data in desired format
-    const formattedMentors = mentors.map((mentor) => ({
-      id: mentor.id,
-      mentorName: mentor.user.alumni.fullName, // Use fullName from alumni
-      keywords: mentor.keywords,
-      experience: mentor.experience,
-      interaction: mentor.interaction,
-      maxMentees: mentor.maxMentees,
-      currentMentees: mentor.currentMentees,
-      levelsOfMentees: mentor.levelsOfMentees,
-      interests: mentor.interests,
-      linkedinProfile: mentor.linkedinProfile,
-      currentOrganization: mentor.currentOrganization,
-      passingYear: mentor.passingYear,
-      status: mentor.availabilityStatus, 
-    }));
+    const formattedMentors = mentors.map((mentor) => {
+      const mentorshipStatus =
+        mentor.mentorships.length > 0 ? mentor.mentorships[0].status : "NEW";
+
+      return {
+        id: mentor.userId,  //using mentor userId isntead of mentorId
+        mentorName: mentor.user.alumni.fullName,
+        keywords: mentor.keywords,
+        experience: mentor.experience,
+        interaction: mentor.interaction,
+        maxMentees: mentor.maxMentees,
+        currentMentees: mentor.currentMentees,
+        levelsOfMentees: mentor.levelsOfMentees,
+        interests: mentor.interests,
+        linkedinProfile: mentor.linkedinProfile,
+        currentOrganization: mentor.currentOrganization,
+        passingYear: mentor.passingYear,
+        mentorStatus: mentor.availabilityStatus,
+        status: mentorshipStatus, // Include MentorshipStatus
+      };
+    });
 
     return res.status(200).json(formattedMentors); // Return formatted response
   } catch (error) {
@@ -132,18 +143,20 @@ const getAllMentors = async (req, res) => {
 };
 
 
+
 const connectToMentor = async (req, res) => {
   try {
-    const { mentorId } = req.body; 
-    const menteeId = req.userId; // Mentee ID from the authenticated user
+    const { mentorUserId } = req.body;   //this should be userId too
+    const menteeId = req.userId; // Mentee userId
 
     const mentor = await prisma.mentor.findUnique({
-      where: { id: mentorId },
+      where: { userId: mentorUserId },
     });
 
     if (!mentor) {
       return res.status(404).json({ message: "Mentor not found" });
     }
+    const mentorId = mentor.id;
     const existingConnection = await prisma.mentorship.findUnique({
       where: {
         mentorId_menteeId: {

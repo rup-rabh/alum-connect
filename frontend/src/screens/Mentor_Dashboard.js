@@ -1,29 +1,39 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NavBar from "./NavBar";
 import StudentCard from "../components/Studentcard";
 import defaultProfilePic from "../media/default-profile.png";
 import "./Mentor_Dashboard.css";
+import { fetchMentorProfileForMentor } from "./postData";
 
+const mentorProfile1 = {
+  name: "John Doe",
+  photo: defaultProfilePic,
+  keywords: ["SOFTWARE", "BLOCKCHAIN"],
+  experience: 5,
+  interaction: "HIGH",
+  maxMentees: 10,
+  currentMentees: 3,
+  levelsOfMentees: ["SECOND_YEAR", "FOURTH_YEAR"],
+  interests: ["PRO_BONO_HELP", "MENTORING_AND_PARTNERSHIP"],
+  linkedinProfile: "https://linkedin.com/in/johndoe",
+  currentOrganization: "Google",
+  passingYear: 2015,
+  status: "ALUMNI"
+};
 const Mentor_Dashboard = () => {
   const [pendingIndex, setPendingIndex] = useState(0);
   const [acceptedIndex, setAcceptedIndex] = useState(0);
   const [processingStudents, setProcessingStudents] = useState([]);
 
-  const mentorProfile = {
-    name: "John Doe",
-    photo: defaultProfilePic,
-    keywords: ["SOFTWARE", "BLOCKCHAIN"],
-    experience: 5,
-    interaction: "HIGH",
-    maxMentees: 10,
-    currentMentees: 3,
-    levelsOfMentees: ["SECOND_YEAR", "FOURTH_YEAR"],
-    interests: ["PRO_BONO_HELP", "MENTORING_AND_PARTNERSHIP"],
-    linkedinProfile: "https://linkedin.com/in/johndoe",
-    currentOrganization: "Google",
-    passingYear: 2015,
-    status: "ALUMNI"
-  };
+  const [mentorProfile, setMentorProfile] = useState(mentorProfile1);
+
+  useEffect( ()=>{
+    const response = fetchMentorProfileForMentor().then((data)=>{
+      console.log(data);
+      
+      setMentorProfile(data)
+    });
+  },[])
 
   const [applications,setApplications] = useState([
     {

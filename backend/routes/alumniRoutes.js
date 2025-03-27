@@ -8,7 +8,8 @@ const { addBasicProfile,
     getExperience, 
     addMentorProfile, 
     getMentorProfile,
-    updateBasicProfile} = require("../controllers/profile Controllers/alumniProfileController");
+    updateBasicProfile,
+    updateMentorProfile} = require("../controllers/profile Controllers/alumniProfileController");
 const { postInternship, 
     getAllApplications,
     acceptStudent,
@@ -46,7 +47,8 @@ router.put("/updateInternship/:id", authenticationToken, isAlumWithBasicProfile,
 router.get("/mentorshipStatus",authenticationToken,isAlumWithBasicProfile,isMentor,sendMentorStatus)
 
 router.post("/setMentorProfile", authenticationToken, isAlumWithBasicProfile, addMentorProfile);
-router.get("/getMentorProfile", authenticationToken, isAlumWithBasicProfile, isMentor, getMentorProfile);
+router.post("/getMentorProfile", authenticationToken, isAlumWithBasicProfile, isMentor, getMentorProfile);
+router.patch("/setMentorProfile", authenticationToken, isAlumWithBasicProfile, isMentor,updateMentorProfile );
 
 
 router.get("/getMentorshipsForMentors",authenticationToken,isAlumWithBasicProfile,isMentor,getMentorshipsForMentor);

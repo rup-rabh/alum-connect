@@ -162,11 +162,13 @@ const addMentorProfile = async (req, res) => {
 
 
 const getMentorProfile = async (req, res) => {
+  // console.log(req.userId);
   try {
     const basicProfile = await prisma.mentor.findUnique({
-      where: { id: req.body.mentorId },
+      where: { userId: req.userId },
     });
-
+    
+    
     if (!basicProfile) {
       return res.status(404).json({ message: "Mentor not found" });
     }
@@ -176,6 +178,49 @@ const getMentorProfile = async (req, res) => {
     res.status(500).json({ message: "Error retrieving Mentor profile", error });
   }
 };
+const updateMentorProfile = async (req, res) => {
+  try {
+    const mentorUserId = parseInt(req.params.id);
+    const alumniId = req.alumniId;
+    if(mentorUserId != req.userId){
+      return res.status(401).json({ message: "Not authorized to edit someone else's profile" });
+    }
+    // Find the mentor by userId
+    const mentor = await prisma.mentor.findUnique({
+      where: { userId: mentorUserId },
+    });
+
+    if (!mentor) {
+      return res.status(404).json({ message: "Mentor not found" });
+    }
+    // Prepare data for updating the mentor profile
+    const mentorProfileData = {
+      ...req.body,
+      keywords: req.body.keywords || mentor.keywords, // Preserving existing keywords if not provided
+      experience: req.body.experience || mentor.experience,
+      interaction: req.body.interaction || mentor.interaction,
+      maxMentees: req.body.maxMentees || mentor.maxMentees,
+      currentMentees: req.body.currentMentees || mentor.currentMentees,
+      levelsOfMentees: req.body.levelsOfMentees || mentor.levelsOfMentees,
+      interests: req.body.interests || mentor.interests,
+      linkedinProfile: req.body.linkedinProfile || mentor.linkedinProfile,
+      currentOrganization: req.body.currentOrganization || mentor.currentOrganization,
+      passingYear: req.body.passingYear || mentor.passingYear,
+      availabilityStatus: req.body.availabilityStatus || mentor.availabilityStatus,
+    };
+
+    await prisma.mentor.update({
+      where: { userId: mentorUserId },
+      data: mentorProfileData,
+    });
+
+    return res.status(200).json({ message: "Mentor Profile updated successfully" });
+  } catch (error) {
+    console.error("Error updating Mentor Profile:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+
 
 module.exports = {
   addBasicProfile,
@@ -184,5 +229,6 @@ module.exports = {
   getBasicProfile,
   getExperience,
   getMentorProfile,
-  addMentorProfile
+  addMentorProfile,
+  updateMentorProfile,
 };
