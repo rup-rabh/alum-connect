@@ -40,7 +40,7 @@ async function main() {
   });
   console.log("👨‍🎓 Created an alumni ");
 
-  const alumniUser1 = await prisma.user.create({ //this guy becomes mentor later
+  const alumniUser1 = await prisma.user.create({ 
     data: {
       username: "alum",
       email: "alum@gmail.com",
@@ -51,6 +51,25 @@ async function main() {
           fullName: "Doe Jana",
           presentCompany: "Tata",
           yearsOfExperience: 3,
+          domain: "PRODUCT_MANAGEMENT",
+        },
+      },
+    },
+    include: { alumni: true },
+  });
+  console.log("👨‍🎓 Created another alumni user");
+
+  const alumniUser2 = await prisma.user.create({  //another mentor candidate
+    data: {
+      username: "goodMentor",
+      email: "good@gmail.com",
+      password: hashedPassword,
+      role: "ALUMNI",
+      alumni: {
+        create: {
+          fullName: "Good Man",
+          presentCompany: "Bata",
+          yearsOfExperience: 5,
           domain: "PRODUCT_MANAGEMENT",
         },
       },
@@ -80,6 +99,16 @@ async function main() {
       endDate: new Date("2023-01-01"),
       description: "Was sweeping during the day and gaming on night",
       alumniId: alumniUser1.alumni.id,
+    },
+  });
+  await prisma.alumniExperience.create({
+    data: {
+      company: "Bata",
+      role: "Manager",
+      startDate: new Date("2020-01-01"),
+      endDate: new Date("2023-01-01"),
+      description: "Maintenance Manager ",
+      alumniId: alumniUser2.alumni.id,
     },
   });
   console.log("💼 Added another alumni experience");
@@ -190,6 +219,22 @@ async function main() {
       linkedinProfile: "https://www.linkedin.com/in/example-profile/",
       currentOrganization: "Google",
       passingYear: 2016,
+    },
+    include: { user: true },
+  });
+  const mentor1 = await prisma.mentor.create({
+    data: {
+      userId: alumniUser2.alumni.userId,
+      keywords: ["SOFTWARE", "BLOCKCHAIN"],
+      experience: 5,
+      interaction: "HIGH",
+      maxMentees: 10,
+      currentMentees: 3,
+      levelsOfMentees: ["SECOND_YEAR", "THIRD_YEAR"],
+      interests: ["PRO_BONO_HELP", "MENTORING_AND_PARTNERSHIP"],
+      linkedinProfile: "https://www.linkedin.com/in/example-profile/",
+      currentOrganization: "Bata",
+      passingYear: 2018,
     },
     include: { user: true },
   });
