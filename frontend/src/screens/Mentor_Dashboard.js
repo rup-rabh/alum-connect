@@ -5,35 +5,59 @@ import defaultProfilePic from "../media/default-profile.png";
 import "./Mentor_Dashboard.css";
 import { fetchMentorProfileForMentor } from "./postData";
 
-const mentorProfile1 = {
-  name: "John Doe",
-  photo: defaultProfilePic,
-  keywords: ["SOFTWARE", "BLOCKCHAIN"],
-  experience: 5,
-  interaction: "HIGH",
-  maxMentees: 10,
-  currentMentees: 3,
-  levelsOfMentees: ["SECOND_YEAR", "FOURTH_YEAR"],
-  interests: ["PRO_BONO_HELP", "MENTORING_AND_PARTNERSHIP"],
-  linkedinProfile: "https://linkedin.com/in/johndoe",
-  currentOrganization: "Google",
-  passingYear: 2015,
-  status: "ALUMNI"
-};
 const Mentor_Dashboard = () => {
   const [pendingIndex, setPendingIndex] = useState(0);
   const [acceptedIndex, setAcceptedIndex] = useState(0);
   const [processingStudents, setProcessingStudents] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({});
+  const [mentorProfile, setMentorProfile] = useState({
+    name: "John Doe",
+    photo: defaultProfilePic,
+    keywords: ["SOFTWARE", "BLOCKCHAIN"],
+    experience: 5,
+    interaction: "HIGH",
+    maxMentees: 10,
+    currentMentees: 3,
+    levelsOfMentees: ["SECOND_YEAR", "FOURTH_YEAR"],
+    interests: ["PRO_BONO_HELP", "MENTORING_AND_PARTNERSHIP"],
+    linkedinProfile: "https://linkedin.com/in/johndoe",
+    currentOrganization: "Google",
+    passingYear: 2015,
+    status: "ALUMNI"
+  });
 
-  const [mentorProfile, setMentorProfile] = useState(mentorProfile1);
-
-  useEffect( ()=>{
-    const response = fetchMentorProfileForMentor().then((data)=>{
-      console.log(data);
-      
-      setMentorProfile(data)
+  useEffect(() => {
+    fetchMentorProfileForMentor().then((data) => {
+      setMentorProfile(data);
     });
-  },[])
+  }, []);
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+    setFormData({
+      ...mentorProfile,
+      keywords: mentorProfile.keywords.join(', '),
+      levelsOfMentees: mentorProfile.levelsOfMentees.join(', ').replace(/_/g, ' '),
+      interests: mentorProfile.interests.join(', ').replace(/_/g, ' ')
+    });
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    const processedData = {
+      ...formData,
+      keywords: formData.keywords.split(',').map(k => k.trim()),
+      levelsOfMentees: formData.levelsOfMentees.split(',').map(l => l.trim().replace(/ /g, '_').toUpperCase()),
+      interests: formData.interests.split(',').map(i => i.trim().replace(/ /g, '_').toUpperCase()),
+      experience: Number(formData.experience),
+      maxMentees: Number(formData.maxMentees),
+      currentMentees: Number(formData.currentMentees),
+      passingYear: Number(formData.passingYear),
+    };
+    setMentorProfile(processedData);
+    setIsEditing(false);
+  };
 
   const [applications,setApplications] = useState([
     {
@@ -91,71 +115,202 @@ const Mentor_Dashboard = () => {
       <NavBar />
       <div className="dashboard-container">
         <h1>Mentor Dashboard</h1>
-        <div className="mentor-profile">
-          <div className="mentor-profile-left">
-            <img 
-              src={mentorProfile.photo} 
-              alt="Profile" 
-              className="mentor-profile-photo" 
-            />
-            <button className="mentor-profile-edit">Edit Profile</button>
-          </div>
-          
-          <div className="mentor-profile-right">
-            <div className="mentor-profile-header">
-              <h2 className="mentor-profile-name">{mentorProfile.name}</h2>
-              <span className="mentor-profile-status">{mentorProfile.status}</span>
+        {isEditing ? (
+          <form className="mentor-profile" onSubmit={handleFormSubmit}>
+            <div className="mentor-profile-left">
+              <img 
+                src={formData.photo || defaultProfilePic} 
+                alt="Profile" 
+                className="mentor-profile-photo" 
+              />
+              <input
+                type="text"
+                value={formData.photo}
+                onChange={(e) => setFormData({...formData, photo: e.target.value})}
+                placeholder="Image URL"
+              />
+              <button type="submit" className="mentor-profile-edit">Save Profile</button>
+              <button 
+                type="button" 
+                className="mentor-profile-edit"
+                onClick={() => setIsEditing(false)}
+                style={{ marginTop: '10px', backgroundColor: '#666' }}
+              >
+                Cancel
+              </button>
             </div>
-
-            <div className="mentor-profile-details">
-              <div className="mentor-profile-detail">
-                <span className="detail-label">Current Organization</span>
-                <span className="detail-value">{mentorProfile.currentOrganization}</span>
+            <div className="mentor-profile-right">
+              <div className="mentor-profile-header">
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  className="mentor-profile-name-input"
+                  style={{ width: '100%', padding: '8px', fontSize: '2.2rem' }}
+                />
+                <select
+                  value={formData.status}
+                  onChange={(e) => setFormData({...formData, status: e.target.value})}
+                  style={{ padding: '4px 12px', borderRadius: '15px' }}
+                >
+                  <option value="ALUMNI">Alumni</option>
+                  <option value="CURRENT">Current</option>
+                </select>
               </div>
-              <div className="mentor-profile-detail">
-                <span className="detail-label">Experience</span>
-                <span className="detail-value">{mentorProfile.experience} years</span>
+              <div className="mentor-profile-details">
+                <div className="mentor-profile-detail">
+                  <span className="detail-label">Current Organization</span>
+                  <input
+                    type="text"
+                    value={formData.currentOrganization}
+                    onChange={(e) => setFormData({...formData, currentOrganization: e.target.value})}
+                  />
+                </div>
+                <div className="mentor-profile-detail">
+                  <span className="detail-label">Experience</span>
+                  <input
+                    type="number"
+                    value={formData.experience}
+                    onChange={(e) => setFormData({...formData, experience: e.target.value})}
+                  />
+                </div>
+                <div className="mentor-profile-detail">
+                  <span className="detail-label">Max Mentees</span>
+                  <input
+                    type="number"
+                    value={formData.maxMentees}
+                    onChange={(e) => setFormData({...formData, maxMentees: e.target.value})}
+                  />
+                </div>
+                <div className="mentor-profile-detail">
+                  <span className="detail-label">Current Mentees</span>
+                  <input
+                    type="number"
+                    value={formData.currentMentees}
+                    onChange={(e) => setFormData({...formData, currentMentees: e.target.value})}
+                  />
+                </div>
+                <div className="mentor-profile-detail">
+                  <span className="detail-label">Domains</span>
+                  <input
+                    type="text"
+                    value={formData.keywords}
+                    onChange={(e) => setFormData({...formData, keywords: e.target.value})}
+                    placeholder="Comma separated domains"
+                  />
+                </div>
+                <div className="mentor-profile-detail">
+                  <span className="detail-label">Mentee Levels</span>
+                  <input
+                    type="text"
+                    value={formData.levelsOfMentees}
+                    onChange={(e) => setFormData({...formData, levelsOfMentees: e.target.value})}
+                    placeholder="Comma separated levels"
+                  />
+                </div>
+                <div className="mentor-profile-detail">
+                  <span className="detail-label">Interests</span>
+                  <input
+                    type="text"
+                    value={formData.interests}
+                    onChange={(e) => setFormData({...formData, interests: e.target.value})}
+                    placeholder="Comma separated interests"
+                  />
+                </div>
+                <div className="mentor-profile-detail">
+                  <span className="detail-label">Passing Year</span>
+                  <input
+                    type="number"
+                    value={formData.passingYear}
+                    onChange={(e) => setFormData({...formData, passingYear: e.target.value})}
+                  />
+                </div>
+                <div className="mentor-profile-detail">
+                  <span className="detail-label">LinkedIn</span>
+                  <input
+                    type="url"
+                    value={formData.linkedinProfile}
+                    onChange={(e) => setFormData({...formData, linkedinProfile: e.target.value})}
+                  />
+                </div>
+                <div className="mentor-profile-detail">
+                  <span className="detail-label">Interaction</span>
+                  <select
+                    value={formData.interaction}
+                    onChange={(e) => setFormData({...formData, interaction: e.target.value})}
+                  >
+                    <option value="HIGH">High</option>
+                    <option value="MEDIUM">Medium</option>
+                    <option value="LOW">Low</option>
+                  </select>
+                </div>
               </div>
-              <div className="mentor-profile-detail">
-                <span className="detail-label">Max Mentees</span>
-                <span className="detail-value">{mentorProfile.maxMentees}</span>
+            </div>
+          </form>
+        ) : (
+          <div className="mentor-profile">
+            <div className="mentor-profile-left">
+              <img 
+                src={mentorProfile.photo} 
+                alt="Profile" 
+                className="mentor-profile-photo" 
+              />
+              <button className="mentor-profile-edit" onClick={handleEditClick}>Edit Profile</button>
+            </div>
+            <div className="mentor-profile-right">
+              <div className="mentor-profile-header">
+                <h2 className="mentor-profile-name">{mentorProfile.name}</h2>
+                <span className="mentor-profile-status">{mentorProfile.status}</span>
               </div>
-              <div className="mentor-profile-detail">
-                <span className="detail-label">Current Mentees</span>
-                <span className="detail-value">{mentorProfile.currentMentees}</span>
-              </div>
-              <div className="mentor-profile-detail">
-                <span className="detail-label">Domains</span>
-                <span className="detail-value domain-pill">
-                  {mentorProfile.keywords.join(', ')}
-                </span>
-              </div>
-              <div className="mentor-profile-detail">
-                <span className="detail-label">Mentee Levels</span>
-                <span className="detail-value">
-                  {mentorProfile.levelsOfMentees.join(', ').replace(/_/g, ' ')}
-                </span>
-              </div>
-              <div className="mentor-profile-detail">
-                <span className="detail-label">Interests</span>
-                <span className="detail-value">
-                  {mentorProfile.interests.join(', ').replace(/_/g, ' ')}
-                </span>
-              </div>
-              <div className="mentor-profile-detail">
-                <span className="detail-label">Passing Year</span>
-                <span className="detail-value">{mentorProfile.passingYear}</span>
-              </div>
-              <div className="mentor-profile-detail">
-                <span className="detail-label">LinkedIn</span>
-                <a href={mentorProfile.linkedinProfile} className="detail-link">
-                  View Profile
-                </a>
+              <div className="mentor-profile-details">
+                <div className="mentor-profile-detail">
+                  <span className="detail-label">Current Organization</span>
+                  <span className="detail-value">{mentorProfile.currentOrganization}</span>
+                </div>
+                <div className="mentor-profile-detail">
+                  <span className="detail-label">Experience</span>
+                  <span className="detail-value">{mentorProfile.experience} years</span>
+                </div>
+                <div className="mentor-profile-detail">
+                  <span className="detail-label">Max Mentees</span>
+                  <span className="detail-value">{mentorProfile.maxMentees}</span>
+                </div>
+                <div className="mentor-profile-detail">
+                  <span className="detail-label">Current Mentees</span>
+                  <span className="detail-value">{mentorProfile.currentMentees}</span>
+                </div>
+                <div className="mentor-profile-detail">
+                  <span className="detail-label">Domains</span>
+                  <span className="detail-value domain-pill">
+                    {mentorProfile.keywords.join(', ')}
+                  </span>
+                </div>
+                <div className="mentor-profile-detail">
+                  <span className="detail-label">Mentee Levels</span>
+                  <span className="detail-value">
+                    {mentorProfile.levelsOfMentees.join(', ').replace(/_/g, ' ')}
+                  </span>
+                </div>
+                <div className="mentor-profile-detail">
+                  <span className="detail-label">Interests</span>
+                  <span className="detail-value">
+                    {mentorProfile.interests.join(', ').replace(/_/g, ' ')}
+                  </span>
+                </div>
+                <div className="mentor-profile-detail">
+                  <span className="detail-label">Passing Year</span>
+                  <span className="detail-value">{mentorProfile.passingYear}</span>
+                </div>
+                <div className="mentor-profile-detail">
+                  <span className="detail-label">LinkedIn</span>
+                  <a href={mentorProfile.linkedinProfile} className="detail-link">
+                    View Profile
+                  </a>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-
+        )}
         <div className="applications-sections">
           <section className="status-section">
             <h3 className="status-header">New Applications</h3>
@@ -182,7 +337,6 @@ const Mentor_Dashboard = () => {
               </div>
             ) : <p className="no-applications">No new applications</p>}
           </section>
-
           <section className="status-section">
             <h3 className="status-header">Accepted Applications</h3>
             {acceptedApps.length > 0 ? (
