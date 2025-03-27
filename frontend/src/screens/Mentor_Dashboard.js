@@ -4,7 +4,43 @@ import StudentCard from "../components/Studentcard";
 import defaultProfilePic from "../media/default-profile.png";
 import "./Mentor_Dashboard.css";
 import { fetchMentorProfileForMentor } from "./postData";
-
+import { fetchMentorships } from "./fetchData";
+const demoApplications = [
+  {
+    fullName: "Alice Smith",
+    rollno: "CS2021001",
+    department: "Computer Science",
+    cgpa: "8.9",
+    domain: "SOFTWARE",
+    cv: "/dummy.pdf",
+    experiences: [{
+      title: "Software Intern",
+      company: "Tech Corp",
+      startDate: "2023-06-01",
+      endDate: "2023-12-01",
+      description: "Worked on frontend development",
+      techStacks: ["React", "Node.js"]
+    }],
+    status: "PENDING"
+  },
+  {
+    fullName: "Bob Wilson",
+    rollno: "EC2021002",
+    department: "Electrical",
+    cgpa: "9.1",
+    domain: "BLOCKCHAIN",
+    cv: "/dummy.pdf",
+    experiences: [{
+      title: "Blockchain Developer",
+      company: "ChainTech",
+      startDate: "2022-05-01",
+      endDate: null,
+      description: "Developing smart contracts",
+      techStacks: ["Solidity", "Ethereum"]
+    }],
+    status: "ACCEPTED"
+  }
+];
 const Mentor_Dashboard = () => {
   const [pendingIndex, setPendingIndex] = useState(0);
   const [acceptedIndex, setAcceptedIndex] = useState(0);
@@ -26,10 +62,18 @@ const Mentor_Dashboard = () => {
     passingYear: 2015,
     status: "ALUMNI"
   });
-
+  const [applications,setApplications] = useState(demoApplications);
+  
   useEffect(() => {
     fetchMentorProfileForMentor().then((data) => {
+      // console.log("Here");
+      
       setMentorProfile(data);
+    });
+    fetchMentorships().then(data=>{
+      // console.log("fetch mentors",data.mentorships);
+      
+      setApplications(data.mentorships)
     });
   }, []);
 
@@ -59,42 +103,6 @@ const Mentor_Dashboard = () => {
     setIsEditing(false);
   };
 
-  const [applications,setApplications] = useState([
-    {
-      fullName: "Alice Smith",
-      rollno: "CS2021001",
-      department: "Computer Science",
-      cgpa: "8.9",
-      domain: "SOFTWARE",
-      cv: "/dummy.pdf",
-      experiences: [{
-        title: "Software Intern",
-        company: "Tech Corp",
-        startDate: "2023-06-01",
-        endDate: "2023-12-01",
-        description: "Worked on frontend development",
-        techStacks: ["React", "Node.js"]
-      }],
-      status: "PENDING"
-    },
-    {
-      fullName: "Bob Wilson",
-      rollno: "EC2021002",
-      department: "Electrical",
-      cgpa: "9.1",
-      domain: "BLOCKCHAIN",
-      cv: "/dummy.pdf",
-      experiences: [{
-        title: "Blockchain Developer",
-        company: "ChainTech",
-        startDate: "2022-05-01",
-        endDate: null,
-        description: "Developing smart contracts",
-        techStacks: ["Solidity", "Ethereum"]
-      }],
-      status: "ACCEPTED"
-    }
-  ]);
 
   const handleApplicationAction = async (rollno, action) => {
     setProcessingStudents((prev) => [...prev, rollno]);
