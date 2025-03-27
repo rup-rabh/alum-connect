@@ -176,13 +176,19 @@
   background-color: #ddd;
 }
 
-.button-spinner {
-  width: 20px;
-  height: 20px;
-  border: 2px solid #fff;
-  border-top: 2px solid transparent;
+.spinner {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid #fff;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  width: 16px;
+  height: 16px;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 @keyframes spin {

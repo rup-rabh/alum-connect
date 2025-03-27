@@ -5,7 +5,7 @@ const getInternshipById = async (req, res) => {
       const internshipId = parseInt(req.params.id)
   
       const internship = await prisma.internship.findUnique({
-        where:{id:internshipId}
+        where:{id:internshipId},
       })
   
       if (!internship) {

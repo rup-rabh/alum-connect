@@ -4,23 +4,28 @@ import { useParams } from "react-router-dom";
 import "./InternApplications.css";
 import NavBar from "./NavBar";
 import { fetchInternshipApplications } from "../components/fetchData";
-import { acceptInternshipApplication, rejectInternshipApplication } from "../components/postData";
+import {
+  acceptInternshipApplication,
+  rejectInternshipApplication,
+} from "../components/postData";
 
 const InternApplications = () => {
   const { internshipId } = useParams();
   const [loading, setLoading] = useState(true);
   const [applications, setApplications] = useState([]);
   const [error, setError] = useState(null);
-  const [processingStudents, setProcessingStudents] = useState([]);
+  const [processing, setProcessing] = useState({});
   const [currentPendingIndex, setCurrentPendingIndex] = useState(0);
   const [currentAcceptedIndex, setCurrentAcceptedIndex] = useState(0);
 
   useEffect(() => {
-    console.log("In internship Applications:",internshipId);
+    console.log("In internship Applications:", internshipId);
     const getApplications = async () => {
       setLoading(true);
       try {
-        const applicationsData = await fetchInternshipApplications(internshipId);
+        const applicationsData = await fetchInternshipApplications(
+          internshipId
+        );
         setApplications(applicationsData);
       } catch (error) {
         setError("Failed to load applications");
@@ -34,7 +39,7 @@ const InternApplications = () => {
   }, [internshipId]);
 
   const handleApplicationAction = async (studentId, action) => {
-    setProcessingStudents((prev) => [...prev, studentId]);
+    setProcessing((prev) => ({ ...prev, [studentId]: action }));
     try {
       if (action === "accept") {
         await acceptInternshipApplication(internshipId, studentId);
@@ -46,7 +51,7 @@ const InternApplications = () => {
     } catch (error) {
       console.error(`Failed to ${action} application:`, error);
     } finally {
-      setProcessingStudents((prev) => prev.filter((id) => id !== studentId));
+      setProcessing((prev) => ({ ...prev, [studentId]: null }));
     }
   };
 
@@ -62,13 +67,15 @@ const InternApplications = () => {
     }
   };
 
-  const handleStatusChange=(studentId,newStatus)=>{
-    setApplications((applications)=>{
-      return applications.map((app)=>{
-        return (app.student.id===studentId)?{...app,status:newStatus}:app;
-      })
-    })
-  }
+  const handleStatusChange = (studentId, newStatus) => {
+    setApplications((applications) => {
+      return applications.map((app) => {
+        return app.student.id === studentId
+          ? { ...app, status: newStatus }
+          : app;
+      });
+    });
+  };
 
   if (loading) {
     return (
@@ -93,7 +100,6 @@ const InternApplications = () => {
         <h2 className="applications-header">Internship Applications</h2>
 
         <div className="applications-sections">
-          {/* New Applications Section */}
           <section className="status-section">
             <h3 className="status-header">New Applications</h3>
             {pendingApplications.length > 0 ? (
@@ -121,14 +127,12 @@ const InternApplications = () => {
                         cv={student.cv}
                         experiences={student.experiences}
                         onAccept={() =>
-                          handleApplicationAction(student.rollno, "accept")
+                          handleApplicationAction(student.id, "accept")
                         }
                         onReject={() =>
-                          handleApplicationAction(student.rollno, "reject")
+                          handleApplicationAction(student.id, "reject")
                         }
-                        isProcessing={processingStudents.includes(
-                          student.rollno
-                        )}
+                        isProcessing={processing[student.id]}
                       />
                     ))}
                 </div>
@@ -147,7 +151,6 @@ const InternApplications = () => {
             )}
           </section>
 
-          {/* Accepted Applications Section */}
           <section className="status-section">
             <h3 className="status-header">Accepted Applications</h3>
             {acceptedApplications.length > 0 ? (

@@ -29,7 +29,7 @@ const locations = [
   "Remote",
 ];
 
-const statuses=["NEW","ACCEPTED","PENDING","REJECTED"];
+const statuses = ["NEW", "ACCEPTED", "PENDING", "REJECTED"];
 
 const InternshipPage = () => {
   const [internships, setInternships] = useState([]);
@@ -39,24 +39,23 @@ const InternshipPage = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
-    company: '',
-    title: '',
-    jd: '',
-    domain: '',
-    location: '',
-    compensation: '',
-    duration: '',
-    startTime: '',
-    endTime: '',
-    criteria: '',
-    weeklyHours: '',
+    company: "",
+    title: "",
+    jd: "",
+    domain: "",
+    location: "",
+    compensation: "",
+    duration: "",
+    startTime: "",
+    endTime: "",
+    criteria: "",
+    weeklyHours: "",
   });
   const [role, setRole] = useState(null);
   const [token, setToken] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const filterRef = useRef(null);
 
-  
   useEffect(() => {
     const getUserRole = async () => {
       try {
@@ -82,7 +81,7 @@ const InternshipPage = () => {
 
     const fetchData = async () => {
       try {
-        const internships = await fetchInternships(url,role);
+        const internships = await fetchInternships(url, role);
         setInternships(internships);
       } catch (error) {
         console.log("Error while fetching internships:", error.message);
@@ -110,20 +109,32 @@ const InternshipPage = () => {
   };
 
   const handleDomainSelect = (domain) => {
-    setSelectedDomains((prev) =>
-      prev.includes(domain)
-        ? prev.filter((d) => d !== domain)
-        : [...prev, domain]
-    );
+    if (domain === "All Domains") {
+      setSelectedDomains([]); // Clear selection to show all domains
+    } else {
+      setSelectedDomains((prev) =>
+        prev.includes(domain)
+          ? prev.filter((d) => d !== domain)
+          : [...prev, domain]
+      );
+    }
   };
 
   const handleLocationSelect = (location) => {
-    setSelectedLocation(location === selectedLocation ? "" : location);
+    if (location === "All Locations") {
+      setSelectedLocation(""); // Clear selection to show all locations
+    } else {
+      setSelectedLocation(location);
+    }
     setOpenDropdown(null);
   };
 
   const handleStatusSelect = (status) => {
-    setSelectedStatus(status === selectedStatus ? "" : status);
+    if (status === "All Statuses") {
+      setSelectedStatus(""); 
+    } else {
+      setSelectedStatus(status);
+    }
     setOpenDropdown(null);
   };
 
@@ -135,65 +146,64 @@ const InternshipPage = () => {
       endTime: new Date(formData.endTime).toISOString(),
     };
 
-    
-
     try {
       const new_internship = await postNewInternship(payload);
 
       if (new_internship) {
         try {
           setIsLoading(true);
-          const url = role === "ALUMNI" 
-            ? "alumni/getPostedInternships" 
-            : "student/getAllInternships";
+          const url =
+            role === "ALUMNI"
+              ? "alumni/getPostedInternships"
+              : "student/getAllInternships";
           const internships = await fetchInternships(url);
           setInternships(internships);
-          alert('Internship posted successfully!');
-          setIsLoading(false)
+          alert("Internship posted successfully!");
+          setIsLoading(false);
         } catch (error) {
-          alert('Posted successfully but failed to refresh list');
+          alert("Posted successfully but failed to refresh list");
         }
-   
+
         setShowForm(false);
         setFormData({
-          company: '',
-          title: '',
-          jd: '',
-          domain: '',
-          location: '',
-          compensation: '',
-          duration: '',
-          startTime: '',
-          endTime: '',
-          criteria: '',
-          weeklyHours: '',
+          company: "",
+          title: "",
+          jd: "",
+          domain: "",
+          location: "",
+          compensation: "",
+          duration: "",
+          startTime: "",
+          endTime: "",
+          criteria: "",
+          weeklyHours: "",
         });
       } else {
-        alert('Failed to post internship');
+        alert("Failed to post internship");
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('An error occurred while posting the internship');
+      console.error("Error:", error);
+      alert("An error occurred while posting the internship");
     }
   };
 
-    const handleChange = (e) => {
-      setFormData({
-        ...formData,
-        [e.target.name]: e.target.value
-      });
-    };
-    
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   const filteredInternships = internships.filter((intern) => {
     const matchesDomain =
       selectedDomains.length === 0 || selectedDomains.includes(intern.domain);
     const matchesLocation =
       !selectedLocation || intern.location === selectedLocation;
-      const matchesStatus =
-    !selectedStatus || 
-    (selectedStatus === "NEW" 
-      ? intern.applicationStatus === null 
-      : intern.applicationStatus === selectedStatus);
+    const matchesStatus =
+      !selectedStatus ||
+      (selectedStatus === "NEW"
+        ? intern.applicationStatus === null
+        : intern.applicationStatus === selectedStatus);
 
     return matchesDomain && matchesLocation && matchesStatus;
   });
@@ -201,22 +211,22 @@ const InternshipPage = () => {
   if (isLoading) {
     return (
       <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        width: "100vw",
-        textAlign: "center",
-        fontSize: "18px",
-        fontWeight: "bold",
-        color: "#C45A12",
-        backgroundColor: "#f9f9f9",
-      }}
-    >
-      Loading, please wait...
-    </div>
-    )
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          width: "100vw",
+          textAlign: "center",
+          fontSize: "18px",
+          fontWeight: "bold",
+          color: "#C45A12",
+          backgroundColor: "#f9f9f9",
+        }}
+      >
+        Loading, please wait...
+      </div>
+    );
   }
 
   return (
@@ -234,7 +244,7 @@ const InternshipPage = () => {
               >
                 <span>
                   {selectedLocation
-                    ?' Hiring in ${selectedLocation}'
+                    ? `Hiring in ${selectedLocation}`
                     : "All Locations"}
                 </span>
                 <i
@@ -246,6 +256,19 @@ const InternshipPage = () => {
 
               {openDropdown === "location" && (
                 <div className="dropdown-menu">
+                  {/* Always include 'All Locations' option */}
+                  <div
+                    className={`dropdown-item ${
+                      selectedLocation === "" ? "active" : ""
+                    }`}
+                    onClick={() => handleLocationSelect("All Locations")}
+                  >
+                    All Locations
+                    {selectedLocation === "" && (
+                      <i className="fas fa-check"></i>
+                    )}
+                  </div>
+
                   {locations.map((location) => (
                     <div
                       key={location}
@@ -255,6 +278,9 @@ const InternshipPage = () => {
                       onClick={() => handleLocationSelect(location)}
                     >
                       {location}
+                      {selectedLocation === location && (
+                        <i className="fas fa-check"></i>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -268,7 +294,7 @@ const InternshipPage = () => {
               >
                 <span>
                   {selectedDomains.length > 0
-                    ?' ${selectedDomains.length} Domains Selected'
+                    ? ` ${selectedDomains.length} Domains Selected`
                     : "All Domains"}
                 </span>
                 <i
@@ -280,6 +306,19 @@ const InternshipPage = () => {
 
               {openDropdown === "domain" && (
                 <div className="dropdown-menu">
+                  {/* Always include 'All Domains' option */}
+                  <div
+                    className={`dropdown-item ${
+                      selectedDomains.length === 0 ? "active" : ""
+                    }`}
+                    onClick={() => handleDomainSelect("All Domains")}
+                  >
+                    All Domains
+                    {selectedDomains.length === 0 && (
+                      <i className="fas fa-check"></i>
+                    )}
+                  </div>
+
                   {domains.map((domain) => (
                     <div
                       key={domain}
@@ -305,9 +344,7 @@ const InternshipPage = () => {
                   onClick={() => toggleDropdown("status")}
                 >
                   <span>
-                    {selectedStatus
-                      ?' Status: ${selectedStatus}'
-                      : "Status"}
+                    {selectedStatus ? ` Status: ${selectedStatus}` : "Status"}
                   </span>
                   <i
                     className={`fas fa-chevron-${
@@ -318,6 +355,19 @@ const InternshipPage = () => {
 
                 {openDropdown === "status" && (
                   <div className="dropdown-menu">
+                    {/* Always include 'All Statuses' option */}
+                    <div
+                      className={`dropdown-item ${
+                        selectedStatus === "" ? "active" : ""
+                      }`}
+                      onClick={() => handleStatusSelect("All Statuses")}
+                    >
+                      All Statuses
+                      {selectedStatus === "" && (
+                        <i className="fas fa-check"></i>
+                      )}
+                    </div>
+
                     {statuses.map((status) => (
                       <div
                         key={status}
@@ -327,6 +377,9 @@ const InternshipPage = () => {
                         onClick={() => handleStatusSelect(status)}
                       >
                         {status}
+                        {selectedStatus === status && (
+                          <i className="fas fa-check"></i>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -336,14 +389,11 @@ const InternshipPage = () => {
           </div>
 
           <div className="add-intern-div">
-          {role === "ALUMNI" && (
-            <button 
-              className="add-button"
-              onClick={() => setShowForm(true)}
-            >
-              Add Internship
-            </button>
-          )}
+            {role === "ALUMNI" && (
+              <button className="add-button" onClick={() => setShowForm(true)}>
+                Add Internship
+              </button>
+            )}
           </div>
         </div>
 
@@ -353,7 +403,7 @@ const InternshipPage = () => {
               <h2>Add New Internship</h2>
               <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                  <label>Company (optional)</label>
+                  <label>Company*</label>
                   <input
                     type="text"
                     name="company"
@@ -392,9 +442,9 @@ const InternshipPage = () => {
                     required
                   >
                     <option value="">Select Domain</option>
-                    {domains.map(domain => (
+                    {domains.map((domain) => (
                       <option key={domain} value={domain}>
-                        {domain.replace(/_/g, ' ')}
+                        {domain.replace(/_/g, " ")}
                       </option>
                     ))}
                   </select>
@@ -409,7 +459,7 @@ const InternshipPage = () => {
                     required
                   >
                     <option value="">Select Location</option>
-                    {[...locations, 'ONLINE'].map(location => (
+                    {[...locations, "ONLINE"].map((location) => (
                       <option key={location} value={location}>
                         {location}
                       </option>
@@ -498,7 +548,7 @@ const InternshipPage = () => {
             <InternCard
               key={internship.id}
               {...internship}
-              company={internship.company} 
+              company={internship.company}
               role={role}
             />
           ))}

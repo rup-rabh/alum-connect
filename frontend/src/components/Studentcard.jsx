@@ -1,7 +1,10 @@
 import React from "react";
 import "./Studentcard.css";
-import { useParams } from 'react-router-dom';
-import { acceptInternshipApplication, rejectInternshipApplication } from "./postData";
+import { useParams } from "react-router-dom";
+import {
+  acceptInternshipApplication,
+  rejectInternshipApplication,
+} from "./postData";
 
 const domainMap = {
   SOFTWARE: "Software Engineering",
@@ -31,9 +34,8 @@ const StudentCard = ({
   onReject,
   isProcessing,
 }) => {
-
-  const {internshipId}=useParams();
-  console.log(internshipId)
+  const { internshipId } = useParams();
+  console.log(internshipId);
 
   const formatDate = (dateString) => {
     if (!dateString) return "Present";
@@ -111,14 +113,15 @@ const StudentCard = ({
             onClick={onAccept}
             disabled={isProcessing}
           >
-            {isProcessing ? <div className="button-spinner"></div> : "Accept"}
+            {isProcessing ? <span className="spinner"></span> : "Accept"}
           </button>
+
           <button
             className="reject-button"
             onClick={onReject}
             disabled={isProcessing}
           >
-            {isProcessing ? <div className="button-spinner"></div> : "Reject"}
+            {isProcessing ? <span className="spinner"></span> : "Reject"}
           </button>
         </div>
       )}

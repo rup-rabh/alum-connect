@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./InternCard.css";
 import { useNavigate } from "react-router-dom";
-import { fetchInternships, fetchUserInfo } from "./fetchData";
+import { fetchInternships, fetchUserInfo } from "../components/fetchData";
 import { Link } from "react-router-dom";
 import axios from "axios";
 

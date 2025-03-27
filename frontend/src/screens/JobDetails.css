@@ -170,3 +170,12 @@
   margin-left: 10px;
 }
 
+.applied-text {
+  color: green;
+  font-weight: bold;
+  font-size: 16px;
+  background-color: #e6f4ea; /* Light green background */
+  padding: 8px 12px;
+  border-radius: 5px;
+  display: inline-block;
+}

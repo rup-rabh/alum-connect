@@ -1,62 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import "./JobDetails.css";
 import NavBar from "./NavBar";
 import axios from "axios";
 import { fetchInternships, fetchUserInfo } from "../components/fetchData";
-import { useNavigate } from "react-router-dom";
 import { closeInternship } from "../components/postData";
 
 const JobDetails = () => {
   const { id } = useParams();
   const [job, setJob] = useState(null);
   const [role, setRole] = useState(null);
-  const [token, setToken] = useState(null);
-  const navigate = useNavigate();
-  const [isApplying, setIsApplying] = useState(false);
-  const [hasApplied, setHasApplied] = useState(false);
-  const [internships, setInternships] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isApplying, setIsApplying] = useState(false);
+  const [isClosing, setIsClosing] = useState(false); // Added loading state for closing internship
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchJobDetails = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(
-          `http://localhost:3000/api/internship/getInternship/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        setJob({
-          ...response.data,
-          responsibilities: response.data.responsibilities || [
-            "Collaborate with team members",
-            "Write clean and maintainable code",
-            "Debug and troubleshoot issues",
-          ],
-        });
-      } catch (error) {
-        console.error("Error fetching job details:", error);
-      }
-    };
-
-    if (!job && id) {
-      fetchJobDetails();
-    }
-  }, [id, job]);
-
-  // Fetch user role on component mount
   useEffect(() => {
     const getUserRole = async () => {
       try {
         const userInfo = await fetchUserInfo();
         if (userInfo) {
           setRole(userInfo.role);
-          setToken(userInfo.token);
         }
       } catch (error) {
         console.log("Error:", error.message);
@@ -76,7 +40,17 @@ const JobDetails = () => {
     const fetchData = async () => {
       try {
         const internships = await fetchInternships(url, role);
-        setInternships(internships);
+        const selectedJob = internships.find(
+          (internship) => internship.id === parseInt(id)
+        );
+        setJob({
+          ...selectedJob,
+          responsibilities: selectedJob.responsibilities || [
+            "Collaborate with team members",
+            "Write clean and maintainable code",
+            "Debug and troubleshoot issues",
+          ],
+        });
       } catch (error) {
         console.log("Error while fetching internships:", error.message);
       } finally {
@@ -85,17 +59,18 @@ const JobDetails = () => {
     };
 
     fetchData();
-  }, [role]);
+  }, [role, id]);
 
   const handleCloseInternship = async () => {
-    setIsLoading(true);
+    setIsClosing(true); // Start loading state
     try {
       const updatedJob = await closeInternship(id);
       console.log("Internship closed successfully!");
       setJob(updatedJob);
-      setIsLoading(false);
     } catch (error) {
       console.error("Failed to close internship:", error);
+    } finally {
+      setIsClosing(false); // Stop loading state
     }
   };
 
@@ -114,8 +89,7 @@ const JobDetails = () => {
           },
         }
       );
-
-      setHasApplied(true);
+      setJob((prevJob) => ({ ...prevJob, applicationStatus: "APPLIED" }));
     } catch (error) {
       console.error("Application failed:", error);
     } finally {
@@ -125,20 +99,8 @@ const JobDetails = () => {
 
   if (!job)
     return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          width: "100vw",
-          textAlign: "center",
-          fontSize: "18px",
-          fontWeight: "bold",
-          color: "#C45A12",
-          backgroundColor: "#f9f9f9",
-        }}
-      >
+      <div className="loading-container">
+        <div className="spinner"></div>
         Loading, please wait...
       </div>
     );
@@ -161,7 +123,7 @@ const JobDetails = () => {
           <div className="main-content">
             <section className="job-description">
               <h3>Job Description</h3>
-              <p>{job.fullDescription}</p>
+              <p>{job.jd}</p>
             </section>
 
             <section className="responsibilities">
@@ -190,30 +152,33 @@ const JobDetails = () => {
                     <button
                       className="close-internship-button"
                       onClick={handleCloseInternship}
+                      disabled={isClosing} // Disable while processing
                     >
-                      Close Internship
+                      {isClosing ? (
+                        <span className="spinner"></span> // Show spinner when loading
+                      ) : (
+                        "Close Internship"
+                      )}
                     </button>
                   )}
                 </>
               ) : (
                 <>
-                  <button
-                    className={`apply-button ${
-                      internships.applicationStatus !== null ? "applied" : ""
-                    }`}
-                    onClick={handleApplyClick}
-                    disabled={
-                      isApplying || internships.applicationStatus !== null
-                    }
-                  >
-                    {isApplying ? (
-                      <span className="spinner"></span>
-                    ) : internships.applicationStatus !== null ? (
-                      "Applied "
-                    ) : (
-                      "Apply Now"
-                    )}
-                  </button>
+                  {job.applicationStatus !== null ? (
+                    <p className="applied-text">✅ Applied</p>
+                  ) : (
+                    <button
+                      className="apply-button"
+                      onClick={handleApplyClick}
+                      disabled={isApplying}
+                    >
+                      {isApplying ? (
+                        <span className="spinner"></span> // Show spinner when loading
+                      ) : (
+                        "Apply Now"
+                      )}
+                    </button>
+                  )}
                 </>
               )}
               <div className="job-details-meta">
