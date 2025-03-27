@@ -191,34 +191,61 @@ const updateInternship = async (req, res) => {
 
 const getMentorshipsForMentor = async (req, res) => {
   try {
-    const mentorId = req.mentorId; // Assuming mentor's ID is retrieved from the authenticated user
+    const mentorId = req.mentorId;
 
-    // Fetch all mentorships for the mentor
     const mentorships = await prisma.mentorship.findMany({
+      where: { mentorId },  // Added filter for current mentor
       include: {
         mentee: {
           include: {
             student: {
-              select: {
-                fullName: true, // Fetch only the name from Student
-              },
-            },
-          },
-        },
-      },
+              include: {
+                experiences: {
+                  select: {
+                    title: true,
+                    startDate: true,
+                    endDate: true,
+                    description: true,
+                    techStacks: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     });
-    if (!mentorships || mentorships.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No mentorships found for this mentor" });
+
+    if (!mentorships.length) {
+      return res.status(404).json({ message: "No mentorships found" });
     }
+
+    // Transform data to match desired format
+    const formatted = mentorships.map(mentorship => ({
+      fullName: mentorship.mentee.student.fullName,
+      rollno: mentorship.mentee.student.rollno,
+      department: mentorship.mentee.student.department,
+      cgpa: mentorship.mentee.student.cgpa.toString(),
+      domain: mentorship.mentee.student.domain,
+      cv: mentorship.mentee.student.cv,
+      experiences: mentorship.mentee.student.experiences.map(exp => ({
+        title: exp.title,
+        company: exp.title, // Company not available in schema - using title as fallback
+        startDate: exp.startDate.toISOString().split('T')[0],
+        endDate: exp.endDate?.toISOString().split('T')[0] || null,
+        description: exp.description,
+        techStacks: exp.techStacks
+      })),
+      status: mentorship.status
+    }));
 
     return res.status(200).json({
       message: "Mentorships fetched successfully",
-      mentorships,
+      mentorships: formatted
     });
+
   } catch (error) {
-    console.error("Error fetching mentorships for mentor:", error);
+    console.error("Error fetching mentorships:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };

@@ -162,11 +162,11 @@ const addMentorProfile = async (req, res) => {
 
 
 const getMentorProfile = async (req, res) => {
-  // console.log(req.userId);
   try {
     const basicProfile = await prisma.mentor.findUnique({
       where: { userId: req.userId },
     });
+    console.log(req.userId);
     
     
     if (!basicProfile) {

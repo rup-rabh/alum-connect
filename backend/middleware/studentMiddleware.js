@@ -1,6 +1,8 @@
 const prisma=require("../utils/prismaClient")
 
 const isStudent = async (req, res, next) => {
+
+  
     try {
       if (req.role !== "STUDENT") {
         return res.status(403).json({

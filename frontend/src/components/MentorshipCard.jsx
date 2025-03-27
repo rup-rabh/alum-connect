@@ -1,8 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./MentorshipCard.css";
-
+import { sendMentorshipRequest } from "../screens/postData";
 const MentorshipCard = ({
+  id,
   mentorName,
   keywords,
   experience,
@@ -67,8 +68,8 @@ const MentorshipCard = ({
           >
             View LinkedIn
           </Link>
-          {!status && (
-            <button className="apply-button">
+          {status =='NEW' && (
+            <button className="apply-button" onClick={()=>sendMentorshipRequest(id)}>
               Apply
             </button>
           )}

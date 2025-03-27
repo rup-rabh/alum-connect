@@ -87,7 +87,9 @@ const getRejectedInternships=async(req,res)=>{
   return res.status(201).json({rejectedInternships});
 }
 const getAllMentors = async (req, res) => {
+  
   try {
+
     const menteeUserId = req.userId; // Assuming `req.user.id` contains the logged-in mentee's ID
 
     const mentors = await prisma.mentor.findMany({
@@ -145,8 +147,14 @@ const getAllMentors = async (req, res) => {
 
 
 const connectToMentor = async (req, res) => {
+  console.log("In mentor connect");
+  
   try {
-    const { mentorUserId } = req.body;   //this should be userId too
+       //this should be userId too
+    const mentorUserId = parseInt(req.body.mentorUserId);
+
+    console.log(req.body);
+    
     const menteeId = req.userId; // Mentee userId
 
     const mentor = await prisma.mentor.findUnique({
