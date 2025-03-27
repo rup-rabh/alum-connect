@@ -72,12 +72,13 @@ export const closeInternship = async (id) => {
   }
 };
 
-export const sendMentorshipRequest = async (mentorId) =>{
+export const sendMentorshipRequest = async (mentorUserId) =>{
   try {
     const token = localStorage.getItem('token');
     const body = {
-      mentorId: mentorId,
+      mentorUserId: mentorUserId,
     };
+
     const headers = {
       Authorization: `Bearer ${token}`,
     };

@@ -147,11 +147,13 @@ const getAllMentors = async (req, res) => {
 
 
 const connectToMentor = async (req, res) => {
+  console.log("In mentor connect");
+  
   try {
        //this should be userId too
     const mentorUserId = parseInt(req.body.mentorUserId);
 
-    console.log(mentorUserId);
+    console.log(req.body);
     
     const menteeId = req.userId; // Mentee userId
 
