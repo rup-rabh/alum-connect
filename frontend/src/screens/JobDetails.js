@@ -186,7 +186,8 @@ const JobDetails = () => {
                   <strong>Location:</strong> {job.location}
                 </p>
                 <p>
-                  <strong>Salary:</strong> {job.compensation}
+                  <strong>Salary: &#8377;
+                  </strong> {job.compensation}
                 </p>
                 <p>
                   <strong>Duration:</strong> {job.duration}
