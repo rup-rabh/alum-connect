@@ -14,7 +14,7 @@ const domains = [
   "CYBERSECURITY",
 ];
 
-const statuses = ["NEW", "PENDING", "ACCEPTED", "REJECTED"];
+const statuses = ["NEW", "PENDING", "ACTIVE", "REJECTED"];
 
 const Mentee_Dashboard = () => {
   const [mentorships, setMentorships] = useState([]);
@@ -57,7 +57,7 @@ const Mentee_Dashboard = () => {
         linkedinProfile: "https://linkedin.com/in/janesmith",
         currentOrganization: "Microsoft",
         passingYear: 2018,
-        status: "ACCEPTED",
+        status: "ACTIVE",
       },
       {
         id: 3,
