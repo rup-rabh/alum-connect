@@ -2,7 +2,7 @@ const prisma = require("../../utils/prismaClient");
 const { z } = require("zod");
 
 const profileSchema = z.object({
-  fullName: z.string().min(1,{message:"full name cannot be empty."}),
+  fullName: z.string().min(1, { message: "full name cannot be empty." }),
   cgpa: z.number().min(0).max(10).optional(),
   cv: z
     .string()
@@ -24,6 +24,22 @@ const profileSchema = z.object({
       "BLOCKCHAIN",
       "CLOUD_COMPUTING",
       "CYBERSECURITY",
+      "BUSINESS_MANAGEMENT",
+      "FINANCE",
+      "ACCOUNTING",
+      "HUMAN_RESOURCES",
+      "MARKETING",
+      "SALES",
+      "OPERATIONS",
+      "STRATEGY",
+      "PROJECT_MANAGEMENT",
+      "SUPPLY_CHAIN_MANAGEMENT",
+      "CONSULTING",
+      "ENTREPRENEURSHIP",
+      "BUSINESS_DEVELOPMENT",
+      "BUSINESS_ANALYTICS",
+      "ECONOMICS",
+      "PUBLIC_RELATIONS",
     ])
     .optional(),
 });
@@ -72,16 +88,21 @@ const addBasicProfile = async (req, res) => {
     .json({ message: "Student profile completed successfully.", student });
 };
 
-const updateBasicProfile=async (req,res)=>{
-  const studentId=req.studentId;
-  const basicProfile=req.body;
-  const updatedBasicProfile=await prisma.alumni.update({
-    where:{id:studentId},
-    data:basicProfile
-  })
+const updateBasicProfile = async (req, res) => {
+  const studentId = req.studentId;
+  const basicProfile = req.body;
+  const updatedBasicProfile = await prisma.alumni.update({
+    where: { id: studentId },
+    data: basicProfile,
+  });
 
-  return res.status(403).json({message:"Basic profile updated sucessfully!",updateBasicProfile});
-}
+  return res
+    .status(403)
+    .json({
+      message: "Basic profile updated sucessfully!",
+      updateBasicProfile,
+    });
+};
 
 const addExperience = async (req, res) => {
   const experience = experienceSchema.safeParse(req.body);
@@ -96,8 +117,8 @@ const addExperience = async (req, res) => {
 
   const experienceData = {
     ...experience.data,
-    studentId
-  }
+    studentId,
+  };
   await prisma.studentExperience.create({
     data: experienceData,
   });
@@ -116,9 +137,11 @@ const getBasicProfile = async (req, res) => {
       return res.status(404).json({ message: "Student not found" });
     }
 
-    res.status(200).json({basicProfile});
+    res.status(200).json({ basicProfile });
   } catch (error) {
-    res.status(500).json({ message: "Error retrieving student profile", error });
+    res
+      .status(500)
+      .json({ message: "Error retrieving student profile", error });
   }
 };
 
@@ -128,12 +151,11 @@ const getExperience = async (req, res) => {
       where: { studentId: req.studentId },
     });
 
-    res.status(200).json({pastExperiences});
+    res.status(200).json({ pastExperiences });
   } catch (error) {
     res.status(500).json({ message: "Error retrieving experience", error });
   }
 };
-
 
 module.exports = {
   addBasicProfile,

@@ -3,7 +3,7 @@ const prisma = require("../../utils/prismaClient");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { z } = require("zod");
-const {MentorSchema,MentorshipSchema} = require("../zodSchemas/mentorModel");
+const { MentorSchema, MentorshipSchema } = require("../zodSchemas/mentorModel");
 const { json } = require("body-parser");
 const basicProfileSchema = z.object({
   fullName: z.string().min(1, { message: "Full name is required." }),
@@ -24,6 +24,22 @@ const basicProfileSchema = z.object({
       "BLOCKCHAIN",
       "CLOUD_COMPUTING",
       "CYBERSECURITY",
+      "BUSINESS_MANAGEMENT",
+      "FINANCE",
+      "ACCOUNTING",
+      "HUMAN_RESOURCES",
+      "MARKETING",
+      "SALES",
+      "OPERATIONS",
+      "STRATEGY",
+      "PROJECT_MANAGEMENT",
+      "SUPPLY_CHAIN_MANAGEMENT",
+      "CONSULTING",
+      "ENTREPRENEURSHIP",
+      "BUSINESS_DEVELOPMENT",
+      "BUSINESS_ANALYTICS",
+      "ECONOMICS",
+      "PUBLIC_RELATIONS",
     ],
     { message: "Invalid domain selected." }
   ),
@@ -31,7 +47,7 @@ const basicProfileSchema = z.object({
 
 const experienceSchema = z.object({
   company: z.string().min(1, { message: "Company name cannot be empty." }),
-  role: z.string().min(1,{message:"Role cannot be empty."}),
+  role: z.string().min(1, { message: "Role cannot be empty." }),
   startDate: z.union([z.string().datetime(), z.null()]).optional(),
   endDate: z.union([z.string().datetime(), z.null()]).optional(),
   description: z.string().min(1, { message: "Description cannot be empty." }),
@@ -48,9 +64,7 @@ const addBasicProfile = async (req, res) => {
       message: error.message,
       path: error.path,
     }));
-    return res
-      .status(403)
-      .json({ message: "Zod validation errors.", errors });
+    return res.status(403).json({ message: "Zod validation errors.", errors });
   }
 
   const existingAlumni = await prisma.alumni.findUnique({
@@ -73,16 +87,21 @@ const addBasicProfile = async (req, res) => {
     .json({ message: "Alumni profile completed successfully.", alumni });
 };
 
-const updateBasicProfile=async (req,res)=>{
-  const alumniId=req.alumniId;
-  const basicProfile=req.body;
-  const updatedBasicProfile=await prisma.alumni.update({
-    where:{id:alumniId},
-    data:basicProfile
-  })
+const updateBasicProfile = async (req, res) => {
+  const alumniId = req.alumniId;
+  const basicProfile = req.body;
+  const updatedBasicProfile = await prisma.alumni.update({
+    where: { id: alumniId },
+    data: basicProfile,
+  });
 
-  return res.status(200).json({message:"Basic profile updated sucessfully!",updatedBasicProfile});
-}
+  return res
+    .status(200)
+    .json({
+      message: "Basic profile updated sucessfully!",
+      updatedBasicProfile,
+    });
+};
 
 const addExperience = async (req, res) => {
   const alumniId = req.alumniId;
@@ -93,18 +112,16 @@ const addExperience = async (req, res) => {
       message: error.message,
       path: error.path,
     }));
-    return res
-      .status(403)
-      .json({ message: "Zod validation errors.", errors });
+    return res.status(403).json({ message: "Zod validation errors.", errors });
   }
 
   const experincedata = {
     ...experience.data,
-    alumniId
-  }
+    alumniId,
+  };
 
   await prisma.alumniExperience.create({
-    data:experincedata
+    data: experincedata,
   });
 
   return res
@@ -143,8 +160,7 @@ const addMentorProfile = async (req, res) => {
 
   if (existingMentor) {
     return res.status(400).json({
-      message:
-        "Mentor Profile exists already. You can update your details.",
+      message: "Mentor Profile exists already. You can update your details.",
     });
   }
 
@@ -157,8 +173,6 @@ const addMentorProfile = async (req, res) => {
     .json({ message: "Mentor profile completed successfully.", mentor });
 };
 
-
-
 const getMentorProfile = async (req, res) => {
   try {
     const basicProfile = await prisma.mentor.findUnique({
@@ -169,7 +183,7 @@ const getMentorProfile = async (req, res) => {
       return res.status(404).json({ message: "Mentor not found" });
     }
 
-    res.status(200).json({basicProfile});
+    res.status(200).json({ basicProfile });
   } catch (error) {
     res.status(500).json({ message: "Error retrieving Mentor profile", error });
   }
@@ -182,5 +196,5 @@ module.exports = {
   getBasicProfile,
   getExperience,
   getMentorProfile,
-  addMentorProfile
+  addMentorProfile,
 };
