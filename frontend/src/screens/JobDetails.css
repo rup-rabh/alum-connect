@@ -170,12 +170,33 @@
   margin-left: 10px;
 }
 
-.applied-text {
-  color: green;
+.status-text {
   font-weight: bold;
-  font-size: 16px;
-  background-color: #e6f4ea; /* Light green background */
-  padding: 8px 12px;
+  padding: 5px 0;
+}
+
+.applied-text {
+  padding: 5px 10px;
   border-radius: 5px;
-  display: inline-block;
+  font-weight: bold;
+}
+
+.pending-status {
+  background-color: #fff3cd; /* Light yellow */
+  color: #856404; /* Darker yellow */
+}
+
+.accepted-status {
+  background-color: #d4edda; /* Light green */
+  color: #155724; /* Darker green */
+}
+
+.rejected-status {
+  background-color: #f8d7da; /* Light red */
+  color: #721c24; /* Darker red */
+}
+
+.other-status {
+    background-color: #e2e3e5; /*light grey*/
+    color: #383d41; /*darker grey*/
 }

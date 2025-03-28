@@ -105,6 +105,53 @@ const JobDetails = () => {
       </div>
     );
 
+  function formatCreatedAt(createdAt) {
+    const now = new Date();
+    const createdDate = new Date(createdAt);
+    const timeDifference = now - createdDate;
+    const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+    if (daysDifference === 0) {
+      return "Posted today";
+    } else if (daysDifference === 1) {
+      return "Posted 1 day ago";
+    } else {
+      return `Posted ${daysDifference} days ago`;
+    }
+  }
+
+  function JobMeta({ job }) {
+    return (
+      <div className="job-meta">
+        <span>{job.location}</span>
+        <span>{job.compensation}</span>
+        <span>{formatCreatedAt(job.createdAt)}</span>
+      </div>
+    );
+  }
+
+  function formatCreatedAt(createdAt) {
+    const now = new Date();
+    const createdDate = new Date(createdAt);
+
+    const timeDifference = now.getTime() - createdDate.getTime();
+
+    const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+    if (daysDifference === 0) {
+      // Check if it's still the same day (ignoring time)
+      if (now.getDate() === createdDate.getDate()) {
+        return "Posted today";
+      } else {
+        return "Posted yesterday";
+      }
+    } else if (daysDifference === 1) {
+      return "Posted yesterday";
+    } else {
+      return `Posted ${daysDifference} days ago`;
+    }
+  }
+
   return (
     <>
       <NavBar />
@@ -115,7 +162,7 @@ const JobDetails = () => {
           <div className="job-meta">
             <span>{job.location}</span>
             <span>{job.compensation}</span>
-            <span>Posted 3 days ago</span>
+            <span>{formatCreatedAt(job.createdAt)}</span>
           </div>
         </div>
 
@@ -165,7 +212,26 @@ const JobDetails = () => {
               ) : (
                 <>
                   {job.applicationStatus !== null ? (
-                    <p className="applied-text">✅ Applied</p>
+                    <p
+                      className={`applied-text ${
+                        job.applicationStatus === "PENDING"
+                          ? "pending-status"
+                          : job.applicationStatus === "ACCEPTED"
+                          ? "accepted-status"
+                          : job.applicationStatus === "REJECTED"
+                          ? "rejected-status"
+                          : "other-status"
+                      }`}
+                    >
+                      {job.applicationStatus === "PENDING" && "⏳ Pending"}
+                      {job.applicationStatus === "ACCEPTED" && "✅ Accepted"}
+                      {job.applicationStatus === "REJECTED" && "❌ Rejected"}
+                      {job.applicationStatus &&
+                        job.applicationStatus !== "PENDING" &&
+                        job.applicationStatus !== "ACCEPTED" &&
+                        job.applicationStatus !== "REJECTED" &&
+                        `Status: ${job.applicationStatus}`}
+                    </p>
                   ) : (
                     <button
                       className="apply-button"
@@ -173,7 +239,7 @@ const JobDetails = () => {
                       disabled={isApplying}
                     >
                       {isApplying ? (
-                        <span className="spinner"></span> // Show spinner when loading
+                        <span className="spinner"></span>
                       ) : (
                         "Apply Now"
                       )}
@@ -186,8 +252,7 @@ const JobDetails = () => {
                   <strong>Location:</strong> {job.location}
                 </p>
                 <p>
-                  <strong>Salary: &#8377;
-                  </strong> {job.compensation}
+                  <strong>Salary: &#8377;</strong> {job.compensation}
                 </p>
                 <p>
                   <strong>Duration:</strong> {job.duration}
