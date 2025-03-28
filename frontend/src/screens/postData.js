@@ -131,7 +131,7 @@ export const fetchMentorProfile = async(mentorUserId) =>{
     };
 
     const response = await axios.post(
-      'http://localhost:3000/api/alumni/getMentorProfile', 
+      'http://localhost:3000/api/student/getMentorProfile', 
       body,
       { headers } 
     );

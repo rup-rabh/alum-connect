@@ -222,6 +222,7 @@ const getMentorshipsForMentor = async (req, res) => {
 
     // Transform data to match desired format
     const formatted = mentorships.map(mentorship => ({
+      id:mentorship.id,
       fullName: mentorship.mentee.student.fullName,
       rollno: mentorship.mentee.student.rollno,
       department: mentorship.mentee.student.department,

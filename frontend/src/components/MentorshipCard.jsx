@@ -15,6 +15,11 @@ const MentorshipCard = ({
   status,
   linkedinProfile,
 }) => {
+  const handleApply = () =>{
+    sendMentorshipRequest(id); 
+    alert("Request Sent Successfully");
+    
+  }
   return (
     <div className="mentorship-card">
       <div className="card-header">
@@ -69,7 +74,7 @@ const MentorshipCard = ({
             View LinkedIn
           </Link>
           {status =='NEW' && (
-            <button className="apply-button" onClick={()=>sendMentorshipRequest(id)}>
+            <button className="apply-button" onClick={handleApply}>
               Apply
             </button>
           )}

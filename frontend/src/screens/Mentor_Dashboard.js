@@ -4,7 +4,7 @@ import StudentCard from "../components/Studentcard";
 import defaultProfilePic from "../media/default-profile.png";
 import "./Mentor_Dashboard.css";
 import { fetchMentorProfileForMentor } from "./postData";
-import { fetchMentorships } from "./fetchData";
+import { fetchMentorships,acceptMentorship } from "./fetchData";
 const demoApplications = [
   {
     fullName: "Alice Smith",
@@ -38,7 +38,7 @@ const demoApplications = [
       description: "Developing smart contracts",
       techStacks: ["Solidity", "Ethereum"]
     }],
-    status: "ACCEPTED"
+    status: "ACTIVE"
   }
 ];
 const Mentor_Dashboard = () => {
@@ -108,15 +108,21 @@ const Mentor_Dashboard = () => {
     setProcessingStudents((prev) => [...prev, rollno]);
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setApplications((prev) =>
-      prev.map((app) => app.rollno === rollno ? 
-        { ...app, status: action === "accept" ? "ACCEPTED" : "REJECTED" } : app
+      prev.map((app) => {
+        if(app.rollno === rollno ){
+          acceptMentorship(app.id);
+          return { ...app, status: action === "accept" ? "ACTIVE" : "REJECTED" } ;
+        }else {
+          return app;
+        }
+      }
       )
     );
     setProcessingStudents((prev) => prev.filter((id) => id !== rollno));
   };
 
   const pendingApps = applications.filter((app) => app.status === "PENDING");
-  const acceptedApps = applications.filter((app) => app.status === "ACCEPTED");
+  const acceptedApps = applications.filter((app) => app.status === "ACTIVE");
 
   return (
     <>
@@ -356,7 +362,7 @@ const Mentor_Dashboard = () => {
                 </button>
                 <div className="applications-grid">
                   {acceptedApps.slice(acceptedIndex, acceptedIndex + 3).map((student) => (
-                    <StudentCard key={student.rollno} {...student} status="ACCEPTED" />
+                    <StudentCard key={student.rollno} {...student} status="ACTIVE" />
                   ))}
                 </div>
                 <button className="carousel-arrow right" 
