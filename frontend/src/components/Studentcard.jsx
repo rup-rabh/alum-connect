@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import {
   acceptInternshipApplication,
   rejectInternshipApplication,
-} from "./postData";
+} from "../components/postData";
 
 const domainMap = {
   SOFTWARE: "Software Engineering",
