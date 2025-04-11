@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./MentorshipCard.css";
-import { sendMentorshipRequest } from "../screens/postData";
+import { sendMentorshipRequest } from "./postData";
 const MentorshipCard = ({
   id,
   mentorName,

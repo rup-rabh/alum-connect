@@ -74,7 +74,6 @@ export const closeInternship = async (id) => {
   }
 };
 
-<<<<<<< HEAD:frontend/src/screens/postData.js
 export const sendMentorshipRequest = async (mentorUserId) =>{
   try {
     const token = localStorage.getItem('token');
@@ -145,7 +144,6 @@ export const fetchMentorProfile = async(mentorUserId) =>{
   }
 
 }
-=======
 export const acceptInternshipApplication = async (internshipId, studentId) => {
   try {
     const token = localStorage.getItem("token");
@@ -186,4 +184,3 @@ export const rejectInternshipApplication = async (internshipId, studentId) => {
     throw error;
   }
 };
->>>>>>> backend_snr:frontend/src/components/postData.js

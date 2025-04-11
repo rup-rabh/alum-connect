@@ -3,8 +3,8 @@ import NavBar from "./NavBar";
 import StudentCard from "../components/Studentcard";
 import defaultProfilePic from "../media/default-profile.png";
 import "./Mentor_Dashboard.css";
-import { fetchMentorProfileForMentor } from "./postData";
-import { fetchMentorships,acceptMentorship } from "./fetchData";
+import { fetchMentorProfileForMentor } from "../components/postData";
+import { fetchMentorships,acceptMentorship } from "../components/fetchData";
 const demoApplications = [
   {
     fullName: "Alice Smith",
