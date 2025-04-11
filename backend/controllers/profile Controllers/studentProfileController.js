@@ -2,6 +2,7 @@ const prisma = require("../../utils/prismaClient");
 const { z } = require("zod");
 
 const profileSchema = z.object({
+  fullName: z.string().min(1, { message: "full name cannot be empty." }),
   cgpa: z.number().min(0).max(10).optional(),
   cv: z
     .string()
@@ -23,6 +24,22 @@ const profileSchema = z.object({
       "BLOCKCHAIN",
       "CLOUD_COMPUTING",
       "CYBERSECURITY",
+      "BUSINESS_MANAGEMENT",
+      "FINANCE",
+      "ACCOUNTING",
+      "HUMAN_RESOURCES",
+      "MARKETING",
+      "SALES",
+      "OPERATIONS",
+      "STRATEGY",
+      "PROJECT_MANAGEMENT",
+      "SUPPLY_CHAIN_MANAGEMENT",
+      "CONSULTING",
+      "ENTREPRENEURSHIP",
+      "BUSINESS_DEVELOPMENT",
+      "BUSINESS_ANALYTICS",
+      "ECONOMICS",
+      "PUBLIC_RELATIONS",
     ])
     .optional(),
 });
@@ -37,9 +54,9 @@ const experienceSchema = z.object({
   endDate: z.union([z.string().datetime(), z.null()]).optional(),
 });
 
-const experiencesSchema = z
-  .array(experienceSchema)
-  .min(1, { message: "Enter atleast one experience." });
+// const experiencesSchema = z
+//   .array(experienceSchema)
+//   .min(1, { message: "Enter atleast one experience." });
 
 const addBasicProfile = async (req, res) => {
   const profile = profileSchema.safeParse(req.body);
@@ -71,37 +88,39 @@ const addBasicProfile = async (req, res) => {
     .json({ message: "Student profile completed successfully.", student });
 };
 
-const updateBasicProfile=async (req,res)=>{
-  const studentId=req.studentId;
-  const basicProfile=req.body;
-  const updatedBasicProfile=await prisma.alumni.update({
-    where:{id:studentId},
-    data:basicProfile
-  })
+const updateBasicProfile = async (req, res) => {
+  const studentId = req.studentId;
+  const basicProfile = req.body;
+  const updatedBasicProfile = await prisma.alumni.update({
+    where: { id: studentId },
+    data: basicProfile,
+  });
 
-  return res.status(403).json({message:"Basic profile updated sucessfully!",updateBasicProfile});
-}
+  return res
+    .status(403)
+    .json({
+      message: "Basic profile updated sucessfully!",
+      updateBasicProfile,
+    });
+};
 
 const addExperience = async (req, res) => {
-  const experiences = experiencesSchema.safeParse(req.body);
+  const experience = experienceSchema.safeParse(req.body);
 
-  if (!experiences.success) {
-    const errors = experiences.error.errors.map((error) => ({
+  if (!experience.success) {
+    const errors = experience.error.errors.map((error) => ({
       message: error.message,
       path: error.path,
     }));
     return res.status(403).json({ message: "Zod validation errors.", errors });
   }
 
-  const experiencesData = experiences.data.map((exp) => {
-    return {
-      ...exp,
-      studentId: req.studentId,
-    };
-  });
-
-  await prisma.studentExperience.createMany({
-    data: experiencesData,
+  const experienceData = {
+    ...experience.data,
+    studentId,
+  };
+  await prisma.studentExperience.create({
+    data: experienceData,
   });
   return res
     .status(201)
@@ -118,9 +137,11 @@ const getBasicProfile = async (req, res) => {
       return res.status(404).json({ message: "Student not found" });
     }
 
-    res.status(200).json({basicProfile});
+    res.status(200).json({ basicProfile });
   } catch (error) {
-    res.status(500).json({ message: "Error retrieving student profile", error });
+    res
+      .status(500)
+      .json({ message: "Error retrieving student profile", error });
   }
 };
 
@@ -130,12 +151,11 @@ const getExperience = async (req, res) => {
       where: { studentId: req.studentId },
     });
 
-    res.status(200).json({pastExperiences});
+    res.status(200).json({ pastExperiences });
   } catch (error) {
     res.status(500).json({ message: "Error retrieving experience", error });
   }
 };
-
 
 module.exports = {
   addBasicProfile,

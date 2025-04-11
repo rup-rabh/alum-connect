@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Mentee_Dashboard.css";
 import MentorshipCard from "../components/MentorshipCard";
 import NavBar from "./NavBar";
-import {fetchMentors,fetchMentorProfile} from "./fetchData"
+import {fetchMentors,fetchMentorProfile} from "../components/fetchData"
 const domains = [
   "SOFTWARE",
   "FRONTEND",

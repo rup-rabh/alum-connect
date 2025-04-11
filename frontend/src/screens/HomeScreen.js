@@ -3,7 +3,7 @@ import "./HomeScreen.css";
 import Card from "../components/Card";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import NavBar from "./NavBar";
-import { fetchUserInfo } from "./fetchData";
+import { fetchUserInfo } from "../components/fetchData";
 
 const HomeScreen = () => {
   const alumniCards = [

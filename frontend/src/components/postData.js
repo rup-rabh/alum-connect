@@ -22,11 +22,12 @@ export const updateBasicProfile = async (url, profileData) => {
 export const addExperience = async (url, experienceData) => {
   try {
     const token = localStorage.getItem("token");
-    await axios.post(`http://localhost:3000/api/${url}`, experienceData, {
+    const response=await axios.post(`http://localhost:3000/api/${url}`, experienceData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
+    return response;
   } catch (error) {
     console.error("Error fetching profile:", error);
   }
@@ -54,6 +55,7 @@ export const postNewInternship = async (internshipData) => {
 };
 
 export const closeInternship = async (id) => {
+  console.log("Inside closing internship function")
   try {
     const token = localStorage.getItem("token");
     const response = await axios.patch(
@@ -72,6 +74,7 @@ export const closeInternship = async (id) => {
   }
 };
 
+<<<<<<< HEAD:frontend/src/screens/postData.js
 export const sendMentorshipRequest = async (mentorUserId) =>{
   try {
     const token = localStorage.getItem('token');
@@ -142,3 +145,45 @@ export const fetchMentorProfile = async(mentorUserId) =>{
   }
 
 }
+=======
+export const acceptInternshipApplication = async (internshipId, studentId) => {
+  try {
+    const token = localStorage.getItem("token");
+    await axios.patch(
+      `http://localhost:3000/api/alumni/acceptStudent/${internshipId}`,
+      {
+        studentId: studentId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  } catch (error) {
+    console.error("Error closing internship:", error);
+    throw error;
+  }
+};
+
+
+export const rejectInternshipApplication = async (internshipId, studentId) => {
+  try {
+    const token = localStorage.getItem("token");
+    await axios.patch(
+      `http://localhost:3000/api/alumni/rejectStudent/${internshipId}`,
+      {
+        studentId: studentId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  } catch (error) {
+    console.error("Error closing internship:", error);
+    throw error;
+  }
+};
+>>>>>>> backend_snr:frontend/src/components/postData.js

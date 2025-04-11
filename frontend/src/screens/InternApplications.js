@@ -3,22 +3,29 @@ import StudentCard from "../components/Studentcard";
 import { useParams } from "react-router-dom";
 import "./InternApplications.css";
 import NavBar from "./NavBar";
-import { fetchInternshipApplications } from "./fetchData";
+import { fetchInternshipApplications } from "../components/fetchData";
+import {
+  acceptInternshipApplication,
+  rejectInternshipApplication,
+} from "../components/postData";
 
 const InternApplications = () => {
-  const { id } = useParams();
+  const { internshipId } = useParams();
   const [loading, setLoading] = useState(true);
   const [applications, setApplications] = useState([]);
   const [error, setError] = useState(null);
-  const [processingStudents, setProcessingStudents] = useState([]);
+  const [processing, setProcessing] = useState({});
   const [currentPendingIndex, setCurrentPendingIndex] = useState(0);
   const [currentAcceptedIndex, setCurrentAcceptedIndex] = useState(0);
 
   useEffect(() => {
+    console.log("In internship Applications:", internshipId);
     const getApplications = async () => {
       setLoading(true);
       try {
-        const applicationsData = await fetchInternshipApplications(id);
+        const applicationsData = await fetchInternshipApplications(
+          internshipId
+        );
         setApplications(applicationsData);
       } catch (error) {
         setError("Failed to load applications");
@@ -28,24 +35,24 @@ const InternApplications = () => {
       }
     };
 
-    if (id) getApplications();
-  }, [id]);
+    if (internshipId) getApplications();
+  }, [internshipId]);
 
   const handleApplicationAction = async (studentId, action) => {
-    setProcessingStudents((prev) => [...prev, studentId]);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setApplications((prev) =>
-      prev.map((app) => {
-        if (app.student.rollno === studentId) {
-          return {
-            ...app,
-            status: action === "accept" ? "ACCEPTED" : "REJECTED",
-          };
-        }
-        return app;
-      })
-    );
-    setProcessingStudents((prev) => prev.filter((id) => id !== studentId));
+    setProcessing((prev) => ({ ...prev, [studentId]: action }));
+    try {
+      if (action === "accept") {
+        await acceptInternshipApplication(internshipId, studentId);
+        handleStatusChange(studentId, "ACCEPTED");
+      } else {
+        await rejectInternshipApplication(internshipId, studentId);
+        handleStatusChange(studentId, "REJECTED");
+      }
+    } catch (error) {
+      console.error(`Failed to ${action} application:`, error);
+    } finally {
+      setProcessing((prev) => ({ ...prev, [studentId]: null }));
+    }
   };
 
   const handleCarousel = (section, direction) => {
@@ -58,6 +65,16 @@ const InternApplications = () => {
         Math.max(0, direction === "next" ? prev + 3 : prev - 3)
       );
     }
+  };
+
+  const handleStatusChange = (studentId, newStatus) => {
+    setApplications((applications) => {
+      return applications.map((app) => {
+        return app.student.id === studentId
+          ? { ...app, status: newStatus }
+          : app;
+      });
+    });
   };
 
   if (loading) {
@@ -83,7 +100,6 @@ const InternApplications = () => {
         <h2 className="applications-header">Internship Applications</h2>
 
         <div className="applications-sections">
-          {/* New Applications Section */}
           <section className="status-section">
             <h3 className="status-header">New Applications</h3>
             {pendingApplications.length > 0 ? (
@@ -101,6 +117,7 @@ const InternApplications = () => {
                     .map(({ status, student }, index) => (
                       <StudentCard
                         key={index}
+                        studentId={student.id}
                         status={status}
                         fullName={student.fullName}
                         rollno={student.rollno}
@@ -110,14 +127,12 @@ const InternApplications = () => {
                         cv={student.cv}
                         experiences={student.experiences}
                         onAccept={() =>
-                          handleApplicationAction(student.rollno, "accept")
+                          handleApplicationAction(student.id, "accept")
                         }
                         onReject={() =>
-                          handleApplicationAction(student.rollno, "reject")
+                          handleApplicationAction(student.id, "reject")
                         }
-                        isProcessing={processingStudents.includes(
-                          student.rollno
-                        )}
+                        isProcessing={processing[student.id]}
                       />
                     ))}
                 </div>
@@ -136,7 +151,6 @@ const InternApplications = () => {
             )}
           </section>
 
-          {/* Accepted Applications Section */}
           <section className="status-section">
             <h3 className="status-header">Accepted Applications</h3>
             {acceptedApplications.length > 0 ? (

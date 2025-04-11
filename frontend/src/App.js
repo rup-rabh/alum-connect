@@ -14,7 +14,6 @@ import "./App.css";
 import InternshipPage from "./screens/InternshipPage";
 import JobDetails from "./screens/JobDetails";
 import ProfilePage from "./screens/ProfilePage";
-import { UserProvider, useUser } from "./context/userContext";
 import Mentor_Dashboard from "./screens/Mentor_Dashboard";
 import Mentor_Registration from "./screens/Mentor_Registration";
 import InternApplications from "./screens/InternApplications";
@@ -22,7 +21,6 @@ import Mentee_Dashboard from "./screens/Mentee_Dashboard";
 
 function App() {
   return (
-    <UserProvider>
       <Router>
         {/* Include the NavBar on every screen */}
         <Routes>
@@ -35,11 +33,10 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/mentorDashboard" element={<Mentor_Dashboard />} />
           <Route path="/mentorRegistration" element={<Mentor_Registration/>} />  
-          <Route   path="/intern-applications/:id"  element={<InternApplications />}/>
+          <Route   path="/intern-applications/:internshipId"  element={<InternApplications />}/>
           <Route path="/menteeDashboard" element={<Mentee_Dashboard/>}   />
         </Routes>
       </Router>
-    </UserProvider>
   );
 }
 
