@@ -87,18 +87,6 @@ const AboutUs = () => {
           </div>
         </section>
 
-        <section className="au-testimonials">
-          <h2>Success Stories</h2>
-          <div className="au-testimonial-grid">
-            {testimonials.map((testimonial, index) => (
-              <div key={index} className="au-testimonial-block">
-                <p>"{testimonial.quote}"</p>
-                <p>- {testimonial.author}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
         <section className="au-cta-section">
           <h2>Ready to Start Your Journey?</h2>
           <p>Join our community of founders, mentors, and investors today and take the first step toward building a successful startup.</p>
@@ -118,6 +106,7 @@ const AboutUs = () => {
           </div>
         </footer>
       </div>
+      
     </>
   );
 };

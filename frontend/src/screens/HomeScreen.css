@@ -170,6 +170,9 @@
   white-space: nowrap;
 }
 
+ .full-screen-grid{
+  background-image: url("../media/gra.jpg");;
+ }
 /* Responsive Design */
 @media (max-width: 768px) {
   .cards-grid {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./Activities.css";
 import NavBar from "./NavBar";
 import { fetchUpcomingEvents, fetchPastEvents } from "../components/fetchData";
@@ -10,8 +10,8 @@ const Activities = () => {
   const [pastEvents, setPastEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [registeringEventId, setRegisteringEventId] = useState(null);
-  const [registerErrorEventId, setRegisterErrorEventId] = useState(null);
-
+  const [selectedEventId, setSelectedEventId] = useState(null);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -23,9 +23,6 @@ const Activities = () => {
         ]);
         setUpcomingEvents(upcoming);
         setPastEvents(past);
-
-        console.log("Upcoming:", upcoming);
-        console.log("Past:", past);
       } catch (error) {
         console.error("Failed to fetch events:", error);
       }
@@ -34,13 +31,20 @@ const Activities = () => {
     fetchEvents();
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setSelectedEventId(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const handleRegister = async (eventId) => {
     setRegisteringEventId(eventId);
-    setRegisterErrorEventId(null);
-  
     try {
       const response = await registerForEvent(eventId);
-  
       if (response.success) {
         setUpcomingEvents((prev) =>
           prev.map((ev) =>
@@ -49,20 +53,11 @@ const Activities = () => {
               : ev
           )
         );
-      } else {
-        // Backend returned success: false
-        console.warn("Registration failed:", response.message);
-        setRegisterErrorEventId(eventId);
       }
-    } catch (error) {
-      console.error("Unexpected error during registration:", error);
-      setRegisterErrorEventId(eventId);
     } finally {
       setRegisteringEventId(null);
     }
   };
-  
-  
 
   const formatDate = (isoDate) =>
     new Date(isoDate).toLocaleDateString("en-US", {
@@ -98,6 +93,10 @@ const Activities = () => {
       groups[key].push(ev);
     });
     return Object.entries(groups).map(([month, events]) => ({ month, events }));
+  };
+
+  const handleResourcesClick = (eventId) => {
+    setSelectedEventId(selectedEventId === eventId ? null : eventId);
   };
 
   return (
@@ -146,24 +145,12 @@ const Activities = () => {
                     <p className="event-description">{event.description}</p>
                     <div className="event-details">
                       <p>📅 {formatDate(event.startTime)}</p>
-                      <p>
-                        ⏰ {formatTimeRange(event.startTime, event.endTime)}
-                      </p>
-                      <p>
-                        📍{" "}
-                        {event.mode === "VIRTUAL" ? (
-                          <a
-                            href={event.location}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="virtual-link"
-                          >
-                            Join Virtual Event
-                          </a>
-                        ) : (
-                          event.location
-                        )}
-                      </p>
+                      <p>⏰ {formatTimeRange(event.startTime, event.endTime)}</p>
+                      <p>📍 {event.mode === "VIRTUAL" ? (
+                        <a href={event.location} target="_blank" rel="noopener noreferrer" className="virtual-link">
+                          Join Virtual Event
+                        </a>
+                      ) : event.location}</p>
                       <p>👥 {event.attendeesCount} students attending</p>
                     </div>
                     {event.registered ? (
@@ -172,15 +159,11 @@ const Activities = () => {
                       </button>
                     ) : (
                       <button
-                        className={`register-button ${
-                          registeringEventId === event.id ? "registering" : ""
-                        }`}
+                        className={`register-button ${registeringEventId === event.id ? "registering" : ""}`}
                         onClick={() => handleRegister(event.id)}
                         disabled={registeringEventId === event.id}
                       >
-                        {registeringEventId === event.id
-                          ? "Registering..."
-                          : "Register Now"}
+                        {registeringEventId === event.id ? "Registering..." : "Register Now"}
                       </button>
                     )}
                   </div>
@@ -190,9 +173,7 @@ const Activities = () => {
           ) : (
             <div className="past-events">
               {pastEvents.length === 0 ? (
-                <div className="no-events-message">
-                  No past events available
-                </div>
+                <div className="no-events-message">No past events available</div>
               ) : (
                 groupPastEventsByMonth(pastEvents).map((monthGroup, index) => (
                   <div key={`month-${index}`}>
@@ -200,17 +181,35 @@ const Activities = () => {
                     {monthGroup.events.map((event) => (
                       <div className="event-card" key={event.id}>
                         <h4 className="past-event-title">{event.title}</h4>
-                        <p className="past-event-description">
-                          {event.description}
-                        </p>
+                        <p className="past-event-description">{event.description}</p>
                         <div className="past-event-details">
                           <p>📅 {formatDate(event.startTime)}</p>
                           <p>👥 {event.attendeesCount} students attended</p>
                         </div>
                         <div className="past-event-actions">
-                          <button className="resources-button">
-                            Resources
-                          </button>
+                          <div className="resources-container" ref={dropdownRef}>
+                            <button
+                              className="resources-button"
+                              onClick={() => handleResourcesClick(event.id)}
+                            >
+                              Resources
+                            </button>
+                            {selectedEventId === event.id && event.links && (
+                              <div className="resources-dropdown">
+                                {event.links.map((link) => (
+                                  <a
+                                    key={link.id}
+                                    href={link.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="resource-item"
+                                  >
+                                    {link.label}
+                                  </a>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     ))}
