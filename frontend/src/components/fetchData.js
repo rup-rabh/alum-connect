@@ -106,6 +106,38 @@ export const fetchInternshipApplications=async(id)=>{
   }
 }
 
+
+export const fetchUpcomingEvents = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get("http://localhost:3000/api/events/getUpcomingEvents", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data.data; 
+  } catch (error) {
+    console.error("Error fetching upcoming events:", error);
+    return [];
+  }
+};
+
+export const fetchPastEvents = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get("http://localhost:3000/api/events/getPastEvents", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data.data; 
+  } catch (error) {
+    console.error("Error fetching past events:", error);
+    return [];
+  }
+};
+
+
 export const fetchMentors = async ()=>{
   try {
     const token = localStorage.getItem("token");

@@ -211,6 +211,42 @@
     background: #fee2e2;
   }
   
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 0;
+    font-size: 1.2rem;
+    color: #555;
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  .spinner {
+    border: 4px solid #eee;
+    border-top: 4px solid #3f51b5;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 15px;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  
+  .loading-text {
+    font-weight: 500;
+  }  
+
   @media (max-width: 768px) {
     .activities-title {
       font-size: 2rem;
