@@ -1,0 +1,240 @@
+.activities-container {
+    max-width: 1300px;
+    margin: 2rem auto;
+    padding: 0 20px;
+    background-color: rgb(255, 237, 213);
+  }
+  
+  .activities-title {
+    font-family: 'Arbutus Slab', serif;
+    color: #9a3412;
+    font-size: 1.8rem;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  .activities-subtitle {
+    font-family: 'Arbutus Slab', serif;
+    color: #c2410c;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.2rem;
+  }
+  
+  .tabs-container {
+    display: flex;
+    gap: 1rem;
+    margin: 2rem 0;
+    border-bottom: 2px solid #fed7aa;
+  }
+  
+  .tab-button {
+    padding: 1rem 2rem;
+    border: none;
+    background: none;
+    font-family: 'Arbutus Slab', serif;
+    font-size: 1.1rem;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  
+  .tab-button.active {
+    color: #9a3412;
+    font-weight: bold;
+  }
+  
+  .tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #9a3412;
+  }
+  
+  .tab-button:hover {
+    color: #7c2d12;
+  }
+  
+  .events-container {
+    margin-top: 2rem;
+  }
+  
+  .no-events-message {
+    text-align: center;
+    color: #6b7280;
+    font-size: 1.2rem;
+    padding: 2rem;
+    border: 2px dashed #e5e7eb;
+    border-radius: 8px;
+    margin: 2rem 0;
+  }
+  
+  .event-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 2px solid #fed7aa;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  }
+  
+  .event-time-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #9a3412;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    font-family: 'Arbutus Slab', serif;
+  }
+  
+  .event-title {
+    color: #c2410c;
+    font-family: 'Arbutus Slab', serif;
+    margin-bottom: 0.8rem;
+    font-size: 1.3rem;
+  }
+  
+  .event-description {
+    color: #6b7280;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+  
+  .event-details {
+    margin: 1.5rem 0;
+    color: #6b7280;
+  }
+  
+  .event-details p {
+    margin: 0.8rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  
+  .register-button {
+    background-color: #9a3412;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    font-family: 'Arbutus Slab', serif;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+   margin-left: 500px;
+    font-size: 1rem;
+    
+  }
+  
+  .register-button:hover {
+    background-color: #7c2d12;
+  }
+  
+  .past-events-month {
+    color: #9a3412;
+    font-family: 'Arbutus Slab', serif;
+    margin: 3rem 0 1.5rem;
+    font-size: 1.4rem;
+  }
+  
+  .past-event-title {
+    color: #c2410c;
+    font-family: 'Arbutus Slab', serif;
+    margin-bottom: 0.8rem;
+    font-size: 1.2rem;
+  }
+  
+  .past-event-description {
+    color: #6b7280;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+  
+  .past-event-details {
+    display: flex;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  
+  .rating-badge {
+    background: #ffedd5;
+    color: #9a3412;
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-family: 'Arbutus Slab', serif;
+  }
+  
+  .past-event-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  
+  .view-button, .resources-button {
+    padding: 0.6rem 1.2rem;
+    border-radius: 5px;
+    font-family: 'Arbutus Slab', serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+  }
+  
+  .view-button {
+    background: #9a3412;
+    color: white;
+    border: none;
+  }
+  
+  .resources-button {
+    background: none;
+    color: #9a3412;
+    border: 2px solid #9a3412;
+  }
+  
+  .view-button:hover {
+    background: #7c2d12;
+  }
+  
+  .resources-button:hover {
+    background: #fee2e2;
+  }
+  
+  @media (max-width: 768px) {
+    .activities-title {
+      font-size: 2rem;
+    }
+  
+    .tab-button {
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+    }
+  
+    .event-time-badge {
+      right: 0;
+      top: -15px;
+      font-size: 0.8rem;
+      padding: 6px 12px;
+    }
+  
+    .past-event-actions {
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+  
+    .view-button, .resources-button {
+      width: 100%;
+      text-align: center;
+    }
+  }

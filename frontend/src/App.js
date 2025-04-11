@@ -18,6 +18,8 @@ import Mentor_Dashboard from "./screens/Mentor_Dashboard";
 import Mentor_Registration from "./screens/Mentor_Registration";
 import InternApplications from "./screens/InternApplications";
 import Mentee_Dashboard from "./screens/Mentee_Dashboard";
+import Activities from "./screens/Activities";
+import AboutUs from "./screens/AboutUs";
 
 function App() {
   return (
@@ -35,6 +37,8 @@ function App() {
           <Route path="/mentorRegistration" element={<Mentor_Registration/>} />  
           <Route   path="/intern-applications/:internshipId"  element={<InternApplications />}/>
           <Route path="/menteeDashboard" element={<Mentee_Dashboard/>}   />
+          <Route path="/activities" element={<Activities/>}/>
+          <Route path="/aboutus" element={<AboutUs/>}/>
         </Routes>
       </Router>
   );
