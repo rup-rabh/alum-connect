@@ -1,28 +1,16 @@
 const prisma = require("../utils/prismaClient");
 const bcrypt = require("bcrypt");
-//node prisma/seed.js
+
 async function main() {
-  console.log("🌱 Seeding database...");
+  console.log("🌱 Seeding database with upserts...");
 
-  // Delete existing data
-  await prisma.internApplication.deleteMany();
-  await prisma.internship.deleteMany();
-  await prisma.alumniExperience.deleteMany();
-  await prisma.alumni.deleteMany();
-  await prisma.studentExperience.deleteMany();
-  await prisma.student.deleteMany();
-  await prisma.mentorship.deleteMany();
-  await prisma.mentor.deleteMany();
-  await prisma.user.deleteMany();
-
-  console.log("🗑️ Deleted existing users and dependent records");
-
-  // Hash passwords
   const hashedPassword = await bcrypt.hash("123456", 10);
 
-  // Create Alumni User
-  const alumniUser = await prisma.user.create({ //this guy becomes mentor later
-    data: {
+  // Upsert Alumni Users
+  const alumniUser = await prisma.user.upsert({
+    where: { email: "alumni@gmail.com" },
+    update: {},
+    create: {
       username: "alumni",
       email: "alumni@gmail.com",
       password: hashedPassword,
@@ -38,10 +26,11 @@ async function main() {
     },
     include: { alumni: true },
   });
-  console.log("👨‍🎓 Created an alumni ");
 
-  const alumniUser1 = await prisma.user.create({ 
-    data: {
+  const alumniUser1 = await prisma.user.upsert({
+    where: { email: "alum@gmail.com" },
+    update: {},
+    create: {
       username: "alum",
       email: "alum@gmail.com",
       password: hashedPassword,
@@ -57,10 +46,11 @@ async function main() {
     },
     include: { alumni: true },
   });
-  console.log("👨‍🎓 Created another alumni user");
 
-  const alumniUser2 = await prisma.user.create({  //another mentor candidate
-    data: {
+  const alumniUser2 = await prisma.user.upsert({
+    where: { email: "good@gmail.com" },
+    update: {},
+    create: {
       username: "goodMentor",
       email: "good@gmail.com",
       password: hashedPassword,
@@ -76,46 +66,12 @@ async function main() {
     },
     include: { alumni: true },
   });
-  console.log("👨‍🎓 Created another alumni user");
 
-  // Add Alumni Experience
-  await prisma.alumniExperience.create({
-    data: {
-      company: "Tech Corp",
-      role: "Software Engineer",
-      startDate: new Date("2020-01-01"),
-      endDate: new Date("2023-01-01"),
-      description: "Worked on full-stack applications",
-      alumniId: alumniUser.alumni.id,
-    },
-  });
-  console.log("💼 Added an alumni experience");
-
-  await prisma.alumniExperience.create({
-    data: {
-      company: "Tata",
-      role: "Sweeper",
-      startDate: new Date("2020-01-01"),
-      endDate: new Date("2023-01-01"),
-      description: "Was sweeping during the day and gaming on night",
-      alumniId: alumniUser1.alumni.id,
-    },
-  });
-  await prisma.alumniExperience.create({
-    data: {
-      company: "Bata",
-      role: "Manager",
-      startDate: new Date("2020-01-01"),
-      endDate: new Date("2023-01-01"),
-      description: "Maintenance Manager ",
-      alumniId: alumniUser2.alumni.id,
-    },
-  });
-  console.log("💼 Added another alumni experience");
-
-  // Create Student User
-  const studentUser = await prisma.user.create({
-    data: {
+  // Upsert Student Users
+  const studentUser = await prisma.user.upsert({
+    where: { email: "student@gmail.com" },
+    update: {},
+    create: {
       username: "student",
       email: "student@gmail.com",
       password: hashedPassword,
@@ -133,25 +89,11 @@ async function main() {
     },
     include: { student: true },
   });
-  console.log("🎓 Created student user");
 
-  // Add Student Experience
-  await prisma.studentExperience.create({
-    data: {
-      title: "Frontend Intern",
-      description: "Developed React components for a dashboard.",
-      techStacks: ["React", "JavaScript", "TailwindCSS"],
-      startDate: new Date("2023-06-01"),
-      endDate: new Date("2023-09-01"),
-      studentId: studentUser.student.id,
-    },
-  });
-  console.log("🛠️ Added student experience");
-
-
-  // ✅ Create Second Student User
-  const studentUser2 = await prisma.user.create({
-    data: {
+  const studentUser2 = await prisma.user.upsert({
+    where: { email: "student2@gmail.com" },
+    update: {},
+    create: {
       username: "student2",
       email: "student2@gmail.com",
       password: hashedPassword,
@@ -170,138 +112,95 @@ async function main() {
     include: { student: true },
   });
 
-  console.log("🎓 Created second student user");
+  await prisma.event.deleteMany();
+  await prisma.eventLink.deleteMany();
 
-  // ✅ Add Experience for Second Student
-  await prisma.studentExperience.create({
-    data: {
-      title: "Backend Intern",
-      description: "Developed REST APIs using Node.js and Express.",
-      techStacks: ["Node.js", "Express", "PostgreSQL"],
-      startDate: new Date("2023-07-01"),
-      endDate: new Date("2023-10-01"),
-      studentId: studentUser2.student.id,
-    },
-  });
-
-  console.log("🛠️ Added experience for second student");
-
-  // Post an Internship
-  await prisma.internship.create({
-    data: {
-      company: "Tech Corp",
-      title: "Frontend Developer Intern",
-      jd: "Build UI components using React and TailwindCSS.",
-      domain: "FRONTEND",
-      location: "REMOTE",
-      compensation: "$1000/month",
-      duration: "3 months",
-      startTime: new Date("2025-06-01"),
-      endTime: new Date("2025-09-01"),
-      criteria: "Final year students with frontend experience",
-      weeklyHours: "20 hours",
-      postedById: alumniUser.alumni.id,
-    },
-  });
-
-  console.log("📢 Posted internship");
-
-  const mentor = await prisma.mentor.create({
-    data: {
-      userId: alumniUser.alumni.userId,
-      keywords: ["SOFTWARE", "BLOCKCHAIN"],
-      experience: 5,
-      interaction: "HIGH",
-      maxMentees: 10,
-      currentMentees: 3,
-      levelsOfMentees: ["SECOND_YEAR", "FOURTH_YEAR"],
-      interests: ["PRO_BONO_HELP", "MENTORING_AND_PARTNERSHIP"],
-      linkedinProfile: "https://www.linkedin.com/in/example-profile/",
-      currentOrganization: "Google",
-      passingYear: 2016,
-    },
-    include: { user: true },
-  });
-  const mentor1 = await prisma.mentor.create({
-    data: {
-      userId: alumniUser2.alumni.userId,
-      keywords: ["SOFTWARE", "BLOCKCHAIN"],
-      experience: 5,
-      interaction: "HIGH",
-      maxMentees: 10,
-      currentMentees: 3,
-      levelsOfMentees: ["SECOND_YEAR", "THIRD_YEAR"],
-      interests: ["PRO_BONO_HELP", "MENTORING_AND_PARTNERSHIP"],
-      linkedinProfile: "https://www.linkedin.com/in/example-profile/",
-      currentOrganization: "Bata",
-      passingYear: 2018,
-    },
-    include: { user: true },
-  });
-
-  console.log("Φ created mentor!", mentor.id);
-  const mentorShip = await prisma.mentorship.create({
-    data: {
-      mentorId: mentor.id,
-      menteeId: studentUser.student.userId,
-      status: "PENDING",
-    },
-    include: { mentor: true },
-  });
-
-  console.log("🎉 created mentorship!", "status ", mentorShip.status);
-
-  /************Commented below to check test api */
-
-  // const mentorShipAccepted = await prisma.mentorship.update({
-  //   where: { id: mentorShip.id },
-  //   data: {
-  //     status: "ACTIVE",
-  //     mentor: {
-  //       update: {
-  //         currentMentees: { increment: 1 },
-  //       },
-  //     },
-  //   },
-  // });
-  // console.log("🎉 mentorship accepted!", "status ", mentorShipAccepted.status);
-
-  // Create Sample Events
-await prisma.event.createMany({
-  data: [
+  const eventsWithLinks = [
     {
-      title: "Frontend Bootcamp",
-      description: "A hands-on workshop covering advanced React and TailwindCSS.",
-      date: new Date("2025-05-10"),
-      startTime: new Date("2025-05-10T10:00:00"),
-      endTime: new Date("2025-05-10T14:00:00"),
-      location: "https://meet.google.com/example",
-      mode: "VIRTUAL",
-      type: "UPCOMING",
+      data: {
+        title: "AI & Future Careers Webinar",
+        description: "Explore how AI is shaping job roles and skills of the future.",
+        date: new Date("2025-06-05"),
+        startTime: new Date("2025-06-05T17:00:00"),
+        endTime: new Date("2025-06-05T18:30:00"),
+        location: "https://zoom.us/j/ai-webinar",
+        mode: "VIRTUAL",
+        type: "UPCOMING",
+        attendeesCount: 3,
+      },
+      links: [
+        { label: "Poster", url: "https://example.com/ai-poster.pdf" },
+        { label: "Join Link", url: "https://zoom.us/j/ai-webinar" },
+      ],
     },
     {
-      title: "Alumni Networking Night",
-      description: "Meet alumni across batches and build connections.",
-      date: new Date("2025-04-20"),
-      startTime: new Date("2025-04-20T18:00:00"),
-      endTime: new Date("2025-04-20T20:00:00"),
-      location: "Auditorium Hall, Block B",
-      mode: "OFFLINE",
-      type: "UPCOMING",
+      data: {
+        title: "Startup Pitch Fest",
+        description: "Watch student startups pitch their ideas to real investors.",
+        date: new Date("2025-06-15"),
+        startTime: new Date("2025-06-15T14:00:00"),
+        endTime: new Date("2025-06-15T17:00:00"),
+        location: "Innovation Hub, Main Campus",
+        mode: "OFFLINE",
+        type: "UPCOMING",
+        attendeesCount: 7,
+      },
+      links: [
+        { label: "Event Poster", url: "https://example.com/startup-poster.png" },
+        { label: "Pitch Deck Samples", url: "https://example.com/pitch-decks.zip" },
+      ],
     },
     {
-      title: "Past Hackathon Winners Panel",
-      description: "Hear from our top teams who nailed national hackathons.",
-      date: new Date("2025-03-10"),
-      mode: "HYBRID",
-      type: "PAST",
+      data: {
+        title: "Build Your Portfolio Session",
+        description: "Get expert tips on making your dev/design portfolio stand out.",
+        date: new Date("2025-03-25"),
+        startTime: new Date("2025-03-25T11:00:00"),
+        endTime: new Date("2025-03-25T13:00:00"),
+        location: "Hybrid Link: https://meet.google.com/portfolio",
+        mode: "HYBRID",
+        type: "PAST",
+        attendeesCount: 12,
+      },
+      links: [
+        { label: "Slides", url: "https://example.com/portfolio-slides.pdf" },
+        { label: "Recording", url: "https://example.com/portfolio-recording" },
+      ],
     },
-  ],
-});
-console.log("📅 Created sample events");
+    {
+      data: {
+        title: "Cloud Certification AMA",
+        description: "Live Q&A with certified cloud engineers about AWS, GCP, and Azure.",
+        date: new Date("2025-02-18"),
+        startTime: new Date("2025-02-18T16:00:00"),
+        endTime: new Date("2025-02-18T17:30:00"),
+        location: "Tech Hall, Room 3",
+        mode: "OFFLINE",
+        type: "PAST",
+        attendeesCount: 20,
+      },
+      links: [
+        { label: "FAQ PDF", url: "https://example.com/cloud-ama-faq.pdf" },
+        { label: "Event Poster", url: "https://example.com/cloud-ama-poster.jpg" },
+      ],
+    },
+  ];
+  
+  for (const item of eventsWithLinks) {
+    const event = await prisma.event.create({
+      data: item.data,
+    });
+  
+    await prisma.eventLink.createMany({
+      data: item.links.map((link) => ({
+        ...link,
+        eventId: event.id,
+      })),
+    });
+  }
+  
 
-
-  console.log("🎉 Seeding complete!");
+  console.log("✅ Seeding complete with upserts and non-zero attendees!");
 }
 
 main()

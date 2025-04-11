@@ -1,12 +1,12 @@
 const express = require("express");
 const authenticationToken = require("../middleware/auth");
-const { getUpcomingEvents, getPastEvents, regsiterForUpcomingEvent } = require("../controllers/eventsController");
+const { getUpcomingEvents, getPastEvents, registerForUpcomingEvent } = require("../controllers/eventsController");
 
 const router = express.Router();
 
 
 router.get("/getUpcomingEvents",authenticationToken,getUpcomingEvents);
 router.get("/getPastEvents",authenticationToken,getPastEvents);
-router.post("/regsiterForUpcomingEvent",authenticationToken,regsiterForUpcomingEvent);
+router.post("/registerForUpcomingEvent",authenticationToken,registerForUpcomingEvent);
 
 module.exports=router

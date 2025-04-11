@@ -2,83 +2,101 @@ const prisma = require("../utils/prismaClient");
 
 const getUpcomingEvents = async (req, res) => {
   try {
-    const upcomingEvents = await prisma.event.findMany({
+    const userId = req.userId;
+
+    const events = await prisma.event.findMany({
       where: {
         type: "UPCOMING",
       },
       orderBy: {
-        date: "asc", // shows upcoming events in order
+        startTime: "asc",
       },
       include: {
-        links: true,
         registrations: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                username: true,
-                email: true,
-              },
-            },
-          },
+          where: { userId },
+          select: { id: true },
         },
+        links:true
       },
     });
 
-    res.status(200).json({
-      success: true,
-      data: upcomingEvents,
+    const formatted = events.map((event) => ({
+      id: event.id,
+      title: event.title,
+      description: event.description,
+      startTime: event.startTime,
+      endTime: event.endTime,
+      location: event.location,
+      mode: event.mode,
+      attendeesCount: event.attendeesCount,
+      registered: event.registrations.length > 0,
+      links: event.links.map(link => ({
+        id: link.id,
+        label: link.label,
+        url: link.url,
+      })),
+    }));
+
+    res.json({
+      data:formatted
     });
   } catch (error) {
-    console.error("Error fetching upcoming events:", error);
-    res.status(500).json({
-      success: false,
-      message: "Something went wrong while fetching upcoming events.",
-    });
+    console.error("Failed to fetch upcoming events:", error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
+
 const getPastEvents = async (req, res) => {
   try {
-    const pastEvents = await prisma.event.findMany({
+    const userId = req.userId;
+
+    const events = await prisma.event.findMany({
       where: {
         type: "PAST",
       },
       orderBy: {
-        date: "desc", // latest past event first
+        startTime: "desc",
       },
       include: {
-        links: true,
         registrations: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                username: true,
-                email: true,
-              },
-            },
-          },
+          where: { userId },
+          select: { id: true },
         },
+        links:true
       },
     });
 
-    res.status(200).json({
-      success: true,
-      data: pastEvents,
+    const formatted = events.map((event) => ({
+      id: event.id,
+      title: event.title,
+      description: event.description,
+      startTime: event.startTime,
+      endTime: event.endTime,
+      location: event.location,
+      mode: event.mode,
+      attendeesCount: event.attendeesCount,
+      registered: event.registrations.length > 0,
+      links: event.links.map(link => ({
+        id: link.id,
+        label: link.label,
+        url: link.url,
+      })),
+    }));
+
+    res.json({
+      data:formatted
     });
   } catch (error) {
-    console.error("Error fetching past events:", error);
-    res.status(500).json({
-      success: false,
-      message: "Something went wrong while fetching past events.",
-    });
+    console.error("Failed to fetch past events:", error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
 
 const registerForUpcomingEvent = async (req, res) => {
-  const { userId, eventId } = req.body;
+  const { eventId } = req.body;
+  const userId=req.userId;
 
   if (!userId || !eventId) {
     return res.status(400).json({
@@ -119,7 +137,7 @@ const registerForUpcomingEvent = async (req, res) => {
     await prisma.event.update({
       where: { id: eventId },
       data: {
-        attendessCount: { increment: 1 },
+        attendeesCount: { increment: 1 },
       },
     });
 
@@ -145,9 +163,8 @@ const registerForUpcomingEvent = async (req, res) => {
   }
 };
 
-
 module.exports = {
   getUpcomingEvents,
   getPastEvents,
-  regsiterForUpcomingEvent
+  registerForUpcomingEvent,
 };

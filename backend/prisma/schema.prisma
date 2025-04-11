@@ -186,7 +186,7 @@ model Event {
   mode        EventMode     // VIRTUAL / OFFLINE / HYBRID
   type        EventType     // UPCOMING / PAST
   
-  attendessCount Int @default(0) 
+  attendeesCount Int @default(0) 
   registrations UserEvent[]
   links       EventLink[]
 

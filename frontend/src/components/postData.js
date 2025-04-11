@@ -74,13 +74,13 @@ export const closeInternship = async (id) => {
   }
 };
 
-export const registerForEvent = async (userId, eventId) => {
+export const registerForEvent = async (eventId) => {
   try {
     const token = localStorage.getItem("token");
 
     const response = await axios.post(
-      "http://localhost:3000/api/events/regsiterForUpcomingEvent",
-      { userId, eventId },
+      "http://localhost:3000/api/events/registerForUpcomingEvent",
+      { eventId },
       {
         headers: {
           Authorization: `Bearer ${token}`,
