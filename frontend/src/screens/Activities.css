@@ -2,7 +2,8 @@
     max-width: 1300px;
     margin: 2rem auto;
     padding: 0 20px;
-    background-color: rgb(255, 237, 213);
+    background-color: rgb(255, 237, 213); 
+    /* background-image: url("../media/gra.jpg");  */
   }
   
   .activities-title {
@@ -232,6 +233,65 @@
     animation: spin 1s linear infinite;
   }
   
+  .resources-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .resources-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #fed7aa;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    min-width: 180px;
+    margin-top: 5px;
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition: all 0.2s ease-out;
+  }
+  
+  .resource-item {
+    display: block;
+    padding: 10px 15px;
+    color: #9a3412;
+    text-decoration: none;
+    font-family: 'Arbutus Slab', serif;
+    transition: background-color 0.2s ease;
+  }
+  
+  .resource-item:hover {
+    background-color: #fff7ed;
+  }
+  
+  .resources-button {
+    position: relative;
+    padding: 0.6rem 1.2rem;
+    border-radius: 5px;
+    font-family: 'Arbutus Slab', serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    background: none;
+    color: #9a3412;
+    border: 2px solid #9a3412;
+  }
+  
+  .resources-button:hover {
+    background: #fee2e2;
+  }
+  
+  @media (max-width: 768px) {
+    .resources-dropdown {
+      right: 0;
+      left: auto;
+    }
+  }
   @keyframes spin {
     to {
       transform: rotate(360deg);
