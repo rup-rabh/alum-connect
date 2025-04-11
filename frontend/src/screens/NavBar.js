@@ -5,14 +5,16 @@ import logo from "../media/logo.png";
 import defaultProfilePic from "../media/default-profile.png";
 
 function NavBar() {
-  const [showDropdown, setShowDropdown] = useState(false);
-  const profilePic = ""; // Add logic to fetch the user's profile picture URL
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const [showActivitiesDropdown, setShowActivitiesDropdown] = useState(false);
+  const profilePic = ""; // Add logic to fetch profile picture URL
 
-  // Handle clicks outside dropdown
+  // Handle clicks outside dropdowns
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (!e.target.closest('.profile-dropdown-container')) {
-        setShowDropdown(false);
+      if (!e.target.closest('.dropdown-container')) {
+        setShowProfileDropdown(false);
+        setShowActivitiesDropdown(false);
       }
     };
 
@@ -29,46 +31,23 @@ function NavBar() {
             <div className="logo-text">Alumni Connect</div>
           </div>
         </div>
+
         <div className="center-items">
-          <ul>
-            <li>
-              <NavLink to="/" activeClassName="active">
-                Home
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/aboutus" activeClassName="active">
-                About Us
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/register" activeClassName="active">
-                Register
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/activities" activeClassName="active">
-                Activities
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/latest" activeClassName="active">
-                Latest
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/content" activeClassName="active">
-                Content
-              </NavLink>
-            </li>
+        <ul>
+            <li><NavLink exact to="/" activeClassName="active">Home</NavLink></li>
+            <li><NavLink to="/aboutus" activeClassName="active">About Us</NavLink></li>
+            <li><NavLink to="/register" activeClassName="active">Register</NavLink></li>
+            <li><NavLink to="/activities" activeClassName="active">Activities</NavLink></li>
+            <li><NavLink to="/latest" activeClassName="active">Latest</NavLink></li>
+            <li><NavLink to="/content" activeClassName="active">Content</NavLink></li>
           </ul>
         </div>
 
         {localStorage.getItem("token") ? (
-          <div className="profile-dropdown-container">
+          <div className="dropdown-container">
             <div
               className="profile-icon-wrapper"
-              onClick={() => setShowDropdown(!showDropdown)}
+              onClick={() => setShowProfileDropdown(!showProfileDropdown)}
             >
               <img
                 src={profilePic || defaultProfilePic}
@@ -77,12 +56,12 @@ function NavBar() {
               />
             </div>
 
-            {showDropdown && (
+            {showProfileDropdown && (
               <div className="dropdown-menu">
                 <NavLink
-                  to="/profile" // Updated to point to the profile page
+                  to="/profile"
                   className="dropdown-item"
-                  onClick={() => setShowDropdown(false)}
+                  onClick={() => setShowProfileDropdown(false)}
                 >
                   Profile
                 </NavLink>
@@ -90,7 +69,7 @@ function NavBar() {
                   className="dropdown-item"
                   onClick={() => {
                     localStorage.removeItem("token");
-                    setShowDropdown(false);
+                    setShowProfileDropdown(false);
                     window.location.href = "/signin"; 
                   }}
                 >
