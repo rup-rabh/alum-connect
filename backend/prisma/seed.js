@@ -183,7 +183,7 @@ async function main() {
         attendeesCount: 3,
       },
       links: [
-        { label: "Poster", url: "https://example.com/ai-poster.pdf" },
+        { label: "Poster", url: "https://indusuni.ac.in/gif/Future-Career-Scope-of-AI.png" },
         { label: "Join Link", url: "https://zoom.us/j/ai-webinar" },
       ],
     },
@@ -225,7 +225,7 @@ async function main() {
         attendeesCount: 12,
       },
       links: [
-        { label: "Slides", url: "https://example.com/portfolio-slides.pdf" },
+        { label: "Slides", url: "https://slidesgo.com/theme/formal-and-professional-portfolio#search-Portfolio&position-1&results-602" },
         { label: "Recording", url: "https://example.com/portfolio-recording" },
       ],
     },
@@ -246,7 +246,7 @@ async function main() {
         { label: "FAQ PDF", url: "https://example.com/cloud-ama-faq.pdf" },
         {
           label: "Event Poster",
-          url: "https://example.com/cloud-ama-poster.jpg",
+          url: "https://daxg39y63pxwu.cloudfront.net/images/blog/google-cloud-certifications/Google_Cloud_Certifications.webp",
         },
       ],
     },
