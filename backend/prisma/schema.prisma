@@ -20,6 +20,7 @@ model User {
   createdGroups Group[]
   groups        UserGroup[]
   mentorships   Mentorship[]
+  registeredEvents UserEvent[]
 }
 
 model Student {
@@ -171,6 +172,60 @@ model InternApplication {
 
   // Composite unique constraint to prevent duplicate applications
   @@unique([studentId, internshipId])
+}
+
+
+model Event {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  date        DateTime
+  startTime   DateTime?     // only needed for upcoming events
+  endTime     DateTime?     // optional
+  location    String?       // virtual link or physical location
+  mode        EventMode     // VIRTUAL / OFFLINE / HYBRID
+  type        EventType     // UPCOMING / PAST
+  
+  attendessCount Int @default(0) 
+  registrations UserEvent[]
+  links       EventLink[]
+
+  createdAt   DateTime @default(now())
+}
+
+
+model EventLink {
+  id      Int    @id @default(autoincrement())
+  label   String // e.g., "Resources", "View Gallery"
+  url     String
+
+  event   Event @relation(fields: [eventId], references: [id])
+  eventId Int
+}
+
+model UserEvent {
+  id      Int   @id @default(autoincrement())
+  user    User  @relation(fields: [userId], references: [id])
+  userId  Int
+
+  event   Event @relation(fields: [eventId], references: [id])
+  eventId Int
+
+  registeredAt DateTime @default(now())
+
+  @@unique([userId, eventId]) // Prevent duplicate registrations
+}
+
+
+enum EventMode {
+  VIRTUAL
+  OFFLINE
+  HYBRID
+}
+
+enum EventType {
+  UPCOMING
+  PAST
 }
 
 enum Role {

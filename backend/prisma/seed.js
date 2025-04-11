@@ -265,6 +265,42 @@ async function main() {
   //   },
   // });
   // console.log("🎉 mentorship accepted!", "status ", mentorShipAccepted.status);
+
+  // Create Sample Events
+await prisma.event.createMany({
+  data: [
+    {
+      title: "Frontend Bootcamp",
+      description: "A hands-on workshop covering advanced React and TailwindCSS.",
+      date: new Date("2025-05-10"),
+      startTime: new Date("2025-05-10T10:00:00"),
+      endTime: new Date("2025-05-10T14:00:00"),
+      location: "https://meet.google.com/example",
+      mode: "VIRTUAL",
+      type: "UPCOMING",
+    },
+    {
+      title: "Alumni Networking Night",
+      description: "Meet alumni across batches and build connections.",
+      date: new Date("2025-04-20"),
+      startTime: new Date("2025-04-20T18:00:00"),
+      endTime: new Date("2025-04-20T20:00:00"),
+      location: "Auditorium Hall, Block B",
+      mode: "OFFLINE",
+      type: "UPCOMING",
+    },
+    {
+      title: "Past Hackathon Winners Panel",
+      description: "Hear from our top teams who nailed national hackathons.",
+      date: new Date("2025-03-10"),
+      mode: "HYBRID",
+      type: "PAST",
+    },
+  ],
+});
+console.log("📅 Created sample events");
+
+
   console.log("🎉 Seeding complete!");
 }
 

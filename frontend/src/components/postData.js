@@ -74,6 +74,31 @@ export const closeInternship = async (id) => {
   }
 };
 
+export const registerForEvent = async (userId, eventId) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.post(
+      "http://localhost:3000/api/events/regsiterForUpcomingEvent",
+      { userId, eventId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data; // Contains success message and registration data
+  } catch (error) {
+    console.error("Error registering for event:", error);
+
+    const message =
+      error.response?.data?.message || "Failed to register for the event.";
+    return { success: false, message };
+  }
+};
+
+
 export const sendMentorshipRequest = async (mentorUserId) =>{
   try {
     const token = localStorage.getItem('token');
