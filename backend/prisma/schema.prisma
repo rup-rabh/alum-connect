@@ -14,17 +14,17 @@ model User {
   password String? // LinkedIn sign-ins may have null password
   role     Role //will prolly create issue in linkedIn signup
 
-  student       Student?
-  alumni        Alumni?
-  mentor        Mentor?
-  createdGroups Group[]
-  groups        UserGroup[]
-  mentorships   Mentorship[]
+  student          Student?
+  alumni           Alumni?
+  mentor           Mentor?
+  createdGroups    Group[]
+  groups           UserGroup[]
+  mentorships      Mentorship[]
   registeredEvents UserEvent[]
 }
 
 model Student {
-  id         Int     @id @default(autoincrement())
+  id         Int    @id @default(autoincrement())
   fullName   String
   cgpa       Float
   cv         String // Drive link for resume
@@ -40,7 +40,7 @@ model Student {
 }
 
 model Alumni {
-  id                Int     @id @default(autoincrement())
+  id                Int    @id @default(autoincrement())
   fullName          String
   presentCompany    String
   yearsOfExperience Int
@@ -71,8 +71,8 @@ model Mentor {
   linkedinProfile     String?
   currentOrganization String?
   passingYear         Int?
-  availabilityStatus mentorAvailability @default(AVAILABLE)
-  mentorships Mentorship[]
+  availabilityStatus  mentorAvailability @default(AVAILABLE)
+  mentorships         Mentorship[]
 }
 
 model Mentorship {
@@ -138,10 +138,11 @@ model AlumniExperience {
 }
 
 model Internship {
-  id           Int      @id @default(autoincrement())
+  id           Int                @id @default(autoincrement())
   company      String?
   title        String
-  jd           String // Job description
+  jd           String
+  jdType       JobDescriptionType @default(TEXT)
   domain       Domain
   location     String // ONLINE or any city name
   compensation String
@@ -150,8 +151,8 @@ model Internship {
   endTime      DateTime
   criteria     String // Eligibility based on year of study
   weeklyHours  String? // Optional - Weekly time commitment
-  closed       Boolean  @default(false)
-  createdAt    DateTime @default(now())
+  closed       Boolean            @default(false)
+  createdAt    DateTime           @default(now())
 
   postedBy   Alumni @relation(fields: [postedById], references: [id])
   postedById Int
@@ -174,39 +175,37 @@ model InternApplication {
   @@unique([studentId, internshipId])
 }
 
-
 model Event {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   title       String
   description String
   date        DateTime
-  startTime   DateTime?     // only needed for upcoming events
-  endTime     DateTime?     // optional
-  location    String?       // virtual link or physical location
-  mode        EventMode     // VIRTUAL / OFFLINE / HYBRID
-  type        EventType     // UPCOMING / PAST
-  
-  attendeesCount Int @default(0) 
-  registrations UserEvent[]
-  links       EventLink[]
+  startTime   DateTime? // only needed for upcoming events
+  endTime     DateTime? // optional
+  location    String? // virtual link or physical location
+  mode        EventMode // VIRTUAL / OFFLINE / HYBRID
+  type        EventType // UPCOMING / PAST
 
-  createdAt   DateTime @default(now())
+  attendeesCount Int         @default(0)
+  registrations  UserEvent[]
+  links          EventLink[]
+
+  createdAt DateTime @default(now())
 }
 
-
 model EventLink {
-  id      Int    @id @default(autoincrement())
-  label   String // e.g., "Resources", "View Gallery"
-  url     String
+  id    Int    @id @default(autoincrement())
+  label String // e.g., "Resources", "View Gallery"
+  url   String
 
   event   Event @relation(fields: [eventId], references: [id])
   eventId Int
 }
 
 model UserEvent {
-  id      Int   @id @default(autoincrement())
-  user    User  @relation(fields: [userId], references: [id])
-  userId  Int
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
 
   event   Event @relation(fields: [eventId], references: [id])
   eventId Int
@@ -216,6 +215,10 @@ model UserEvent {
   @@unique([userId, eventId]) // Prevent duplicate registrations
 }
 
+enum JobDescriptionType {
+  TEXT
+  URL
+}
 
 enum EventMode {
   VIRTUAL

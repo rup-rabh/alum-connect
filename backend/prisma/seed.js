@@ -112,14 +112,68 @@ async function main() {
     include: { student: true },
   });
 
-  await prisma.event.deleteMany();
+  await prisma.internApplication.deleteMany();
+  await prisma.internship.deleteMany();
+
+  await prisma.internship.createMany({
+    data: [
+      {
+        title: "Frontend Developer Intern",
+        company: "Tech Corp",
+        jd: "Work with React and Tailwind to build scalable UIs.",
+        jdType: "TEXT",
+        domain: "FRONTEND",
+        location: "Remote",
+        compensation: "₹10,000/month",
+        duration: "3 months",
+        startTime: new Date("2025-05-01"),
+        endTime: new Date("2025-07-31"),
+        criteria: "2nd year and above",
+        weeklyHours: "10-15 hours",
+        postedById: alumniUser.alumni.id,
+      },
+      {
+        title: "Product Management Intern",
+        company: "Tata",
+        jd: "Assist in product planning, user research, and roadmap creation.",
+        jdType: "TEXT",
+        domain: "PRODUCT_MANAGEMENT",
+        location: "Mumbai",
+        compensation: "₹15,000/month",
+        duration: "2 months",
+        startTime: new Date("2025-06-01"),
+        endTime: new Date("2025-07-31"),
+        criteria: "3rd year only",
+        weeklyHours: "20 hours",
+        postedById: alumniUser1.alumni.id,
+      },
+      {
+        title: "Software Engineering Intern",
+        company: "Bata",
+        jd: "Full-stack development role with exposure to cloud deployments.",
+        jdType: "TEXT",
+        domain: "SOFTWARE",
+        location: "Online",
+        compensation: "₹12,000/month",
+        duration: "6 weeks",
+        startTime: new Date("2025-05-15"),
+        endTime: new Date("2025-06-30"),
+        criteria: "All years eligible",
+        weeklyHours: "15-20 hours",
+        postedById: alumniUser2.alumni.id,
+      },
+    ],
+  });
+
   await prisma.eventLink.deleteMany();
+  await prisma.event.deleteMany();
 
   const eventsWithLinks = [
     {
       data: {
         title: "AI & Future Careers Webinar",
-        description: "Explore how AI is shaping job roles and skills of the future.",
+        description:
+          "Explore how AI is shaping job roles and skills of the future.",
         date: new Date("2025-06-05"),
         startTime: new Date("2025-06-05T17:00:00"),
         endTime: new Date("2025-06-05T18:30:00"),
@@ -136,7 +190,8 @@ async function main() {
     {
       data: {
         title: "Startup Pitch Fest",
-        description: "Watch student startups pitch their ideas to real investors.",
+        description:
+          "Watch student startups pitch their ideas to real investors.",
         date: new Date("2025-06-15"),
         startTime: new Date("2025-06-15T14:00:00"),
         endTime: new Date("2025-06-15T17:00:00"),
@@ -146,14 +201,21 @@ async function main() {
         attendeesCount: 7,
       },
       links: [
-        { label: "Event Poster", url: "https://example.com/startup-poster.png" },
-        { label: "Pitch Deck Samples", url: "https://example.com/pitch-decks.zip" },
+        {
+          label: "Event Poster",
+          url: "https://example.com/startup-poster.png",
+        },
+        {
+          label: "Pitch Deck Samples",
+          url: "https://example.com/pitch-decks.zip",
+        },
       ],
     },
     {
       data: {
         title: "Build Your Portfolio Session",
-        description: "Get expert tips on making your dev/design portfolio stand out.",
+        description:
+          "Get expert tips on making your dev/design portfolio stand out.",
         date: new Date("2025-03-25"),
         startTime: new Date("2025-03-25T11:00:00"),
         endTime: new Date("2025-03-25T13:00:00"),
@@ -170,7 +232,8 @@ async function main() {
     {
       data: {
         title: "Cloud Certification AMA",
-        description: "Live Q&A with certified cloud engineers about AWS, GCP, and Azure.",
+        description:
+          "Live Q&A with certified cloud engineers about AWS, GCP, and Azure.",
         date: new Date("2025-02-18"),
         startTime: new Date("2025-02-18T16:00:00"),
         endTime: new Date("2025-02-18T17:30:00"),
@@ -181,16 +244,19 @@ async function main() {
       },
       links: [
         { label: "FAQ PDF", url: "https://example.com/cloud-ama-faq.pdf" },
-        { label: "Event Poster", url: "https://example.com/cloud-ama-poster.jpg" },
+        {
+          label: "Event Poster",
+          url: "https://example.com/cloud-ama-poster.jpg",
+        },
       ],
     },
   ];
-  
+
   for (const item of eventsWithLinks) {
     const event = await prisma.event.create({
       data: item.data,
     });
-  
+
     await prisma.eventLink.createMany({
       data: item.links.map((link) => ({
         ...link,
@@ -198,7 +264,6 @@ async function main() {
       })),
     });
   }
-  
 
   console.log("✅ Seeding complete with upserts and non-zero attendees!");
 }
