@@ -23,6 +23,7 @@ const InternCard = ({
   id,
   title,
   jd,
+  jdType,
   domain,
   location,
   compensation,
@@ -157,12 +158,17 @@ const InternCard = ({
           >
             {company}{" - " + title}
           </Link>
-          
         </h2>
         <div className="domain-pill">{domainMap[domain]}</div>
       </div>
 
-      <p className="description">{jd}</p>
+      {jdType === "URL" ? (
+        <a href={jd} target="_blank" rel="noopener noreferrer" className="jd-link">
+          Click here to view job description
+        </a>
+      ) : (
+        <p className="description">{jd}</p>
+      )}
 
       <div className="details">
         <div className="detail-item">
