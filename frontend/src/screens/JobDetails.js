@@ -12,7 +12,7 @@ const JobDetails = () => {
   const [role, setRole] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isApplying, setIsApplying] = useState(false);
-  const [isClosing, setIsClosing] = useState(false); // Added loading state for closing internship
+  const [isClosing, setIsClosing] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -62,7 +62,7 @@ const JobDetails = () => {
   }, [role, id]);
 
   const handleCloseInternship = async () => {
-    setIsClosing(true); // Start loading state
+    setIsClosing(true);
     try {
       const updatedJob = await closeInternship(id);
       console.log("Internship closed successfully!");
@@ -70,7 +70,7 @@ const JobDetails = () => {
     } catch (error) {
       console.error("Failed to close internship:", error);
     } finally {
-      setIsClosing(false); // Stop loading state
+      setIsClosing(false);
     }
   };
 
@@ -130,28 +130,6 @@ const JobDetails = () => {
     );
   }
 
-  function formatCreatedAt(createdAt) {
-    const now = new Date();
-    const createdDate = new Date(createdAt);
-
-    const timeDifference = now.getTime() - createdDate.getTime();
-
-    const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-
-    if (daysDifference === 0) {
-      // Check if it's still the same day (ignoring time)
-      if (now.getDate() === createdDate.getDate()) {
-        return "Posted today";
-      } else {
-        return "Posted yesterday";
-      }
-    } else if (daysDifference === 1) {
-      return "Posted yesterday";
-    } else {
-      return `Posted ${daysDifference} days ago`;
-    }
-  }
-
   return (
     <>
       <NavBar />
@@ -170,7 +148,18 @@ const JobDetails = () => {
           <div className="main-content">
             <section className="job-description">
               <h3>Job Description</h3>
-              <p>{job.jd}</p>
+              {job.jobType === "URL" ? (
+                <a
+                  href={job.jd}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="job-description-link"
+                >
+                  Click here to view the job description
+                </a>
+              ) : (
+                <p>{job.jd}</p>
+              )}
             </section>
 
             <section className="responsibilities">
@@ -199,10 +188,10 @@ const JobDetails = () => {
                     <button
                       className="close-internship-button"
                       onClick={handleCloseInternship}
-                      disabled={isClosing} // Disable while processing
+                      disabled={isClosing}
                     >
                       {isClosing ? (
-                        <span className="spinner"></span> // Show spinner when loading
+                        <span className="spinner"></span>
                       ) : (
                         "Close Internship"
                       )}
@@ -252,7 +241,7 @@ const JobDetails = () => {
                   <strong>Location:</strong> {job.location}
                 </p>
                 <p>
-                  <strong>Salary: &#8377;</strong> {job.compensation}
+                  <strong>Stipend: &#8377;</strong> {job.compensation}
                 </p>
                 <p>
                   <strong>Duration:</strong> {job.duration}
