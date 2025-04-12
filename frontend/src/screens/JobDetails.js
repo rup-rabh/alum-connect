@@ -241,7 +241,7 @@ const JobDetails = () => {
                   <strong>Location:</strong> {job.location}
                 </p>
                 <p>
-                  <strong>Stipend: &#8377;</strong> {job.compensation}
+                  <strong>Stipend: </strong> {job.compensation}
                 </p>
                 <p>
                   <strong>Duration:</strong> {job.duration}
