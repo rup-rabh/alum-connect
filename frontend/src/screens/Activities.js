@@ -198,7 +198,7 @@ const Activities = () => {
                               <div className="resources-dropdown">
                                 {event.links.map((link) => (
                                   <a
-                                    key={link.id}
+                                    key={link.url}
                                     href={link.url}
                                     target="_blank"
                                     rel="noopener noreferrer"

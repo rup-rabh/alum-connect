@@ -31,13 +31,17 @@ const AboutUs = () => {
 
         <section className="au-who-we-are">
           <h2>Who We Are</h2>
-          <p>Founded by a group of passionate entrepreneurs and industry veterans, Alumni Connect bridges the gap between innovative ideas and successful businesses.</p>
-          <p>We understand the challenges that early-stage startups face because we've been there. Our platform is designed to provide the support, knowledge, and connections that we wish we had when we were starting out.</p>
-          <div className="au-community-grid">
-            <div className="au-community-item">Founders</div>
-            <div className="au-community-item">Investors</div>
-            <div className="au-community-item">Mentors</div>
-            <div className="au-community-item">Industry Experts</div>
+          <div className="au-who-we-are-content">
+            <div className="au-text-content">
+              <p>Founded by a group of passionate entrepreneurs and industry veterans, Alumni Connect bridges the gap between innovative ideas and successful businesses.</p>
+              <p>We understand the challenges that early-stage startups face because we've been there. Our platform is designed to provide the support, knowledge, and connections that we wish we had when we were starting out.</p>
+            </div>
+            <div className="au-community-grid">
+              <div className="au-community-item">Founders</div>
+              <div className="au-community-item">Investors</div>
+              <div className="au-community-item">Mentors</div>
+              <div className="au-community-item">Industry Experts</div>
+            </div>
           </div>
         </section>
 
@@ -106,7 +110,6 @@ const AboutUs = () => {
           </div>
         </footer>
       </div>
-      
     </>
   );
 };

@@ -57,6 +57,17 @@
   margin-bottom: 2rem;
 }
 
+.job-description a {
+  color: #7c2d12;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.job-description a:hover {
+  color: #9a3412;
+  text-decoration: none;
+}
+
 .requirements-list {
   list-style-type: none;
   padding: 0;
