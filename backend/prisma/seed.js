@@ -117,6 +117,7 @@ async function main() {
 
   await prisma.internship.createMany({
     data: [
+      // Existing entries
       {
         title: "Frontend Developer Intern",
         company: "Tech Corp",
@@ -162,8 +163,71 @@ async function main() {
         weeklyHours: "15-20 hours",
         postedById: alumniUser2.alumni.id,
       },
+  
+      // New internships
+      {
+        title: "Backend Intern - Node.js",
+        company: "Infosys",
+        jd: "https://www.example.com/jobs/backend-nodejs-internship",
+        jdType: "URL",
+        domain: "BACKEND",
+        location: "Hyderabad",
+        compensation: "₹8,000/month",
+        duration: "2 months",
+        startTime: new Date("2025-06-01"),
+        endTime: new Date("2025-07-31"),
+        criteria: "3rd year and above",
+        weeklyHours: "12-15 hours",
+        postedById: alumniUser.alumni.id,
+      },
+      {
+        title: "Cloud & DevOps Intern",
+        company: "Google Cloud India",
+        jd: "https://careers.google.com/jobs/results/123456-cloud-intern/",
+        jdType: "URL",
+        domain: "CLOUD_COMPUTING",
+        location: "Remote",
+        compensation: "₹18,000/month",
+        duration: "3 months",
+        startTime: new Date("2025-05-20"),
+        endTime: new Date("2025-08-20"),
+        criteria: "Final year students",
+        weeklyHours: "15 hours",
+        postedById: alumniUser1.alumni.id,
+      },
+      {
+        title: "Cybersecurity Research Intern",
+        company: "QuickSecure",
+        jd: "Hands-on research internship on penetration testing, threat modeling, and zero-day analysis.",
+        jdType: "TEXT",
+        domain: "CYBERSECURITY",
+        location: "Delhi",
+        compensation: "₹14,000/month",
+        duration: "2 months",
+        startTime: new Date("2025-06-10"),
+        endTime: new Date("2025-08-10"),
+        criteria: "Students with basic networking knowledge",
+        weeklyHours: "10 hours",
+        postedById: alumniUser2.alumni.id,
+      },
+      {
+        title: "Machine Learning Intern",
+        company: "OpenAI India",
+        jd: "https://openai.com/careers/machine-learning-intern",
+        jdType: "URL",
+        domain: "MACHINE_LEARNING",
+        location: "Remote",
+        compensation: "₹25,000/month",
+        duration: "2 months",
+        startTime: new Date("2025-07-01"),
+        endTime: new Date("2025-08-31"),
+        criteria: "Final year students with ML background",
+        weeklyHours: "20 hours",
+        postedById: alumniUser.alumni.id,
+      }
     ],
   });
+  
 
   await prisma.eventLink.deleteMany();
   await prisma.event.deleteMany();
