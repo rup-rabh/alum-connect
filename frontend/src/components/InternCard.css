@@ -1,98 +1,105 @@
 .intern-card-link {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-  }
-  
-  .intern-card {
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
-    margin: 10px;
-  }
-  
-  .intern-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  }
-  
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-  }
-  
-  .title-link {
-    text-decoration: none;
-    color: inherit;
-  }
-  
-  .title {
-    color: rgb(154, 52, 18);
-    margin: 0;
-    font-size: 1.5rem;
-  }
-  
-  .domain-pill {
-    background: rgba(124, 45, 18, 0.1);
-    color: #7c2d12;
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-  }
-  
-  .description {
-    color: #5a5a5a;
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
-    font-size: 1rem;
-  }
-  
-  .details {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  .detail-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: rgb(154, 52, 18);
-    font-size: 0.9rem;
-  }
-  
-  .detail-item i {
-    color: #7c2d12;
-  }
-  
-  .timeline {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    color: #7c2d12;
-    margin-bottom: 1rem;
-  }
-  
-  .timeline-separator {
-    font-weight: bold;
-  }
-  
-  .eligibility {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    color: #7c2d12;
-    margin-bottom: 1.5rem;
-  }
-  
-  .intern-apply-button, .intern-modify-button {
-    background-color: #7c2d12;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.intern-card {
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin: 10px;
+}
+
+.intern-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.title {
+  color: rgb(154, 52, 18);
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.domain-pill {
+  background: rgba(124, 45, 18, 0.1);
+  color: #7c2d12;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.description {
+  color: #5a5a5a;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+}
+
+.jd-link {
+  color: #7c2d12;
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+  display: block;
+}
+
+.jd-link:hover {
+  text-decoration: underline;
+}
+
+.details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgb(154, 52, 18);
+  font-size: 0.9rem;
+}
+
+.detail-item i {
+  color: #7c2d12;
+}
+
+.timeline {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  color: #7c2d12;
+  margin-bottom: 1rem;
+}
+
+.timeline-separator {
+  font-weight: bold;
+}
+
+.eligibility {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  color: #7c2d12;
+  margin-bottom: 1.5rem;
+}
+
+.intern-apply-button,
+.intern-modify-button {
+  background-color: #7c2d12;
   color: white;
   border: none;
   padding: 0.8rem 2rem;
@@ -104,48 +111,30 @@
   max-width: 200px;
   margin: 0 auto;
   display: block;
-  }
-  
-  .intern-modify-button {
-    background-color: #5b1e0e;
-  }
-  
-  .intern-apply-button:hover, .intern-modify-button:hover {
-    background-color: #4a180b;
-  }
+}
 
-  /* .intern-apply-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  
-  .apply-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .apply-button.applied {
-    background-color: green !important;
-    cursor: default;
-  } */
-  
-  .spinner {
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    border-top: 3px solid white;
-    border-radius: 50%;
-    width: 15px;
-    height: 15px;
-    animation: spin 1s linear infinite;
-    display: inline-block;
-    vertical-align: middle;
-    margin-right: 5px;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  
+.intern-modify-button {
+  background-color: #5b1e0e;
+}
+
+.intern-apply-button:hover,
+.intern-modify-button:hover {
+  background-color: #4a180b;
+}
+
+.spinner {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid white;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

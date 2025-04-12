@@ -148,14 +148,14 @@ const JobDetails = () => {
           <div className="main-content">
             <section className="job-description">
               <h3>Job Description</h3>
-              {job.jobType === "URL" ? (
+              {job.jdType === "URL" ? (
                 <a
                   href={job.jd}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="job-description-link"
                 >
-                  Click here to view the job description
+                  Click here to view job description
                 </a>
               ) : (
                 <p>{job.jd}</p>
