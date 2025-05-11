@@ -2,15 +2,28 @@ const prisma = require("../utils/prismaClient");
 const bcrypt = require("bcrypt");
 
 async function main() {
-  console.log("🌱 Seeding database with upserts...");
+  console.log("🌱 Seeding database...");
+
+  // Delete existing data
+  await prisma.internApplication.deleteMany();
+  await prisma.internship.deleteMany();
+  await prisma.alumniExperience.deleteMany();
+  await prisma.alumni.deleteMany();
+  await prisma.studentExperience.deleteMany();
+  await prisma.student.deleteMany();
+  await prisma.mentorship.deleteMany();
+  await prisma.mentor.deleteMany();
+  await prisma.eventLink.deleteMany();
+  await prisma.event.deleteMany();
+  await prisma.user.deleteMany();
+
+  console.log("🗑️ Deleted existing data");
 
   const hashedPassword = await bcrypt.hash("123456", 10);
 
-  // Upsert Alumni Users
-  const alumniUser = await prisma.user.upsert({
-    where: { email: "alumni@gmail.com" },
-    update: {},
-    create: {
+  // Create Alumni Users
+  const alumniUser = await prisma.user.create({
+    data: {
       username: "alumni",
       email: "alumni@gmail.com",
       password: hashedPassword,
@@ -27,10 +40,8 @@ async function main() {
     include: { alumni: true },
   });
 
-  const alumniUser1 = await prisma.user.upsert({
-    where: { email: "alum@gmail.com" },
-    update: {},
-    create: {
+  const alumniUser1 = await prisma.user.create({
+    data: {
       username: "alum",
       email: "alum@gmail.com",
       password: hashedPassword,
@@ -47,10 +58,8 @@ async function main() {
     include: { alumni: true },
   });
 
-  const alumniUser2 = await prisma.user.upsert({
-    where: { email: "good@gmail.com" },
-    update: {},
-    create: {
+  const alumniUser2 = await prisma.user.create({
+    data: {
       username: "goodMentor",
       email: "good@gmail.com",
       password: hashedPassword,
@@ -67,11 +76,9 @@ async function main() {
     include: { alumni: true },
   });
 
-  // Upsert Student Users
-  const studentUser = await prisma.user.upsert({
-    where: { email: "student@gmail.com" },
-    update: {},
-    create: {
+  // Create Student Users
+  const studentUser = await prisma.user.create({
+    data: {
       username: "student",
       email: "student@gmail.com",
       password: hashedPassword,
@@ -90,10 +97,8 @@ async function main() {
     include: { student: true },
   });
 
-  const studentUser2 = await prisma.user.upsert({
-    where: { email: "student2@gmail.com" },
-    update: {},
-    create: {
+  const studentUser2 = await prisma.user.create({
+    data: {
       username: "student2",
       email: "student2@gmail.com",
       password: hashedPassword,
@@ -112,12 +117,32 @@ async function main() {
     include: { student: true },
   });
 
-  await prisma.internApplication.deleteMany();
-  await prisma.internship.deleteMany();
+  // Add Experiences
+  await prisma.alumniExperience.create({
+    data: {
+      company: "Tech Corp",
+      role: "Software Engineer",
+      startDate: new Date("2020-01-01"),
+      endDate: new Date("2023-01-01"),
+      description: "Worked on full-stack applications",
+      alumniId: alumniUser.alumni.id,
+    },
+  });
 
+  await prisma.studentExperience.create({
+    data: {
+      title: "Frontend Intern",
+      description: "Developed React components for a dashboard.",
+      techStacks: ["React", "JavaScript", "TailwindCSS"],
+      startDate: new Date("2023-06-01"),
+      endDate: new Date("2023-09-01"),
+      studentId: studentUser.student.id,
+    },
+  });
+
+  // Create Internships
   await prisma.internship.createMany({
     data: [
-      // Existing entries
       {
         title: "Frontend Developer Intern",
         company: "Tech Corp",
@@ -163,8 +188,6 @@ async function main() {
         weeklyHours: "15-20 hours",
         postedById: alumniUser2.alumni.id,
       },
-  
-      // New internships
       {
         title: "Backend Intern - Node.js",
         company: "Infosys",
@@ -227,17 +250,13 @@ async function main() {
       }
     ],
   });
-  
 
-  await prisma.eventLink.deleteMany();
-  await prisma.event.deleteMany();
-
+  // Create Events with Links
   const eventsWithLinks = [
     {
       data: {
         title: "AI & Future Careers Webinar",
-        description:
-          "Explore how AI is shaping job roles and skills of the future.",
+        description: "Explore how AI is shaping job roles and skills of the future.",
         date: new Date("2025-06-05"),
         startTime: new Date("2025-06-05T17:00:00"),
         endTime: new Date("2025-06-05T18:30:00"),
@@ -254,8 +273,7 @@ async function main() {
     {
       data: {
         title: "Startup Pitch Fest",
-        description:
-          "Watch student startups pitch their ideas to real investors.",
+        description: "Watch student startups pitch their ideas to real investors.",
         date: new Date("2025-06-15"),
         startTime: new Date("2025-06-15T14:00:00"),
         endTime: new Date("2025-06-15T17:00:00"),
@@ -265,21 +283,14 @@ async function main() {
         attendeesCount: 7,
       },
       links: [
-        {
-          label: "Event Poster",
-          url: "https://example.com/startup-poster.png",
-        },
-        {
-          label: "Pitch Deck Samples",
-          url: "https://example.com/pitch-decks.zip",
-        },
+        { label: "Event Poster", url: "https://example.com/startup-poster.png" },
+        { label: "Pitch Deck Samples", url: "https://example.com/pitch-decks.zip" },
       ],
     },
     {
       data: {
         title: "Build Your Portfolio Session",
-        description:
-          "Get expert tips on making your dev/design portfolio stand out.",
+        description: "Get expert tips on making your dev/design portfolio stand out.",
         date: new Date("2025-03-25"),
         startTime: new Date("2025-03-25T11:00:00"),
         endTime: new Date("2025-03-25T13:00:00"),
@@ -296,8 +307,7 @@ async function main() {
     {
       data: {
         title: "Cloud Certification AMA",
-        description:
-          "Live Q&A with certified cloud engineers about AWS, GCP, and Azure.",
+        description: "Live Q&A with certified cloud engineers about AWS, GCP, and Azure.",
         date: new Date("2025-02-18"),
         startTime: new Date("2025-02-18T16:00:00"),
         endTime: new Date("2025-02-18T17:30:00"),
@@ -308,33 +318,64 @@ async function main() {
       },
       links: [
         { label: "FAQ PDF", url: "https://example.com/cloud-ama-faq.pdf" },
-        {
-          label: "Event Poster",
-          url: "https://daxg39y63pxwu.cloudfront.net/images/blog/google-cloud-certifications/Google_Cloud_Certifications.webp",
-        },
+        { label: "Event Poster", url: "https://daxg39y63pxwu.cloudfront.net/images/blog/google-cloud-certifications/Google_Cloud_Certifications.webp" },
       ],
     },
   ];
 
   for (const item of eventsWithLinks) {
-    const event = await prisma.event.create({
-      data: item.data,
-    });
-
+    const event = await prisma.event.create({ data: item.data });
     await prisma.eventLink.createMany({
-      data: item.links.map((link) => ({
-        ...link,
-        eventId: event.id,
-      })),
+      data: item.links.map(link => ({ ...link, eventId: event.id })),
     });
   }
 
-  console.log("✅ Seeding complete with upserts and non-zero attendees!");
+  // Create Mentor
+  const mentor = await prisma.mentor.create({
+    data: {
+      userId: alumniUser.alumni.userId,
+      keywords: ["SOFTWARE", "BLOCKCHAIN"],
+      experience: 5,
+      interaction: "HIGH",
+      maxMentees: 10,
+      currentMentees: 3,
+      levelsOfMentees: ["SECOND_YEAR", "FOURTH_YEAR"],
+      interests: ["PRO_BONO_HELP", "MENTORING_AND_PARTNERSHIP"],
+      linkedinProfile: "https://www.linkedin.com/in/example-profile/",
+      currentOrganization: "Google",
+      passingYear: 2016
+    },
+    include: { user: true },
+  });
+
+  // Create Mentorship
+  const mentorship = await prisma.mentorship.create({
+    data: {
+      mentorId: mentor.id,
+      menteeId: studentUser.student.userId,
+      status: "PENDING"
+    },
+    include: { mentor: true }
+  });
+
+  // Update Mentorship to Active
+  await prisma.mentorship.update({
+    where: { id: mentorship.id },
+    data: {
+      status: "ACTIVE",
+      mentor: {
+        update: { currentMentees: { increment: 1 } }
+      }
+    }
+  });
+
+  console.log("✅ Database seeding completed!");
 }
 
 main()
   .catch((e) => {
-    console.error("❌ Error seeding database:", e);
+    console.error("❌ Seeding error:", e);
+    process.exit(1);
   })
   .finally(async () => {
     await prisma.$disconnect();

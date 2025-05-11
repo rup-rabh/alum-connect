@@ -17,7 +17,7 @@ const HomeScreen = () => {
       title: "Enroll as Startup Mentors",
       description: "Guide and support budding entrepreneurs",
       icon: <i className="fas fa-user-tie"></i>,
-      link: "/event2",
+      link: "/mentorDashboard",
     },
     {
       title: "Network with Alumni",
