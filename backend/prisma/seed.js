@@ -410,6 +410,99 @@ async function main() {
     }
 
     // Ensure every table has at least one record (if not already created)
+        // --- MENTORS AND MENTORSHIPS SEEDING ---
+
+    // Create mentors for each alumni user
+    const mentors = [];
+
+    // Mentor 1 (for alumniUser)
+    const mentor1 = await prisma.mentor.create({
+      data: {
+        userId: alumniUser.alumni.userId,
+        keywords: ["SOFTWARE", "BLOCKCHAIN"],
+        experience: 5,
+        interaction: "HIGH",
+        maxMentees: 10,
+        currentMentees: 3,
+        levelsOfMentees: ["SECOND_YEAR", "FOURTH_YEAR"],
+        interests: ["PRO_BONO_HELP", "MENTORING_AND_PARTNERSHIP"],
+        linkedinProfile: "https://www.linkedin.com/in/johndoe/",
+        currentOrganization: "Tech Corp",
+        passingYear: 2016,
+      },
+      include: { user: true },
+    });
+    mentors.push(mentor1);
+    console.log("Φ created mentor!", mentor1.id);
+
+    // Mentor 2 (for alumniUser1)
+    const mentor2 = await prisma.mentor.create({
+      data: {
+        userId: alumniUser1.alumni.userId,
+        keywords: ["PRODUCT_MANAGEMENT", "FINANCE"],
+        experience: 3,
+        interaction: "MODERATE",
+        maxMentees: 5,
+        currentMentees: 1,
+        levelsOfMentees: ["THIRD_YEAR"],
+        interests: ["FLOATING_OWN_PROJECTS"],
+        linkedinProfile: "https://www.linkedin.com/in/doejana/",
+        currentOrganization: "Tata",
+        passingYear: 2018,
+      },
+      include: { user: true },
+    });
+    mentors.push(mentor2);
+    console.log("Φ created mentor!", mentor2.id);
+
+    // Mentor 3 (for alumniUser2)
+    const mentor3 = await prisma.mentor.create({
+      data: {
+        userId: alumniUser2.alumni.userId,
+        keywords: ["PRODUCT_MANAGEMENT", "OPERATIONS"],
+        experience: 5,
+        interaction: "VERY_LOW",
+        maxMentees: 8,
+        currentMentees: 2,
+        levelsOfMentees: ["FOURTH_YEAR","FIFTH_YEAR"],
+        interests: ["HELPING_IN_NETWORKING", "INVESTING"],
+        linkedinProfile: "https://www.linkedin.com/in/goodman/",
+        currentOrganization: "Bata",
+        passingYear: 2015,
+      },
+      include: { user: true },
+    });
+    mentors.push(mentor3);
+    console.log("Φ created mentor!", mentor3.id);
+
+    // --- Create mentorships (linking mentors to students) ---
+
+    const mentorships = [
+      {
+        mentorId: mentor1.id,
+        menteeId: studentUser.student.userId,
+        status: "PENDING",
+      },
+      {
+        mentorId: mentor2.id,
+        menteeId: studentUser2.student.userId,
+        status: "ACTIVE",
+      },
+      {
+        mentorId: mentor3.id,
+        menteeId: studentUser.student.userId,
+        status: "REJECTED",
+      },
+    ];
+
+    for (const mentorshipData of mentorships) {
+      const mentorShip = await prisma.mentorship.create({
+        data: mentorshipData,
+        include: { mentor: true },
+      });
+      console.log("🎉 created mentorship!", "status", mentorShip.status);
+    }
+
 
   }
 
